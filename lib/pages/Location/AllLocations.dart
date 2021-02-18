@@ -77,7 +77,7 @@ class _LocationsState extends State<Locations> {
                         icon: BitmapDescriptor.defaultMarker,
                         onTap: () => {
                         Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => LocationDetails())),
+                        context, MaterialPageRoute(builder: (context) => LocationDetails( identifier: Location.id))),
                         },
                         infoWindow: InfoWindow(
                           title: Location.siteName,

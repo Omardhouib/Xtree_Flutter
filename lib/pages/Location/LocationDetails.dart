@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/pages/homepage.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
@@ -16,8 +17,9 @@ import 'package:flutter/gestures.dart';
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 
 class LocationDetails extends StatefulWidget with NavigationStates {
-  LocationDetails({Key key, this.title}) : super(key: key);
+  LocationDetails({Key key, this.title, this.identifier}) : super(key: key);
   final String title;
+  String identifier;
 
   @override
   LocationDetailsState createState() => LocationDetailsState();
@@ -27,6 +29,8 @@ class LocationDetailsState extends State<LocationDetails> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   final RoundedLoadingButtonController _btnController =
   new RoundedLoadingButtonController();
+  String identifier;
+  List<dynamic> Sensors =[];
   @override
   void initState() {
     super.initState();
@@ -34,6 +38,7 @@ class LocationDetailsState extends State<LocationDetails> {
 
   @override
   Widget build(BuildContext context) {
+    identifier = widget.identifier;
     var hour = DateTime.now().hour;
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -50,18 +55,35 @@ class LocationDetailsState extends State<LocationDetails> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              'Home' + hour.toString(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 30.0,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.normal,
-                              ),
+                            FutureBuilder<Location>(
+//                future: databaseHelper.getData(),
+                                future: databaseHelper2.getLocationByid(identifier),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    print(snapshot.error);
+                                    print("mochkla lenaa electro *");
+                                  }
+                                  return snapshot.hasData
+                                      ?  Text(
+                                    snapshot.data.siteName,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 30.0,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontStyle: FontStyle.normal,
+                                    ),
+                                  )
+                                      : Text(
+                                    "",
+                                    style:TextStyle(
+                                      backgroundColor: Colors.transparent,
+                                    ),
+                                  );
+                                }
                             ),
                             Text(
-                              'Welcome Omar dhouib',
+                              'Home' + hour.toString(),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 16.0,
@@ -88,17 +110,9 @@ class LocationDetailsState extends State<LocationDetails> {
                   ),
                 ),
               ]),
-          FutureBuilder(
-              future: databaseHelper2.Lastlocation(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
 
-                return snapshot.hasData
-                    ? FutureBuilder(
-                    future: databaseHelper2.Getweather(snapshot.data.id),
+                    FutureBuilder(
+                    future: databaseHelper2.Getweather(identifier),
                     builder: (context, snapshot2) {
                       if (snapshot2.hasError) {
                         print(snapshot2.error);
@@ -117,83 +131,15 @@ class LocationDetailsState extends State<LocationDetails> {
                           backgroundColor: Colors.transparent,
                         ),
                       );
-                    })
-                    : Text(
-                  "",
-                  style:TextStyle(
-                    backgroundColor: Colors.transparent,
-                  ),
-                );
-              }),
+                    }),
+
           Container(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
             ),
           ),
-          _buildProgrammCard(),
-          FutureBuilder(
-              future: databaseHelper2.NumberofDeviceByUser(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
 
-                return snapshot.hasData
-                    ? Container(
-                  height: 90,
-                  child: Card(
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    elevation: 4,
-                    margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-                    child:Text("Number of devices: "+snapshot.data.toString(),),
-                  ),
-                )
-                    : Text(
-                  "",
-                  style:TextStyle(
-                    backgroundColor: Colors.transparent,
-                  ),
-                );
-              }
-          ),
-          FutureBuilder(
-              future: databaseHelper2.NumberofLocationByUser(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
 
-                return snapshot.hasData
-                    ? Container(
-                  height: 90,
-                  child: Card(
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    elevation: 4,
-                    margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-                    child:Text("Number of locations: "+snapshot.data.toString(),
-                    ),
-                  ),
-                )
-                    : Text(
-                  "",
-                  style:TextStyle(
-                    backgroundColor: Colors.transparent,
-                  ),
-                );
-              }
-          ),
           FutureBuilder(
 //                future: databaseHelper.getData(),
               future: databaseHelper2.AllElectoByUser(),
@@ -212,6 +158,47 @@ class LocationDetailsState extends State<LocationDetails> {
                 );
               }
           ),
+
+          FutureBuilder<Location>(
+//                future: databaseHelper.getData(),
+              future: databaseHelper2.getLocationByid(identifier),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  snapshot.data.sensorIds.forEach((element) {
+                    Sensors.add(element);
+                  });
+                  }
+                return ListView.builder(
+                    itemCount: Sensors == null ? 0 : Sensors.length,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, i) {
+                      return Column(
+                        children: <Widget>[
+                          Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 14),
+                                child: Text(
+                                  'Device name is ',
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(right: 44),
+                                child: Text(
+                                  //list[i].toString() ?? '',
+                                  Sensors[i].toString(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 40,
+                          )
+                        ],
+                      );
+                    });
+              }),
         ],
       ),
     );
@@ -251,54 +238,6 @@ class LocationDetailsState extends State<LocationDetails> {
     );
   }
 
-  /* Widget _buildProgrammCard1() {
-    return Container(
-      height: 90,
-      child: Card(
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        elevation: 4,
-        margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-        child:
-      ),
-    );
-  }*/
-
-  /* Widget _buildProgrammCard2() {
-    return Container(
-      height: 90,
-      child: Card(
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        elevation: 4,
-        margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-        child: FutureBuilder(
-//                future: databaseHelper.getData(),
-            future: NumLocation,
-            builder: (context, snapshot) {
-              Widget widget;
-              if (snapshot.hasError) {
-                print(snapshot.error);
-                print("mochkla lenaa *");
-              }
-              return snapshot.hasData
-                  ? widget =
-                      Text("Number of sites :" + snapshot.data.toString())
-                  : Center(
-                      child: CircularProgressIndicator(),
-                    );
-            }),
-      ),
-    );
-  }*/
   Widget Itemclass({List list}) {
 
     var hour = DateTime.now().hour;
@@ -401,38 +340,10 @@ class LocationDetailsState extends State<LocationDetails> {
                               style: TextStyle(color: Colors.black),
                             ),
                           ),
-                          FutureBuilder(
-                              future: databaseHelper2.Lastlocation(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasError) {
-                                  print(snapshot.error);
-                                  print("there is problem !");
-                                }
-
-                                return snapshot.hasData
-                                    ? FutureBuilder(
-                                    future: databaseHelper2.GetUV(
-                                        snapshot.data.id),
-                                    builder: (context, snapshot2) {
-                                      if (snapshot2.hasError) {
-                                        print(snapshot2.error);
-                                        print("there is problem !");
-                                      }
-                                      return snapshot2.hasData
-                                          ? Text(snapshot2.data[i]["value"]
-                                          .toString())
-                                          : Center(
-                                        child:
-                                        CircularProgressIndicator(
-                                          strokeWidth: 0.1,
-                                        ),
-                                      );
-                                    })
-                                    : Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 0.1,
-                                    ));
-                              }),
+                          Text(
+                            list[i]["uvi"].toString(),
+                            style: TextStyle(color: Colors.black),
+                          )
                         ],
                       ),
                     ],

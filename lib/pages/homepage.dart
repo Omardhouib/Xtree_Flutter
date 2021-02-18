@@ -416,38 +416,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               style: TextStyle(color: Colors.black),
                             ),
                           ),
-                          FutureBuilder(
-                              future: databaseHelper2.Lastlocation(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasError) {
-                                  print(snapshot.error);
-                                  print("there is problem !");
-                                }
-
-                                return snapshot.hasData
-                                    ? FutureBuilder(
-                                    future: databaseHelper2.GetUV(
-                                        snapshot.data.id),
-                                    builder: (context, snapshot2) {
-                                      if (snapshot2.hasError) {
-                                        print(snapshot2.error);
-                                        print("there is problem !");
-                                      }
-                                      return snapshot2.hasData
-                                          ? Text(snapshot2.data[i]["value"]
-                                          .toString())
-                                          : Center(
-                                        child:
-                                        CircularProgressIndicator(
-                                          strokeWidth: 0.1,
-                                        ),
-                                      );
-                                    })
-                                    : Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 0.1,
-                                    ));
-                              }),
+                          Text(
+                            list[i]["uvi"].toString(),
+                            style: TextStyle(color: Colors.black),
+                          )
                         ],
                       ),
                     ],

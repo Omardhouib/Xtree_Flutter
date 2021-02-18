@@ -210,6 +210,29 @@ class DatabaseHelper2 {
       throw Exception('Failed to load album');
     }
   }
+  Future<Location> getLocationByid(String ID) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key) ?? 0;
+
+    String myUrl = "$serverUrl/location/getLocationByid/$ID?token=" + value;
+    http.Response response = await http.get(myUrl,
+        headers: {
+          'Accept': 'application/json',
+        });
+    print("myUrldevice :"+myUrl);
+    print("status :"+response.statusCode.toString());
+
+    if (response.statusCode == 200) {
+      await Future.delayed(Duration(milliseconds: 800));
+
+      // If the server did return a 200 OK response,
+      return Location.fromJson(json.decode(response.body));
+    } else {
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
 
   Future<List> Getweather(String ID) async {
     final prefs = await SharedPreferences.getInstance();
@@ -298,6 +321,8 @@ class DatabaseHelper2 {
 
     return json.decode(response.body);
   }
+
+
 
   Future<List> getDataOfDeviceByID(String ID) async {
     final prefs = await SharedPreferences.getInstance();
