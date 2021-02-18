@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
+import 'package:sidebar_animation/pages/loginPage.dart';
 
 import '../bloc.navigation_bloc/navigation_bloc.dart';
 import '../sidebar/menu_item.dart';
@@ -167,7 +168,10 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                           onIconPressed();
                           SharedPreferences preferences = await SharedPreferences.getInstance();
                           await preferences.clear();
-                          BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.LogoutEvent);
+                          await Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) => LoginPage()),
+                                  (Route<dynamic> route) => false);
                         },
                       ),
                     ],

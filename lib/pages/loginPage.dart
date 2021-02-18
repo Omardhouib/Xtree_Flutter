@@ -15,7 +15,9 @@ import 'dart:io';
 
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 
-class LoginPage extends StatefulWidget with NavigationStates {
+
+
+class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }

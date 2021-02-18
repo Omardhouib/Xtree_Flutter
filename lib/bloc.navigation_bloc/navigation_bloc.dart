@@ -15,7 +15,6 @@ enum NavigationEvents {
   HomePageClickedEvent,
   MyAccountClickedEvent,
   MyOrdersClickedEvent,
-  LogoutEvent,
 }
 
 abstract class NavigationStates {}
@@ -35,9 +34,6 @@ class NavigationBloc extends Bloc<NavigationEvents, NavigationStates> {
         break;
       case NavigationEvents.MyOrdersClickedEvent:
         yield HomeLocation();
-        break;
-      case NavigationEvents.LogoutEvent:
-        yield LoginPage();
         break;
     }
   }

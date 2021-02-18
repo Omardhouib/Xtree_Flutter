@@ -4,26 +4,38 @@ import 'package:sidebar_animation/pages/Device/deviceDetails.dart';
 import '../../bloc.navigation_bloc/navigation_bloc.dart';
 import 'dart:async';
 
-class Devices extends StatelessWidget with NavigationStates {
+// ignore: must_be_immutable
+class Devices extends StatefulWidget with NavigationStates {
+  @override
+  _DevicesState createState() => _DevicesState();
+}
+
+class _DevicesState extends State<Devices> {
+  @override
+
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: FutureBuilder(
+    return Scaffold(
+      body:  Center(
+        child: FutureBuilder(
 //                future: databaseHelper.getData(),
-          future: databaseHelper2.AllDeviceByUser1(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              print(snapshot.error);
-              print("mochkla lenaa *");
-            }
-            return snapshot.hasData
-                ? ItemList(list: snapshot.data)
-                : Center(
-                    child: CircularProgressIndicator(),
-                  );
-          }),
+            future: databaseHelper2.AllDeviceByUser1(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                print(snapshot.error);
+                print("mochkla lenaa *");
+              }
+              return snapshot.hasData
+                  ? ItemList(list: snapshot.data)
+                  : Center(
+                child: CircularProgressIndicator(),
+              );
+            }),
+      ),
     );
+
   }
 }
 

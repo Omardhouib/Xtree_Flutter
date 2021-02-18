@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
+import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
 
 import '../../bloc.navigation_bloc/navigation_bloc.dart';
 
 class Locations extends StatefulWidget with NavigationStates {
-
   @override
   _LocationsState createState() => _LocationsState();
 }
@@ -16,12 +16,13 @@ class Locations extends StatefulWidget with NavigationStates {
 class _LocationsState extends State<Locations> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   GoogleMapController _controller;
-  final CameraPosition _initialPosition = CameraPosition(target: LatLng(33.892166, 9.400138), zoom: 5.0);
- // Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  final CameraPosition _initialPosition =
+      CameraPosition(target: LatLng(33.892166, 9.400138), zoom: 5.0);
+  // Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   List<Marker> Markers = [];
   List<Location> locations = [];
 
-   /*Coord() {
+  /*Coord() {
      databaseHelper2.AllLocationByUser().then((locations) {
        print("heloooooooo"+locations.toString());
        if(locations.isNotEmpty){
@@ -38,12 +39,12 @@ class _LocationsState extends State<Locations> {
     super.initState();
   }
 
- *//* addMarker(cordinate){
+ */ /* addMarker(cordinate){
     int id = Random().nextInt(1);
     setState(() {
       markers.add(Marker(position: cordinate, markerId: MarkerId(id.toString())));
     });
-  }*//*
+  }*/ /*
 
   void initMarker(specify, specifyId) async{
     var markerIdVal = specifyId;
@@ -59,68 +60,61 @@ class _LocationsState extends State<Locations> {
 }
 */
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      body:FutureBuilder<List<Location>>(
+      body: FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
           future: databaseHelper2.AllLocationByUser(),
-          builder: (context,snapshot) {
-    if (snapshot.hasData) {
-    snapshot.data.forEach((Location) {
-      print("beforee: "+Location.coordinates[0].toString());
-    Markers = snapshot.data.map((Location) => Marker(
-    markerId: MarkerId(Location.id),
-    position: LatLng(Location.coordinates[0], Location.coordinates[1]),
-    icon: BitmapDescriptor.defaultMarker,
-    onTap: () => {
-      print("coorddd111"+Location.coordinates.toString()),
-      print("coorddd111"+Location.id),
-    },
-    infoWindow: InfoWindow(title: Location.siteName,onTap: () => {
-      print("coorddd"+Location.coordinates.toString())
-    },)
-    )).toList(growable: true);
-      print("Markers berfore!!! :"+Markers.toString());
-    });
-    }
-    print("Markers !!! :"+Markers.toString());
-          return GoogleMap(
-            initialCameraPosition: _initialPosition,
-            markers: Set<Marker>.of(Markers),
-            mapType: MapType.hybrid,
-            onMapCreated: (controller){
-              setState(() {
-                _controller = controller;
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              snapshot.data.forEach((Location) {
+                Markers = snapshot.data
+                    .map((Location) => Marker(
+                        markerId: MarkerId(Location.id),
+                        position: LatLng(
+                            Location.coordinates[0], Location.coordinates[1]),
+                        icon: BitmapDescriptor.defaultMarker,
+                        onTap: () => {
+                        Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => LocationDetails())),
+                        },
+                        infoWindow: InfoWindow(
+                          title: Location.siteName,
+                          onTap: () => {},
+                        )))
+                    .toList(growable: true);
               });
-            },
-            /*markers: markers.toSet(),
+            }
+            print("Markers !!! :" + Markers.toString());
+            return GoogleMap(
+              initialCameraPosition: _initialPosition,
+              markers: Set<Marker>.of(Markers),
+              mapType: MapType.hybrid,
+              onMapCreated: (controller) {
+                setState(() {
+                  _controller = controller;
+                });
+              },
+              /*markers: markers.toSet(),
             onTap: (cordinate){
               _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
               addMarker(cordinate);
               print("cord"+cordinate.toString());
             },*/
+            );
+          }),
 
-          );
-
-
-    }),
-
-        floatingActionButton: FloatingActionButton(
-        onPressed: (){
-      _controller.animateCamera(CameraUpdate.zoomOut());
-    },
-    child: Icon(Icons.zoom_out),
-    ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _controller.animateCamera(CameraUpdate.zoomOut());
+        },
+        child: Icon(Icons.zoom_out),
+      ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
-
-}}
+  }
+}
 
 /*class ItemList extends StatelessWidget{
   List list;
