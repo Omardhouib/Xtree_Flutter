@@ -328,7 +328,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // ignore: missing_return
           itemBuilder: (context, i) {
             var item = list[i];
-            if ((hour < 18) && (hour >= 6)) {
+            if ((hour < 12) && (hour >= 6)) {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                 child: Container(
@@ -357,7 +357,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
                           Text(
-                            list[i]["temp"]["day"].round().toString() + "°C",
+                            list[i]["temp"]["morn"].round().toString() + "°C",
                             style: TextStyle(color: Colors.black),
                           )
                         ],
@@ -427,7 +427,106 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               );
             }
-            {
+            else if ((hour < 18) && (hour >= 12)) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      gradient: LinearGradient(
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
+                          colors: [
+                            Colors.orange[600],
+                            Colors.orange,
+                            Colors.orange[200]
+                          ])),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: [
+                          if (list[i]["pop"] > 0.1)
+                            new Image.network(
+                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/rain.png'),
+                          if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
+                            new Image.network(
+                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/overcast.png'),
+                          if (list[i]["pop"] == 0 && list[i]["clouds"] == 0)
+                            new Image.network(
+                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
+                          Text(
+                            list[i]["temp"]["eve"].round().toString() + "°C",
+                            style: TextStyle(color: Colors.black),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: Text(
+                              list[i]["temp"]["min"].round().toString() + "/",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                          Text(
+                            list[i]["temp"]["max"].round().toString() + "°C",
+                            style: TextStyle(color: Colors.black),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: Text(
+                              "humidity:",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                          Text(
+                            list[i]["humidity"].toString() + "%",
+                            style: TextStyle(color: Colors.black),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: Text(
+                              "Precipitation:",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                          Text(
+                            list[i]["pop"].toString() + "mm",
+                            style: TextStyle(color: Colors.black),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: Text(
+                              "Uv:",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                          Text(
+                            list[i]["uvi"].toString(),
+                            style: TextStyle(color: Colors.black),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+           else {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                 child: Container(
@@ -456,7 +555,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
                           Text(
-                            list[i]["temp"]["day"].round().toString() + "°C",
+                            list[i]["temp"]["night"].round().toString() + "°C",
                             style: TextStyle(color: Colors.black),
                           )
                         ],
