@@ -8,13 +8,17 @@ import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
+import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
+import 'package:sidebar_animation/pages/Device/deviceDetails.dart';
 import 'package:sidebar_animation/pages/homepage.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import 'package:sidebar_animation/constants.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
+
+import 'LocDevDetails.dart';
 
 class LocationDetails extends StatefulWidget with NavigationStates {
   LocationDetails({Key key, this.title, this.identifier}) : super(key: key);
@@ -185,10 +189,51 @@ class LocationDetailsState extends State<LocationDetails> {
                               ),
                               Padding(
                                 padding: EdgeInsets.only(right: 44),
-                                child: Text(
-                                  //list[i].toString() ?? '',
-                                  Sensors[i].toString(),
-                                ),
+                                child:  FutureBuilder<Sensor>(
+//                future: databaseHelper.getData(),
+                                    future: databaseHelper2.getDeviceById(Sensors[i]),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasError) {
+                                        print(snapshot.error);
+                                        print("mochkla lenaa *");
+                                      }
+                                      if (snapshot.hasData && snapshot.data.sensorType != "electrovanne") {
+                                          return Padding(
+                                              padding: EdgeInsets.only(left: 24),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => LocDevDetails(
+                                                          data: snapshot.data,
+                                                          identifier: snapshot.data.id
+
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Text(
+                                                  //list[i].toString() ?? '',
+                                                  snapshot.data.name,
+                                                ),
+                                              ));
+                                      }
+                                      else if (snapshot.hasData && snapshot.data.sensorType == "electrovanne") {
+                                        return Padding(
+                                            padding: EdgeInsets.only(left: 24),
+                                              child: Text(
+                                                //list[i].toString() ?? '',
+                                                snapshot.data.name,
+                                              ),
+                                            );
+                                      }
+                                      else {
+                                        return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                      }
+                                    }),
                               ),
                             ],
                           ),

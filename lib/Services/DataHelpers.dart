@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
+import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Models/Weather.dart';
 
 class DatabaseHelper2 {
@@ -319,7 +320,7 @@ class DatabaseHelper2 {
     final key = 'token';
     final value = prefs.get(key) ?? 0;
 
-    String myUrl = "$serverUrl/sensors/getDeviceByid/$ID?token=" + value;
+    String myUrl = "$serverUrl/sensors/getDeviceByiddata/$ID?token=" + value;
     http.Response response = await http.get(myUrl,
         headers: {
           'Accept': 'application/json',
@@ -328,6 +329,30 @@ class DatabaseHelper2 {
     print("status :"+response.statusCode.toString());
 
     return json.decode(response.body);
+  }
+
+  Future<Sensor> getDeviceById(String ID) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key) ?? 0;
+
+    String myUrl = "$serverUrl/sensors/getDeviceByid/$ID?token=" + value;
+    http.Response response = await http.get(myUrl,
+        headers: {
+          'Accept': 'application/json',
+        });
+    print("myUrldevice :"+myUrl);
+    print("status :"+response.statusCode.toString());
+
+    if (response.statusCode == 200) {
+      await Future.delayed(Duration(milliseconds: 800));
+
+      // If the server did return a 200 OK response,
+      return Sensor.fromJson(json.decode(response.body));
+    } else {
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
 
