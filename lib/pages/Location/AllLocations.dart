@@ -75,13 +75,13 @@ class _LocationsState extends State<Locations> {
                         position: LatLng(
                             Location.coordinates[0], Location.coordinates[1]),
                         icon: BitmapDescriptor.defaultMarker,
-                        onTap: () => {
-                        Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => LocationDetails( identifier: Location.id))),
-                        },
+                        onTap: () => {},
                         infoWindow: InfoWindow(
                           title: Location.siteName,
-                          onTap: () => {},
+                          onTap: () => {
+                            Navigator.push(
+                                context, MaterialPageRoute(builder: (context) => LocationDetails( identifier: Location.id))),
+                          },
                         )))
                     .toList(growable: true);
               });
