@@ -1,36 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
+import 'package:sidebar_animation/pages/Device/UpdateSens.dart';
 import '../../bloc.navigation_bloc/navigation_bloc.dart';
 import 'dart:async';
 import 'package:sidebar_animation/graphic.dart' as graphic;
 
-class deviceDetails extends StatelessWidget with NavigationStates {
+class deviceDetails extends StatefulWidget with NavigationStates {
   List list;
   int index;
   String identifier;
   deviceDetails({this.list, this.identifier, this.index});
+
+  @override
+  _deviceDetailsState createState() => _deviceDetailsState();
+}
+
+class _deviceDetailsState extends State<deviceDetails> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
+
+  final RoundedLoadingButtonController _btndeleteController =
+  new RoundedLoadingButtonController();
+
+  void _onValueChange(String value) {
+    setState(() {
+      _selectedId = value;
+    });
+  }
+
+  String _selectedId;
+
   @override
   Widget build(BuildContext context) {
-    print(identifier);
-    //String t = list[index]["data"]['time'];
-    /*List hum1 = [];
-    List hum2 = [];
-    List hum3 = [];
-    List humTotal = [];*/
-/*    print("helloo"+list[index]["data"]);
-   var hum1 = list[index]["data"]['humdity1'].slice(-30);
-   var hum2 = list[index]["data"]['humdity2'].slice(-30);
-    var hum3 = list[index]["data"]['humdity3'].slice(-30);
-   var  humTotal = (hum1+hum2+hum3)/3;
-    var tempSol = list[index]["data"]['temperatureSol'].slice(-30);
-    var time = DateTime.fromMillisecondsSinceEpoch(int.tryParse(list[index]["data"]['time'].slice(-30))).toString();
-    var batterie = list[index]["data"]['batterie'];
-    var tempAir = list[index]["data"]['temperature'].slice(-30);
-    var humAir = list[index]["data"]['humidite'].slice(-30);
-    var uv = list[index]["uv"].slice(-30);
-    var sensorName = list[index]["name"];*/
+    print(widget.identifier);
     var hum1 = [];
     var hum2 = [];
     var hum3 = [];
@@ -46,7 +49,7 @@ class deviceDetails extends StatelessWidget with NavigationStates {
       {"type": "humdity3", "index": "3", "value": hum3},
       {"type": "temperatureSol", "index": "4", "value": tempSol},
     ];
-    String type = list[index]["SensorType"].toString();
+    String type = widget.list[widget.index]["SensorType"].toString();
     print(identical(type, type));
     /* var long2 = int.tryParse(t);
     var date = DateTime.fromMillisecondsSinceEpoch(long2);*/
@@ -58,13 +61,13 @@ class deviceDetails extends StatelessWidget with NavigationStates {
           ),
           Text(
             //                         list[i].toString() ?? '',
-            list[index]["name"].toString(),
+            widget.list[widget.index]["name"].toString(),
 
             style: TextStyle(height: 5, fontSize: 10),
           ),
           Text(
             //                         list[i].toString() ?? '',
-            list[index]["SensorType"].toString(),
+            widget.list[widget.index]["SensorType"].toString(),
             style: TextStyle(height: 5, fontSize: 10),
           ),
           Padding(
@@ -74,7 +77,7 @@ class deviceDetails extends StatelessWidget with NavigationStates {
           ),
           FutureBuilder(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.getDeviceByID(identifier),
+              future: databaseHelper2.getDeviceByID(widget.identifier),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
@@ -86,6 +89,47 @@ class deviceDetails extends StatelessWidget with NavigationStates {
                         child: CircularProgressIndicator(),
                       );
               }),
+          Row(
+            children: [
+              Container(
+                height: 50,
+                width: 100,
+                child: AspectRatio(
+                  child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    color: Colors.greenAccent,
+                    child: Text("Update location",
+                        style: TextStyle(color: Colors.white)),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          child: UpdateSens(
+                            onValueChange: _onValueChange,
+                            initialValue: _selectedId,
+                            identifier: widget.identifier,
+                          ));
+                    },
+                  ),
+                  aspectRatio: 8,
+                ),
+              ),
+              Container(
+                height: 50,
+                width: 100,
+                child: AspectRatio(
+                  child: RoundedLoadingButton(
+                    color: Colors.redAccent,
+                    child: Text("Delete location",
+                        style: TextStyle(color: Colors.white)),
+                    onPressed: () {},
+                    controller: _btndeleteController,
+                  ),
+                  aspectRatio: 8,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

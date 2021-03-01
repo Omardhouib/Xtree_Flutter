@@ -10,10 +10,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:http/http.dart' as http;
+import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
 
-class UpdateLoc extends StatefulWidget {
+class UpdateLoc extends StatefulWidget with NavigationStates{
   UpdateLoc(
       {Key key,
       this.title,
@@ -243,8 +244,6 @@ class UpdateLocState extends State<UpdateLoc> {
             }
             else {
               _doSomething();
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => HomeLocation()));
             }
             }
         ),
