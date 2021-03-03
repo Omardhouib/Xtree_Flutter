@@ -147,10 +147,12 @@ class DatabaseHelper2 {
         //'Authorization': 'token $value'
       },
     );
+    await Future.delayed(Duration(milliseconds: 100));
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       List<dynamic> body = jsonDecode(response.body);
       List<Location> locations = body.map((dynamic item) => Location.fromJson(item)).toList();
+      await Future.delayed(Duration(milliseconds: 800));
       return locations;
     } else {
       throw "Can't get orders";

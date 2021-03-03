@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:search_map_place/search_map_place.dart';
 import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
@@ -88,21 +89,21 @@ class _LocationsState extends State<Locations> {
             }
             print("Markers !!! :" + Markers.toString());
             return GoogleMap(
-              initialCameraPosition: _initialPosition,
-              markers: Set<Marker>.of(Markers),
-              mapType: MapType.hybrid,
-              onMapCreated: (controller) {
-                setState(() {
-                  _controller = controller;
-                });
-              },
-              /*markers: markers.toSet(),
-            onTap: (cordinate){
-              _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
-              addMarker(cordinate);
-              print("cord"+cordinate.toString());
-            },*/
-            );
+                  initialCameraPosition: _initialPosition,
+                  markers: Set<Marker>.of(Markers),
+                  mapType: MapType.hybrid,
+                  onMapCreated: (controller) {
+                    setState(() {
+                      _controller = controller;
+                    });
+                  },
+                  /*markers: markers.toSet(),
+                onTap: (cordinate){
+                  _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
+                  addMarker(cordinate);
+                  print("cord"+cordinate.toString());
+                },*/
+                );
           }),
 
       floatingActionButton: FloatingActionButton(

@@ -13,21 +13,21 @@ import '../sidebar/menu_item.dart';
 class SideBar extends StatefulWidget {
   @override
   _SideBarState createState() => _SideBarState();
-
 }
 
-class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<SideBar> {
+class _SideBarState extends State<SideBar>
+    with SingleTickerProviderStateMixin<SideBar> {
   AnimationController _animationController;
   StreamController<bool> isSidebarOpenedStreamController;
   Stream<bool> isSidebarOpenedStream;
   StreamSink<bool> isSidebarOpenedSink;
   final _animationDuration = const Duration(milliseconds: 350);
 
-
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: _animationDuration);
+    _animationController =
+        AnimationController(vsync: this, duration: _animationDuration);
     isSidebarOpenedStreamController = PublishSubject<bool>();
     isSidebarOpenedStream = isSidebarOpenedStreamController.stream;
     isSidebarOpenedSink = isSidebarOpenedStreamController.sink;
@@ -69,17 +69,19 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
           left: isSideBarOpenedAsync.data ? 0 : -screenWidth,
           right: isSideBarOpenedAsync.data ? 0 : screenWidth - 35,
           child: Row(
-
             children: <Widget>[
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Colors.blueGrey[900], Colors.blue[700], Colors.blue[500]])
-                  ),
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                        Color(0xff222d33),
+                        Color(0xff222d33),
+                        Color(0xff222d33)
+                      ])),
                   child: Column(
                     children: <Widget>[
                       SizedBox(
@@ -87,20 +89,23 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                       ),
                       ListTile(
                         title: Text(
-                          "Prateek",
-                          style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w800),
+                          "Omar dhouib",
+                          style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 25,
+                              fontWeight: FontWeight.w800),
                         ),
                         subtitle: Text(
-                          "www.techieblossom.com",
+                          "XTREE",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.grey[400],
                             fontSize: 18,
                           ),
                         ),
                         leading: CircleAvatar(
                           child: Icon(
                             Icons.perm_identity,
-                            color: Colors.white,
+                            color: Colors.grey[400],
                           ),
                           radius: 40,
                         ),
@@ -108,38 +113,59 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                       Divider(
                         height: 64,
                         thickness: 0.9,
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.grey[400].withOpacity(0.3),
                         indent: 32,
                         endIndent: 32,
                       ),
-                      MenuItem(
-                        icon: Icons.home,
-                        title: "Home",
+                      ListTile(
+                        leading: Icon(Icons.home),
+                        title: Text(
+                          "Home",
+                          style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal),
+                        ),
                         onTap: () {
                           onIconPressed();
-                          BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.HomePageClickedEvent);
+                          BlocProvider.of<NavigationBloc>(context)
+                              .add(NavigationEvents.HomePageClickedEvent);
                         },
                       ),
-                      MenuItem(
-                        icon: Icons.device_hub,
-                        title: "My devices",
+                      ListTile(
+                        leading: Icon(Icons.device_hub),
+                        title: Text(
+                          "My devices",
+                          style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal),
+                        ),
                         onTap: () {
                           onIconPressed();
-                          BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.MyAccountClickedEvent);
+                          BlocProvider.of<NavigationBloc>(context)
+                              .add(NavigationEvents.MyAccountClickedEvent);
                         },
                       ),
-                      MenuItem(
-                        icon: Icons.place,
-                        title: "My sites",
+                      ListTile(
+                        leading: Icon(Icons.place),
+                        title: Text(
+                          "My sites",
+                          style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal),
+                        ),
                         onTap: () {
                           onIconPressed();
-                          BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.MyOrdersClickedEvent);
+                          BlocProvider.of<NavigationBloc>(context)
+                              .add(NavigationEvents.MyOrdersClickedEvent);
                         },
                       ),
                       Divider(
                         height: 64,
                         thickness: 0.9,
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.grey[400].withOpacity(0.3),
                         indent: 32,
                         endIndent: 32,
                       ),
@@ -154,52 +180,62 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                             return snapshot.hasData
                                 ? ItemList(list: snapshot.data)
                                 : Center(
-                              child: CircularProgressIndicator(),
-                            );
+                                    child: CircularProgressIndicator(),
+                                  );
                           }),
-                      MenuItem(
-                        icon: Icons.settings,
-                        title: "Account settings",
+                      ListTile(
+                        leading: Icon(Icons.settings),
+                        title: Text(
+                          "Account settings",
+                          style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal),
+                        ),
                       ),
-                      MenuItem(
-                        icon: Icons.exit_to_app,
-                        title: "Logout",
+                      ListTile(
+                        leading: Icon(Icons.exit_to_app),
+                        title: Text(
+                          "Logout",
+                          style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal),
+                        ),
                         onTap: () async {
                           onIconPressed();
-                          SharedPreferences preferences = await SharedPreferences.getInstance();
+                          SharedPreferences preferences =
+                              await SharedPreferences.getInstance();
                           await preferences.clear();
                           await Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                  builder: (BuildContext context) => LoginPage()),
-                                  (Route<dynamic> route) => false);
+                                  builder: (BuildContext context) =>
+                                      LoginPage()),
+                              (Route<dynamic> route) => false);
                         },
                       ),
                     ],
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment(0, -1),
-                child: GestureDetector(
-                  onTap: () {
-                    onIconPressed();
-                  },
-                      child: Container(
-                        width: 35,
-                        height: 110,
-                        color: Colors.transparent,
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                        padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
-                        child: AnimatedIcon(
-                          progress: _animationController.view,
-                          icon: AnimatedIcons.menu_arrow,
-                          color: Colors.black,
-                          size: 34,
-                        ),
-                      ),
+              GestureDetector(
+                onTap: () {
+                  onIconPressed();
+                },
+                child: Container(
+                  width: 70,
+                  height: 1000,
+                  color: Colors.transparent,
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 45, 0, 0),
+                    child: AnimatedIcon(
+                      progress: _animationController.view,
+                      icon: AnimatedIcons.menu_arrow,
+                      color: Colors.black,
+                      size: 34,
                     ),
-
+                  ),
                 ),
               ),
             ],
@@ -214,7 +250,7 @@ class CustomMenuClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Paint paint = Paint();
-    paint.color = Colors.white;
+    paint.color = Colors.grey[400];
 
     final width = size.width;
     final height = size.height;
@@ -234,6 +270,7 @@ class CustomMenuClipper extends CustomClipper<Path> {
     return true;
   }
 }
+
 class ItemList extends StatelessWidget {
   List list;
   ItemList({this.list});
@@ -250,9 +287,9 @@ class ItemList extends StatelessWidget {
 //            DateTime t = DateTime.parse(list[i]['date_published'].toString());
 
           return Container(
-                  child: Column(
-                    children: <Widget>[
-                      /*Padding(
+            child: Column(
+              children: <Widget>[
+                /*Padding(
                           padding: EdgeInsets.only(left: 24),
                           child: GestureDetector(
                             onTap: () {
@@ -273,26 +310,62 @@ class ItemList extends StatelessWidget {
                               list[i].coordinates[0].toString(),
                             ),
                           )),*/
-                      Row(
-                        children: [
-                          Text(
-                            //list[i].toString() ?? '',
-                            list[i].siteName+": ",
-                            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800),
-
-                          ),
-                          Text(
-                            //list[i].toString() ?? '',
-                            list[i].sensorIds.length.toString(),
-                            style: TextStyle(color: Colors.white, fontSize: 20, backgroundColor: Colors.red),
-
-                          ),
-                        ],
+                if (list[i].sensorIds.length == 0)
+                  Row(
+                    children: [
+                      MenuItem(
+                        icon: Icons.place,
+                        title: list[i].siteName.toString(),
                       ),
-                      SizedBox(height: 20),
+                      Container(
+                        width: 17.0,
+                        height: 27.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                          color: Colors.red,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          //list[i].toString() ?? '',
+                          list[i].sensorIds.length.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  Row(
+                    children: [
+                      MenuItem(
+                        icon: Icons.place,
+                        title: list[i].siteName.toString(),
+                      ),
+                      Container(
+                        width: 17.0,
+                        height: 27.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                          color: Colors.green,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          //list[i].toString() ?? '',
+                          list[i].sensorIds.length.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                  );
+                SizedBox(height: 20),
+              ],
+            ),
+          );
         });
   }
 }
