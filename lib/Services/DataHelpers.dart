@@ -152,7 +152,7 @@ class DatabaseHelper2 {
       // If the server did return a 200 OK response,
       List<dynamic> body = jsonDecode(response.body);
       List<Location> locations = body.map((dynamic item) => Location.fromJson(item)).toList();
-      await Future.delayed(Duration(milliseconds: 800));
+    //  await Future.delayed(Duration(milliseconds: 1200));
       return locations;
     } else {
       throw "Can't get orders";
@@ -171,7 +171,7 @@ class DatabaseHelper2 {
           //'Authorization': 'token $value'
         },
     );
-    print("myUrl :"+myUrl);
+
     return json.decode(response.body);
   }
 
@@ -187,7 +187,7 @@ class DatabaseHelper2 {
         //'Authorization': 'token $value'
       },
     );
-    print("myUrl :"+myUrl);
+
     await Future.delayed(Duration(milliseconds: 1800));
     return json.decode(response.body);
   }
@@ -224,8 +224,6 @@ class DatabaseHelper2 {
         headers: {
           'Accept': 'application/json',
         });
-    print("myUrldevice :"+myUrl);
-    print("status :"+response.statusCode.toString());
 
     if (response.statusCode == 200) {
       await Future.delayed(Duration(milliseconds: 800));
@@ -248,8 +246,8 @@ class DatabaseHelper2 {
         headers: {
           'Accept': 'application/json',
         });
-    print("myUrldevice :"+myUrl);
-    print("status :"+response.statusCode.toString());
+   /* print('Response status : ${response.statusCode}');
+    print('Response body : ${response.body}');*/
     //print("result"+json.decode(response.body).toString());
     return json.decode(response.body);
 
@@ -265,9 +263,6 @@ class DatabaseHelper2 {
           'Accept': 'application/json',
         });
     await Future.delayed(Duration(milliseconds: 1));
-    print("myUrldevice :"+myUrl);
-    print("status :"+response.statusCode.toString());
-    //print("result"+json.decode(response.body).toString());
     if (response.statusCode == 200) {
       await Future.delayed(Duration(milliseconds: 800));
 
@@ -295,7 +290,6 @@ class DatabaseHelper2 {
       },
     );
 
-    print("myUrl :"+myUrl);
     return json.decode(response.body);
   }
 
@@ -313,7 +307,6 @@ class DatabaseHelper2 {
         //'Authorization': 'token $value'
       },
     );
-    print("myUrl :"+myUrl);
     return json.decode(response.body);
   }
 
@@ -327,9 +320,6 @@ class DatabaseHelper2 {
         headers: {
           'Accept': 'application/json',
         });
-    print("myUrldevice :"+myUrl);
-    print("status :"+response.statusCode.toString());
-
     return json.decode(response.body);
   }
 
@@ -343,9 +333,6 @@ class DatabaseHelper2 {
         headers: {
           'Accept': 'application/json',
         });
-    print("myUrldevice :"+myUrl);
-    print("status :"+response.statusCode.toString());
-
     if (response.statusCode == 200) {
       await Future.delayed(Duration(milliseconds: 800));
 

@@ -263,7 +263,7 @@ class LocationDetailsState extends State<LocationDetails> {
                                                 },
                                                 child: Text(
                                                   //list[i].toString() ?? '',
-                                                  snapshot.data.name,
+                                                  snapshot.data.id,
                                                 ),
                                               ));
                                       }
@@ -272,7 +272,7 @@ class LocationDetailsState extends State<LocationDetails> {
                                             padding: EdgeInsets.only(left: 24),
                                               child: Text(
                                                 //list[i].toString() ?? '',
-                                                snapshot.data.name,
+                                                snapshot.data.sensorType,
                                               ),
                                             );
                                       }

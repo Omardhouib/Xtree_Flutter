@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import '../bloc.navigation_bloc/navigation_bloc.dart';
@@ -41,7 +42,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   final RoundedLoadingButtonController _btnController =
-  new RoundedLoadingButtonController();
+      new RoundedLoadingButtonController();
+  List<dynamic> sensors =[];
   @override
   void initState() {
     super.initState();
@@ -51,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     var hour = DateTime.now().hour;
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[300],
       body: ListView(
         children: <Widget>[
           Column(
@@ -65,16 +67,32 @@ class _MyHomePageState extends State<MyHomePage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              'Home' + hour.toString(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 30.0,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.normal,
-                              ),
-                            ),
+                            FutureBuilder<Location>(
+//                future: databaseHelper.getData(),
+                                future: databaseHelper2.Lastlocation(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    print(snapshot.error);
+                                    print("mochkla lenaa last *");
+                                  }
+                                  if (snapshot.hasData) {
+                                    return Text(snapshot.data.siteName,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 30.0,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.normal,
+                                    ),);
+                                  } else {
+                                    return Text(
+                                    "",
+                                    style: TextStyle(
+                                      backgroundColor: Colors.transparent,
+                                    ),
+                                  );
+                                  }
+                                }),
                             Text(
                               'Welcome Omar dhouib',
                               textAlign: TextAlign.center,
@@ -119,34 +137,34 @@ class _MyHomePageState extends State<MyHomePage> {
                             print(snapshot2.error);
                             Text(
                               "",
-                                style:TextStyle(
-                                  backgroundColor: Colors.transparent,
-                                ),
+                              style: TextStyle(
+                                backgroundColor: Colors.transparent,
+                              ),
                             );
                           }
                           return snapshot2.hasData
                               ? Itemclass(list: snapshot2.data)
                               : Text(
-                            "",
-                            style:TextStyle(
-                              backgroundColor: Colors.transparent,
-                            ),
-                          );
+                                  "",
+                                  style: TextStyle(
+                                    backgroundColor: Colors.transparent,
+                                  ),
+                                );
                         })
                     : Text(
-                  "",
-                  style:TextStyle(
-                    backgroundColor: Colors.transparent,
-                  ),
-                );
+                        "",
+                        style: TextStyle(
+                          backgroundColor: Colors.transparent,
+                        ),
+                      );
               }),
           Container(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
             ),
           ),
-          _buildProgrammCard(),
-          FutureBuilder(
+         // _buildProgrammCard(),
+          FutureBuilder<int>(
               future: databaseHelper2.NumberofDeviceByUser(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -156,28 +174,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 return snapshot.hasData
                     ? Container(
-                  height: 90,
-                  child: Card(
-                      semanticContainer: true,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      elevation: 4,
-                      margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-                      child:Text("Number of devices: "+snapshot.data.toString(),),
-                  ),
-                )
+                        height: 90,
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          elevation: 4,
+                          margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
+                          child: Text(
+                            "Number of devices: " + snapshot.data.toString(),
+                          ),
+                        ),
+                      )
                     : Text(
-                  "",
-                  style:TextStyle(
-                    backgroundColor: Colors.transparent,
-                  ),
-                );
-              }
-              ),
-          FutureBuilder(
+                        "",
+                        style: TextStyle(
+                          backgroundColor: Colors.transparent,
+                        ),
+                      );
+              }),
+          FutureBuilder<int>(
               future: databaseHelper2.NumberofLocationByUser(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -187,28 +206,72 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 return snapshot.hasData
                     ? Container(
-                  height: 90,
-                  child: Card(
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    elevation: 4,
-                    margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-                    child:Text("Number of locations: "+snapshot.data.toString(),
-                    ),
-                  ),
-                )
+                        height: 90,
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          elevation: 4,
+                          margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
+                          child: Text(
+                            "Number of locations: " + snapshot.data.toString(),
+                          ),
+                        ),
+                      )
                     : Text(
+                        "",
+                        style: TextStyle(
+                          backgroundColor: Colors.transparent,
+                        ),
+                      );
+              }),
+
+        /*  FutureBuilder<Location>(
+              future: databaseHelper2.Lastlocation(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  print("there is problem !");
+                }
+
+                if (snapshot.hasData) {
+                  snapshot.data.sensorIds.forEach((element){
+                    sensors.add(element);
+                  });
+                  return FutureBuilder(
+                    future: databaseHelper2.getDeviceById(),
+                    builder: (context, snapshot2) {
+                      if (snapshot2.hasError) {
+                        print(snapshot2.error);
+                        Text(
+                          "",
+                          style: TextStyle(
+                            backgroundColor: Colors.transparent,
+                          ),
+                        );
+                      }
+                      return snapshot2.hasData
+                          ? Itemclass(list: snapshot2.data)
+                          : Text(
+                        "",
+                        style: TextStyle(
+                          backgroundColor: Colors.transparent,
+                        ),
+                      );
+                    });
+                } else {
+                  return Text(
                   "",
-                  style:TextStyle(
+                  style: TextStyle(
                     backgroundColor: Colors.transparent,
                   ),
                 );
-              }
-          ),
+                }
+              }),*/
+
           FutureBuilder(
 //                future: databaseHelper.getData(),
               future: databaseHelper2.AllElectoByUser(),
@@ -220,18 +283,104 @@ class _MyHomePageState extends State<MyHomePage> {
                 return snapshot.hasData
                     ? ItemListElectro(list: snapshot.data)
                     : Text(
-                  "",
-                  style:TextStyle(
-                    backgroundColor: Colors.transparent,
-                  ),
-                );
-              }
-              ),
+                        "",
+                        style: TextStyle(
+                          backgroundColor: Colors.transparent,
+                        ),
+                      );
+              }),
         ],
       ),
     );
   }
 
+  /*Widget chart(List data, String type) {
+    List<dynamic> adjustData = [];
+    if (data.isNotEmpty) {
+      if (type == "CarteDeSol") {
+        print(' data is not empty');
+        data = data.sublist(data.length - 10, data.length);
+        print(data.length);
+
+        data.forEach((element) {
+          print(element.toString());
+          var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
+              .hour
+              .toString();
+          var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
+              .minute
+              .toString();
+          var hum1 = element["humdity1"];
+          var hum2 = element["humdity2"];
+          var hum3 = element["humdity3"];
+          var tot = (hum1 + hum2 + hum3) / 3;
+          String time = hour + ":" + minute;
+          print(time);
+          adjustData.add({"type": "humdity1", "index": time, "value": tot});
+          adjustData.add({"type": "humdity2", "index": time, "value": tot});
+          adjustData.add({"type": "humdity3", "index": time, "value": tot});
+          adjustData.add({
+            "type": "temperatureSol",
+            "index": time,
+            "value": element["temperatureSol"]
+          });
+        });
+      }
+      print(' data is not empty');
+      data = data.sublist(data.length - 10, data.length);
+      print(data.length);
+
+      data.forEach((element) {
+        var hour =
+        DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .minute
+            .toString();
+        String time = hour + ":" + minute;
+        print("hello " + element.toString());
+        adjustData.add(
+            {"type": "temp", "index": time, "value": element["temperature"]});
+        adjustData
+            .add({"type": "hum", "index": time, "value": element["humidite"]});
+      });
+    }
+
+    return Container(
+      width: 650,
+      height: 300,
+      child: graphic.Chart(
+        data: adjustData,
+        margin: EdgeInsets.all(10),
+        scales: {
+          'index': graphic.CatScale(
+            accessor: (map) => map['index'].toString(),
+            range: [0, 0.99],
+          ),
+          'type': graphic.CatScale(
+            accessor: (map) => map['type'] as String,
+          ),
+          'value': graphic.LinearScale(
+            accessor: (map) => map['value'] as num,
+            nice: true,
+            range: [0, 1],
+          ),
+        },
+        geoms: [
+          graphic.LineGeom(
+            position: graphic.PositionAttr(field: 'index*value'),
+            color: graphic.ColorAttr(field: 'type'),
+            size: graphic.SizeAttr(field: 'value'),
+            shape:
+            graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+          )
+        ],
+        axes: {
+          'index': graphic.Defaults.horizontalAxis,
+          'value': graphic.Defaults.verticalAxis,
+        },
+      ),
+    );
+  }*/
 
   Widget _buildProgrammCard() {
     return Container(
@@ -256,73 +405,24 @@ class _MyHomePageState extends State<MyHomePage> {
               return snapshot.hasData
                   ? Text("Location :" + snapshot.data.siteName)
                   : Text(
-                "",
-                style:TextStyle(
-                  backgroundColor: Colors.transparent,
-                ),
-              );
+                      "",
+                      style: TextStyle(
+                        backgroundColor: Colors.transparent,
+                      ),
+                    );
             }),
       ),
     );
   }
 
- /* Widget _buildProgrammCard1() {
-    return Container(
-      height: 90,
-      child: Card(
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        elevation: 4,
-        margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-        child:
-      ),
-    );
-  }*/
-
- /* Widget _buildProgrammCard2() {
-    return Container(
-      height: 90,
-      child: Card(
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        elevation: 4,
-        margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-        child: FutureBuilder(
-//                future: databaseHelper.getData(),
-            future: NumLocation,
-            builder: (context, snapshot) {
-              Widget widget;
-              if (snapshot.hasError) {
-                print(snapshot.error);
-                print("mochkla lenaa *");
-              }
-              return snapshot.hasData
-                  ? widget =
-                      Text("Number of sites :" + snapshot.data.toString())
-                  : Center(
-                      child: CircularProgressIndicator(),
-                    );
-            }),
-      ),
-    );
-  }*/
   Widget Itemclass({List list}) {
-
     var hour = DateTime.now().hour;
     //  final hour formattedDate = DateFormat.j().format(now);
     dynamic currentTime = DateFormat.j().format(DateTime.now());
     return SizedBox(
-      height: 270.0,
+      height: 300.0,
       child: ListView.builder(
-          itemCount: list.length,
+          itemCount: 6,
           scrollDirection: Axis.horizontal,
           itemExtent: 200.0,
           // ignore: missing_return
@@ -426,8 +526,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               );
-            }
-            else if ((hour < 18) && (hour >= 12)) {
+            } else if ((hour < 18) && (hour >= 12)) {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                 child: Container(
@@ -525,21 +624,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               );
-            }
-           else {
+            } else {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                 child: Container(
-                  decoration: BoxDecoration(
+                  /* decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       gradient: LinearGradient(
                           begin: Alignment.bottomLeft,
                           end: Alignment.topRight,
                           colors: [
+                            Colors.blue,
                             Colors.black,
-                            Colors.white10,
-                            Colors.white12
-                          ])),
+                            Colors.black
+                          ])),*/
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                          image: NetworkImage(
+                              "https://i.pinimg.com/originals/ed/f8/5b/edf85bbb8f8fe3106edc9953c9897f35.jpg"),
+                          fit: BoxFit.cover)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -556,7 +660,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
                           Text(
                             list[i]["temp"]["night"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: Colors.white),
                           )
                         ],
                       ),
@@ -566,12 +670,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.all(3.0),
                             child: Text(
                               list[i]["temp"]["min"].round().toString() + "/",
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Text(
                             list[i]["temp"]["max"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: Colors.white),
                           )
                         ],
                       ),
@@ -581,12 +685,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.all(3.0),
                             child: Text(
                               "humidity:",
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Text(
                             list[i]["humidity"].toString() + "%",
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: Colors.white),
                           )
                         ],
                       ),
@@ -596,12 +700,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.all(3.0),
                             child: Text(
                               "Precipitation:",
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Text(
                             list[i]["pop"].toString() + "mm",
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: Colors.white),
                           )
                         ],
                       ),
@@ -611,12 +715,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.all(3.0),
                             child: Text(
                               "Uv:",
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Text(
                             list[i]["uvi"].toString(),
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: Colors.white),
                           )
                         ],
                       ),
@@ -628,9 +732,7 @@ class _MyHomePageState extends State<MyHomePage> {
           }),
     );
   }
-
 }
-
 
 class ItemListElectro extends StatefulWidget {
   List list;
@@ -645,7 +747,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
   String status;
   String active = "true";
   final RoundedLoadingButtonController _btnController =
-  new RoundedLoadingButtonController();
+      new RoundedLoadingButtonController();
 
   ScrollController _controller = new ScrollController();
 
@@ -658,8 +760,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemBuilder: (context, i) {
-
-              id = widget.list[i]["_id"].toString();
+            id = widget.list[i]["_id"].toString();
             return Column(
               children: <Widget>[
                 Row(
@@ -679,10 +780,10 @@ class _ItemListElectroState extends State<ItemListElectro> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(right: 44),
-                      child:Text(
-                          status = widget.list[i]["status"].toString(),
+                      child: Text(
+                        status = widget.list[i]["status"].toString(),
                       ),
-                      ),
+                    ),
                     Container(
                       height: 50,
                       width: 100,
@@ -692,14 +793,16 @@ class _ItemListElectroState extends State<ItemListElectro> {
                           child: Text("Login",
                               style: TextStyle(color: Colors.white)),
                           onPressed: () {
-                                print("hihih"+status);
-                                status = widget.list[i]["status"].toString();
-                              _doSomething();
+                            print("hihih" + status);
+                            status = widget.list[i]["status"].toString();
+                            _doSomething();
 
-                              setState(() {
-                                Navigator.push(
-                                    context, MaterialPageRoute(builder: (context) => HomePage()));
-                              });
+                            setState(() {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomePage()));
+                            });
                           },
                           controller: _btnController,
                         ),
@@ -722,22 +825,20 @@ isactive =false;
   void _doSomething() async {
     Timer(Duration(seconds: 1), () {
       print("button pressed ");
-      print("stauts"+status);
-      print("id"+id);
-      if(status == "true"){
+      print("stauts" + status);
+      print("id" + id);
+      if (status == "true") {
         status = "false";
         On(id);
         _btnController.stop();
-      }
-      else if(status == "false"){
+      } else if (status == "false") {
         status = "true";
         print("offfff");
         Off(id);
         _btnController.stop();
       }
       _btnController.stop();
-      }
-    );
+    });
   }
 
   On(String id) async {
@@ -746,7 +847,8 @@ isactive =false;
     final value = prefs.get(key) ?? 0;
     Map data = {'status': 01, 'SensorId': "$id"};
     var jsonResponse = null;
-    var response = await http.post(DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
+    var response = await http.post(
+        DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
         headers: {"Content-Type": "application/json"},
 //        "http://192.168.56.81:3000/api/users/login",
         body: json.encode(data));
@@ -763,7 +865,8 @@ isactive =false;
     final value = prefs.get(key) ?? 0;
     Map data = {'status': 00, 'SensorId': "$id"};
     var jsonResponse = null;
-    var response = await http.post(DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
+    var response = await http.post(
+        DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
         headers: {"Content-Type": "application/json"},
 //        "http://192.168.56.81:3000/api/users/login",
         body: json.encode(data));
@@ -772,7 +875,5 @@ isactive =false;
       jsonResponse = json.decode(response.body);
     }
     print(response.body);
+  }
 }
-}
-
-

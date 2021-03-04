@@ -120,7 +120,7 @@ class _SideBarState extends State<SideBar>
                       ListTile(
                         leading: Icon(Icons.home),
                         title: Text(
-                          "Home",
+                          "Dashboard",
                           style: TextStyle(
                               color: Colors.grey[400],
                               fontSize: 20,
@@ -289,51 +289,31 @@ class ItemList extends StatelessWidget {
           return Container(
             child: Column(
               children: <Widget>[
-                /*Padding(
-                          padding: EdgeInsets.only(left: 24),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => deviceDetails(
-                                      list:list,
-                                      index: i,
-                                      identifier: list[i].id
-
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              //list[i].toString() ?? '',
-                              list[i].coordinates[0].toString(),
-                            ),
-                          )),*/
                 if (list[i].sensorIds.length == 0)
                   Row(
                     children: [
-                      MenuItem(
-                        icon: Icons.place,
-                        title: list[i].siteName.toString(),
-                      ),
+                        MenuItem(
+                          icon: Icons.place,
+                          title: list[i].siteName.toString(),
+                        ),
                       Container(
-                        width: 17.0,
-                        height: 27.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                          color: Colors.red,
-                        ),
+                            width: 17.0,
+                            height: 27.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                              color: Colors.red,
+                            ),
                         alignment: Alignment.center,
-                        child: Text(
-                          //list[i].toString() ?? '',
-                          list[i].sensorIds.length.toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
+                            child: Text(
+                              list[i].sensorIds.length.toString(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+
+
                     ],
                   )
                 else
