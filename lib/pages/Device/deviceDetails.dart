@@ -77,7 +77,7 @@ class _deviceDetailsState extends State<deviceDetails> {
           ),
           FutureBuilder(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.getDeviceByID(widget.identifier),
+              future: databaseHelper2.getdataDeviceByID(widget.identifier),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);

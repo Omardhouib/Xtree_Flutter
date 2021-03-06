@@ -5,9 +5,9 @@
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-List<Sensor> sensorFromJson(String str) => List<Sensor>.from(json.decode(str).map((x) => Sensor.fromJson(x)));
+Sensor sensorFromJson(String str) => Sensor.fromJson(json.decode(str));
 
-String sensorToJson(List<Sensor> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String sensorToJson(Sensor data) => json.encode(data.toJson());
 
 class Sensor {
   Sensor({

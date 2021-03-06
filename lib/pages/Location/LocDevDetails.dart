@@ -56,7 +56,7 @@ class LocDevDetails extends StatelessWidget with NavigationStates {
           ),
           FutureBuilder(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.getDeviceByID(identifier),
+              future: databaseHelper2.getdataDeviceByID(identifier),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);

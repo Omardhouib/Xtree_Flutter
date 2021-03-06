@@ -169,7 +169,7 @@ class _SideBarState extends State<SideBar>
                         indent: 32,
                         endIndent: 32,
                       ),
-                      FutureBuilder(
+                     /* FutureBuilder(
 //                future: databaseHelper.getData(),
                           future: databaseHelper2.AllLocationByUser(),
                           builder: (context, snapshot) {
@@ -182,7 +182,7 @@ class _SideBarState extends State<SideBar>
                                 : Center(
                                     child: CircularProgressIndicator(),
                                   );
-                          }),
+                          }),*/
                       ListTile(
                         leading: Icon(Icons.settings),
                         title: Text(

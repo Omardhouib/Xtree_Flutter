@@ -8,13 +8,16 @@ import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
+import 'package:sidebar_animation/Models/LocationHome.dart';
+import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import '../bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/constants.dart';
-
+import 'package:sidebar_animation/graphic.dart' as graphic;
 import 'package:flutter/gestures.dart';
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
+
 
 class HomePage extends StatefulWidget with NavigationStates {
   @override
@@ -43,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   final RoundedLoadingButtonController _btnController =
       new RoundedLoadingButtonController();
-  List<dynamic> sensors =[];
+  List<dynamic> sensors = [];
   @override
   void initState() {
     super.initState();
@@ -67,30 +70,33 @@ class _MyHomePageState extends State<MyHomePage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            FutureBuilder<Location>(
+                            FutureBuilder<HomeLocation>(
 //                future: databaseHelper.getData(),
-                                future: databaseHelper2.Lastlocation(),
+                                future: databaseHelper2.getlocationdetails(),
                                 builder: (context, snapshot) {
                                   if (snapshot.hasError) {
                                     print(snapshot.error);
                                     print("mochkla lenaa last *");
                                   }
                                   if (snapshot.hasData) {
-                                    return Text(snapshot.data.siteName,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 30.0,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FontStyle.normal,
-                                    ),);
+                                    HomeLocation homeLocation = snapshot.data;
+                                    return Text(
+                                      homeLocation.location.siteName,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 30.0,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontStyle: FontStyle.normal,
+                                      ),
+                                    );
                                   } else {
                                     return Text(
-                                    "",
-                                    style: TextStyle(
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                  );
+                                      "",
+                                      style: TextStyle(
+                                        backgroundColor: Colors.transparent,
+                                      ),
+                                    );
                                   }
                                 }),
                             Text(
@@ -163,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
             ),
           ),
-         // _buildProgrammCard(),
+          // _buildProgrammCard(),
           FutureBuilder<int>(
               future: databaseHelper2.NumberofDeviceByUser(),
               builder: (context, snapshot) {
@@ -229,48 +235,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
               }),
 
-        /*  FutureBuilder<Location>(
-              future: databaseHelper2.Lastlocation(),
+          FutureBuilder<HomeLocation>(
+//                future: databaseHelper.getData(),
+              future: databaseHelper2.getlocationdetails(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
-                  print("there is problem !");
+                  print("mochkla lenaa *");
                 }
-
-                if (snapshot.hasData) {
-                  snapshot.data.sensorIds.forEach((element){
-                    sensors.add(element);
-                  });
-                  return FutureBuilder(
-                    future: databaseHelper2.getDeviceById(),
-                    builder: (context, snapshot2) {
-                      if (snapshot2.hasError) {
-                        print(snapshot2.error);
-                        Text(
-                          "",
-                          style: TextStyle(
-                            backgroundColor: Colors.transparent,
-                          ),
-                        );
-                      }
-                      return snapshot2.hasData
-                          ? Itemclass(list: snapshot2.data)
-                          : Text(
-                        "",
-                        style: TextStyle(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      );
-                    });
-                } else {
-                  return Text(
-                  "",
-                  style: TextStyle(
-                    backgroundColor: Colors.transparent,
-                  ),
-                );
-                }
-              }),*/
+                return snapshot.hasData
+                    ? ItemListchart(list: snapshot.data.location.sensorIds)
+                    : Container();
+              }),
 
           FutureBuilder(
 //                future: databaseHelper.getData(),
@@ -293,94 +269,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
-  /*Widget chart(List data, String type) {
-    List<dynamic> adjustData = [];
-    if (data.isNotEmpty) {
-      if (type == "CarteDeSol") {
-        print(' data is not empty');
-        data = data.sublist(data.length - 10, data.length);
-        print(data.length);
-
-        data.forEach((element) {
-          print(element.toString());
-          var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
-              .hour
-              .toString();
-          var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
-              .minute
-              .toString();
-          var hum1 = element["humdity1"];
-          var hum2 = element["humdity2"];
-          var hum3 = element["humdity3"];
-          var tot = (hum1 + hum2 + hum3) / 3;
-          String time = hour + ":" + minute;
-          print(time);
-          adjustData.add({"type": "humdity1", "index": time, "value": tot});
-          adjustData.add({"type": "humdity2", "index": time, "value": tot});
-          adjustData.add({"type": "humdity3", "index": time, "value": tot});
-          adjustData.add({
-            "type": "temperatureSol",
-            "index": time,
-            "value": element["temperatureSol"]
-          });
-        });
-      }
-      print(' data is not empty');
-      data = data.sublist(data.length - 10, data.length);
-      print(data.length);
-
-      data.forEach((element) {
-        var hour =
-        DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
-        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
-            .minute
-            .toString();
-        String time = hour + ":" + minute;
-        print("hello " + element.toString());
-        adjustData.add(
-            {"type": "temp", "index": time, "value": element["temperature"]});
-        adjustData
-            .add({"type": "hum", "index": time, "value": element["humidite"]});
-      });
-    }
-
-    return Container(
-      width: 650,
-      height: 300,
-      child: graphic.Chart(
-        data: adjustData,
-        margin: EdgeInsets.all(10),
-        scales: {
-          'index': graphic.CatScale(
-            accessor: (map) => map['index'].toString(),
-            range: [0, 0.99],
-          ),
-          'type': graphic.CatScale(
-            accessor: (map) => map['type'] as String,
-          ),
-          'value': graphic.LinearScale(
-            accessor: (map) => map['value'] as num,
-            nice: true,
-            range: [0, 1],
-          ),
-        },
-        geoms: [
-          graphic.LineGeom(
-            position: graphic.PositionAttr(field: 'index*value'),
-            color: graphic.ColorAttr(field: 'type'),
-            size: graphic.SizeAttr(field: 'value'),
-            shape:
-            graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
-          )
-        ],
-        axes: {
-          'index': graphic.Defaults.horizontalAxis,
-          'value': graphic.Defaults.verticalAxis,
-        },
-      ),
-    );
-  }*/
 
   Widget _buildProgrammCard() {
     return Container(
@@ -876,4 +764,143 @@ isactive =false;
     }
     print(response.body);
   }
+}
+
+class ItemListchart extends StatelessWidget {
+  List list;
+  ItemListchart({this.list});
+  DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
+
+  ScrollController _controller = new ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: list.length,
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemBuilder: (context, i) {
+//            DateTime t = DateTime.parse(list[i]['date_published'].toString());
+
+          return FutureBuilder<Sensor>(
+              future: databaseHelper2.getDevById(list[i].toString()),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  print("there is problem !");
+                }
+
+                if (snapshot.hasData) {
+                  print("helloo"+snapshot.data.toString());
+                  String type = snapshot.data.sensorType;
+                  if(type != "electrovanne"){
+                    return FutureBuilder(
+                        future: databaseHelper2.getdataDeviceByID(snapshot.data.id),
+                        builder: (context, snapshot2) {
+                          if (snapshot2.hasError) {
+                            print(snapshot2.error);
+                            Text(
+                              "",
+                              style: TextStyle(
+                                backgroundColor: Colors.transparent,
+                              ),
+                            );
+                          }
+                          return snapshot2.hasData
+                              ? chart(snapshot2.data, type)
+                              : Container();
+                        });
+                 // print("helloo"+snapshot.data.id);
+                }
+                }
+                  return Container();
+              });
+        });
+  }
+} Widget chart(List data, String type) {
+  List<dynamic> adjustData = [];
+  if (data.isNotEmpty) {
+    if (type == "CarteDeSol") {
+      print(' data is not empty');
+      data = data.sublist(data.length - 10, data.length);
+      print(data.length);
+
+      data.forEach((element) {
+        print(element.toString());
+        var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .hour
+            .toString();
+        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .minute
+            .toString();
+        var hum1 = element["humdity1"];
+        var hum2 = element["humdity2"];
+        var hum3 = element["humdity3"];
+        var tot = (hum1 + hum2 + hum3) / 3;
+        String time = hour + ":" + minute;
+        print(time);
+        adjustData.add({"type": "humdity1", "index": time, "value": tot});
+        adjustData.add({"type": "humdity2", "index": time, "value": tot});
+        adjustData.add({"type": "humdity3", "index": time, "value": tot});
+        adjustData.add({
+          "type": "temperatureSol",
+          "index": time,
+          "value": element["temperatureSol"]
+        });
+      });
+    }
+    print(' data is not empty');
+    data = data.sublist(data.length - 10, data.length);
+    print(data.length);
+
+    data.forEach((element) {
+      var hour =
+      DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+      var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
+          .minute
+          .toString();
+      String time = hour + ":" + minute;
+      print("hello " + element.toString());
+      adjustData.add(
+          {"type": "temp", "index": time, "value": element["temperature"]});
+      adjustData
+          .add({"type": "hum", "index": time, "value": element["humidite"]});
+    });
+  }
+
+  return Container(
+    width: 650,
+    height: 300,
+    child: graphic.Chart(
+      data: adjustData,
+      margin: EdgeInsets.all(10),
+      scales: {
+        'index': graphic.CatScale(
+          accessor: (map) => map['index'].toString(),
+          range: [0, 0.99],
+        ),
+        'type': graphic.CatScale(
+          accessor: (map) => map['type'] as String,
+        ),
+        'value': graphic.LinearScale(
+          accessor: (map) => map['value'] as num,
+          nice: true,
+          range: [0, 1],
+        ),
+      },
+      geoms: [
+        graphic.LineGeom(
+          position: graphic.PositionAttr(field: 'index*value'),
+          color: graphic.ColorAttr(field: 'type'),
+          size: graphic.SizeAttr(field: 'value'),
+          shape:
+          graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+        )
+      ],
+      axes: {
+        'index': graphic.Defaults.horizontalAxis,
+        'value': graphic.Defaults.verticalAxis,
+      },
+    ),
+  );
 }

@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
+import 'package:sidebar_animation/Models/LocationHome.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Models/Weather.dart';
 
@@ -206,9 +207,29 @@ class DatabaseHelper2 {
     );
     if (response.statusCode == 200) {
       await Future.delayed(Duration(milliseconds: 800));
-
       // If the server did return a 200 OK response,
       return Location.fromJson(json.decode(response.body));
+    } else {
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+  Future<HomeLocation> getlocationdetails() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key) ?? 0;
+    String myUrl = "$serverUrl/dashboard/getlocationdetails?token=" + value;
+    http.Response response = await http.get(
+      myUrl,
+      headers: {
+        'Accept': 'application/json',
+        //'Authorization': 'token $value'
+      },
+    );
+    if (response.statusCode == 200) {
+      await Future.delayed(Duration(milliseconds: 800));
+      // If the server did return a 200 OK response,
+      return HomeLocation.fromJson(json.decode(response.body));
     } else {
       // then throw an exception.
       throw Exception('Failed to load album');
@@ -310,7 +331,7 @@ class DatabaseHelper2 {
     return json.decode(response.body);
   }
 
-  Future<List> getDeviceByID(String ID) async {
+  Future<List> getdataDeviceByID(String ID) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final value = prefs.get(key) ?? 0;
@@ -343,8 +364,26 @@ class DatabaseHelper2 {
       throw Exception('Failed to load album');
     }
   }
+  Future<Sensor> getDevById(String ID) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key) ?? 0;
 
+    String myUrl = "$serverUrl/sensors/getDevByid/$ID?token=" + value;
+    http.Response response = await http.get(myUrl,
+        headers: {
+          'Accept': 'application/json',
+        });
+    if (response.statusCode == 200) {
+      await Future.delayed(Duration(milliseconds: 800));
 
+      // If the server did return a 200 OK response,
+      return Sensor.fromJson(json.decode(response.body));
+    } else {
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
 
   Future<List> getDataOfDeviceByID(String ID) async {
     final prefs = await SharedPreferences.getInstance();
