@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
+import 'package:sidebar_animation/Models/LocationHome.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/pages/Device/deviceDetails.dart';
@@ -30,7 +31,7 @@ class LocationDetails extends StatefulWidget with NavigationStates {
   LocationDetailsState createState() => LocationDetailsState();
 }
 
-class LocationDetailsState extends State<LocationDetails> {
+class LocationDetailsState extends State<LocationDetails> with NavigationStates {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   final RoundedLoadingButtonController _btndeleteController =
   new RoundedLoadingButtonController();
@@ -143,6 +144,32 @@ class LocationDetailsState extends State<LocationDetails> {
                         ),
                       );
                     }),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+            ),
+          ),
+
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.white
+            ),
+            child: Expanded(
+              child:  FutureBuilder<Location>(
+//                future: databaseHelper.getData(),
+                  future: databaseHelper2.getLocationByid(identifier),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      print(snapshot.error);
+                      print("mochkla lenaa *");
+                    }
+                    return snapshot.hasData
+                        ? ItemListchart(list: snapshot.data.sensorIds)
+                        : Container();
+                  }),
+            ),
+          ),
 
           Container(
             child: Padding(
@@ -211,7 +238,7 @@ class LocationDetailsState extends State<LocationDetails> {
             ],
           ),
 
-          FutureBuilder<Location>(
+          /*FutureBuilder<Location>(
 //                future: databaseHelper.getData(),
               future: databaseHelper2.getLocationByid(identifier),
               builder: (context, snapshot) {
@@ -291,7 +318,7 @@ class LocationDetailsState extends State<LocationDetails> {
                         ],
                       );
                     });
-              }),
+              }),*/
         ],
       ),
     );
@@ -791,5 +818,6 @@ isactive =false;
     print(response.body);
   }
 }
+
 
 

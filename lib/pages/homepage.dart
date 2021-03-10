@@ -18,7 +18,6 @@ import 'package:sidebar_animation/graphic.dart' as graphic;
 import 'package:flutter/gestures.dart';
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 
-
 class HomePage extends StatefulWidget with NavigationStates {
   @override
   _HomePageState createState() => _HomePageState();
@@ -58,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: ListView(
+        scrollDirection: Axis.vertical,
         children: <Widget>[
           Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,7 +302,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
   Widget Itemclass({List list}) {
     var hour = DateTime.now().hour;
     //  final hour formattedDate = DateFormat.j().format(now);
@@ -777,7 +776,6 @@ class ItemListchart extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
         itemCount: list.length,
-        scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemBuilder: (context, i) {
 //            DateTime t = DateTime.parse(list[i]['date_published'].toString());
@@ -791,33 +789,46 @@ class ItemListchart extends StatelessWidget {
                 }
 
                 if (snapshot.hasData) {
-                  print("helloo"+snapshot.data.toString());
+                  print("helloo" + snapshot.data.toString());
                   String type = snapshot.data.sensorType;
-                  if(type != "electrovanne"){
-                    return FutureBuilder(
-                        future: databaseHelper2.getdataDeviceByID(snapshot.data.id),
-                        builder: (context, snapshot2) {
-                          if (snapshot2.hasError) {
-                            print(snapshot2.error);
-                            Text(
-                              "",
-                              style: TextStyle(
-                                backgroundColor: Colors.transparent,
-                              ),
-                            );
-                          }
-                          return snapshot2.hasData
-                              ? chart(snapshot2.data, type)
-                              : Container();
-                        });
-                 // print("helloo"+snapshot.data.id);
+                  if (type != "electrovanne") {
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.white),
+                        child: Expanded(
+                          child: FutureBuilder(
+                              future: databaseHelper2
+                                  .getdataDeviceByID(snapshot.data.id),
+                              builder: (context, snapshot2) {
+                                if (snapshot2.hasError) {
+                                  print(snapshot2.error);
+                                  Text(
+                                    "",
+                                    style: TextStyle(
+                                      backgroundColor: Colors.transparent,
+                                    ),
+                                  );
+                                }
+                                return snapshot2.hasData
+                                    ? chart(snapshot2.data, type)
+                                    : Container();
+                              }),
+                        ),
+                      ),
+                    );
+                    // print("helloo"+snapshot.data.id);
+                  }
                 }
-                }
-                  return Container();
+                return Container();
               });
         });
   }
-} Widget chart(List data, String type) {
+}
+
+Widget chart(List data, String type) {
   List<dynamic> adjustData = [];
   if (data.isNotEmpty) {
     if (type == "CarteDeSol") {
@@ -855,7 +866,7 @@ class ItemListchart extends StatelessWidget {
 
     data.forEach((element) {
       var hour =
-      DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+          DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
       var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
           .minute
           .toString();
@@ -894,7 +905,7 @@ class ItemListchart extends StatelessWidget {
           color: graphic.ColorAttr(field: 'type'),
           size: graphic.SizeAttr(field: 'value'),
           shape:
-          graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+              graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
         )
       ],
       axes: {

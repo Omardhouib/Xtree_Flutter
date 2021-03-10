@@ -21,7 +21,7 @@ class _deviceDetailsState extends State<deviceDetails> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
 
   final RoundedLoadingButtonController _btndeleteController =
-  new RoundedLoadingButtonController();
+      new RoundedLoadingButtonController();
 
   void _onValueChange(String value) {
     setState(() {

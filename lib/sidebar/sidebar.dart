@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
+import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
 import 'package:sidebar_animation/pages/loginPage.dart';
 
 import '../bloc.navigation_bloc/navigation_bloc.dart';
 import '../sidebar/menu_item.dart';
 
-class SideBar extends StatefulWidget {
+class SideBar extends StatefulWidget with NavigationStates {
   @override
   _SideBarState createState() => _SideBarState();
 }
@@ -169,7 +171,7 @@ class _SideBarState extends State<SideBar>
                         indent: 32,
                         endIndent: 32,
                       ),
-                     /* FutureBuilder(
+                      FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
                           future: databaseHelper2.AllLocationByUser(),
                           builder: (context, snapshot) {
@@ -177,12 +179,12 @@ class _SideBarState extends State<SideBar>
                               print(snapshot.error);
                               print("mochkla lenaa *");
                             }
-                            return snapshot.hasData
-                                ? ItemList(list: snapshot.data)
-                                : Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                          }),*/
+                            if (snapshot.hasData) {
+                              return itemList(list: snapshot.data);
+                            } else {
+                              return Container();
+                            }
+                          }),
                       ListTile(
                         leading: Icon(Icons.settings),
                         title: Text(
@@ -244,41 +246,8 @@ class _SideBarState extends State<SideBar>
       },
     );
   }
-}
 
-class CustomMenuClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Paint paint = Paint();
-    paint.color = Colors.grey[400];
-
-    final width = size.width;
-    final height = size.height;
-
-    Path path = Path();
-    path.moveTo(-2, 0);
-    path.quadraticBezierTo(0, 8, 10, 16);
-    path.quadraticBezierTo(width - 1, height / 2 - 20, width, height / 2);
-    path.quadraticBezierTo(width + 1, height / 2 + 20, 10, height - 16);
-    path.quadraticBezierTo(0, height - 8, 0, height);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
-  }
-}
-
-class ItemList extends StatelessWidget {
-  List list;
-  ItemList({this.list});
-
-  ScrollController _controller = new ScrollController();
-
-  @override
-  Widget build(BuildContext context) {
+  Widget itemList({List list}) {
     return ListView.builder(
         itemCount: list == null ? 0 : list.length,
         scrollDirection: Axis.vertical,
@@ -292,28 +261,33 @@ class ItemList extends StatelessWidget {
                 if (list[i].sensorIds.length == 0)
                   Row(
                     children: [
-                        MenuItem(
-                          icon: Icons.place,
-                          title: list[i].siteName.toString(),
-                        ),
+                      MenuItem(
+                        icon: Icons.place,
+                        title: list[i].siteName.toString(),
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      LocationDetails(identifier: list[i].id))),
+                        },
+                      ),
                       Container(
-                            width: 17.0,
-                            height: 27.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                              color: Colors.red,
-                            ),
+                        width: 17.0,
+                        height: 27.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                          color: Colors.red,
+                        ),
                         alignment: Alignment.center,
-                            child: Text(
-                              list[i].sensorIds.length.toString(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                            ),
+                        child: Text(
+                          list[i].sensorIds.length.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
                           ),
-
-
+                        ),
+                      ),
                     ],
                   )
                 else
@@ -322,6 +296,13 @@ class ItemList extends StatelessWidget {
                       MenuItem(
                         icon: Icons.place,
                         title: list[i].siteName.toString(),
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      LocationDetails(identifier: list[i].id))),
+                        },
                       ),
                       Container(
                         width: 17.0,
@@ -349,3 +330,115 @@ class ItemList extends StatelessWidget {
         });
   }
 }
+
+class CustomMenuClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Paint paint = Paint();
+    paint.color = Colors.grey[400];
+
+    final width = size.width;
+    final height = size.height;
+
+    Path path = Path();
+    path.moveTo(-2, 0);
+    path.quadraticBezierTo(0, 8, 10, 16);
+    path.quadraticBezierTo(width - 1, height / 2 - 20, width, height / 2);
+    path.quadraticBezierTo(width + 1, height / 2 + 20, 10, height - 16);
+    path.quadraticBezierTo(0, height - 8, 0, height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
+  }
+}
+
+/*class ItemList extends StatelessWidget with NavigationStates {
+  List list;
+  ItemList({this.list});
+
+  ScrollController _controller = new ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: list == null ? 0 : list.length,
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemBuilder: (context, i) {
+//            DateTime t = DateTime.parse(list[i]['date_published'].toString());
+
+          return Container(
+            child: Column(
+              children: <Widget>[
+                if (list[i].sensorIds.length == 0)
+                  Row(
+                    children: [
+                     MenuItem(
+                          icon: Icons.place,
+                          title: list[i].siteName.toString(),
+                       onTap: () => {
+                       onIconPressed();
+              BlocProvider.of<NavigationBloc>(context)
+              .add(NavigationEvents.HomePageClickedEvent);
+        },
+                        ),
+
+                      Container(
+                        width: 17.0,
+                        height: 27.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                          color: Colors.red,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          list[i].sensorIds.length.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  Row(
+                    children: [
+                      MenuItem(
+                        icon: Icons.place,
+                        title: list[i].siteName.toString(),
+                        onTap: () => {
+                          Navigator.push(
+                              context, MaterialPageRoute(builder: (context) => LocationDetails( identifier: list[i].id))),
+                        },
+                      ),
+                      Container(
+                        width: 17.0,
+                        height: 27.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                          color: Colors.green,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          //list[i].toString() ?? '',
+                          list[i].sensorIds.length.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                SizedBox(height: 20),
+              ],
+            ),
+          );
+        });
+  }
+}*/

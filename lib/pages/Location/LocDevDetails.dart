@@ -8,7 +8,7 @@ import 'package:sidebar_animation/graphic.dart' as graphic;
 class LocDevDetails extends StatelessWidget with NavigationStates {
   String identifier;
   Sensor data;
-  LocDevDetails({this.data ,this.identifier});
+  LocDevDetails({this.data, this.identifier});
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class LocDevDetails extends StatelessWidget with NavigationStates {
           ),
           Padding(
             child:
-            Text('Multi Line (No Stack)', style: TextStyle(fontSize: 20)),
+                Text('Multi Line (No Stack)', style: TextStyle(fontSize: 20)),
             padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
           ),
           FutureBuilder(
@@ -65,8 +65,8 @@ class LocDevDetails extends StatelessWidget with NavigationStates {
                 return snapshot.hasData
                     ? chart(snapshot.data, type)
                     : Center(
-                  child: CircularProgressIndicator(),
-                );
+                        child: CircularProgressIndicator(),
+                      );
               }),
         ],
       ),
@@ -112,7 +112,7 @@ Widget chart(List data, String type) {
 
     data.forEach((element) {
       var hour =
-      DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+          DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
       var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
           .minute
           .toString();
@@ -151,7 +151,7 @@ Widget chart(List data, String type) {
           color: graphic.ColorAttr(field: 'type'),
           size: graphic.SizeAttr(field: 'value'),
           shape:
-          graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+              graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
         )
       ],
       axes: {
