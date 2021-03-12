@@ -11,6 +11,7 @@ import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Models/LocationHome.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
+import 'package:sidebar_animation/classes/ChartHistory.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import '../bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/constants.dart';
@@ -18,22 +19,9 @@ import 'package:sidebar_animation/graphic.dart' as graphic;
 import 'package:flutter/gestures.dart';
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 
-class HomePage extends StatefulWidget with NavigationStates {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
 
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MyHomePage(),
-    );
-  }
-}
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatefulWidget with NavigationStates {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
 
@@ -70,18 +58,18 @@ class _MyHomePageState extends State<MyHomePage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            FutureBuilder<HomeLocation>(
+                            FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-                                future: databaseHelper2.getlocationdetails(),
+                                future: databaseHelper2.AllLocationByUser(),
                                 builder: (context, snapshot) {
                                   if (snapshot.hasError) {
                                     print(snapshot.error);
                                     print("mochkla lenaa last *");
                                   }
                                   if (snapshot.hasData) {
-                                    HomeLocation homeLocation = snapshot.data;
+                                    Location location = snapshot.data[0];
                                     return Text(
-                                      homeLocation.location.siteName,
+                                      location.siteName,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 30.0,
@@ -91,12 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ),
                                     );
                                   } else {
-                                    return Text(
-                                      "",
-                                      style: TextStyle(
-                                        backgroundColor: Colors.transparent,
-                                      ),
-                                    );
+                                    return Container();
                                   }
                                 }),
                             Text(
@@ -141,35 +124,19 @@ class _MyHomePageState extends State<MyHomePage> {
                         builder: (context, snapshot2) {
                           if (snapshot2.hasError) {
                             print(snapshot2.error);
-                            Text(
-                              "",
-                              style: TextStyle(
-                                backgroundColor: Colors.transparent,
-                              ),
-                            );
+                            Container();
                           }
                           return snapshot2.hasData
                               ? Itemclass(list: snapshot2.data)
-                              : Text(
-                                  "",
-                                  style: TextStyle(
-                                    backgroundColor: Colors.transparent,
-                                  ),
-                                );
+                              : Container();
                         })
-                    : Text(
-                        "",
-                        style: TextStyle(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      );
+                    : Container();
               }),
           Container(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
             ),
           ),
-          // _buildProgrammCard(),
           FutureBuilder<int>(
               future: databaseHelper2.NumberofDeviceByUser(),
               builder: (context, snapshot) {
@@ -195,12 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                       )
-                    : Text(
-                        "",
-                        style: TextStyle(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      );
+                    : Container();
               }),
           FutureBuilder<int>(
               future: databaseHelper2.NumberofLocationByUser(),
@@ -227,24 +189,19 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                       )
-                    : Text(
-                        "",
-                        style: TextStyle(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      );
+                    : Container();
               }),
 
-          FutureBuilder<HomeLocation>(
+          FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.getlocationdetails(),
+              future: databaseHelper2.AllLocationByUser(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
                   print("mochkla lenaa *");
                 }
                 return snapshot.hasData
-                    ? ItemListchart(list: snapshot.data.location.sensorIds)
+                    ? ItemListchart(list: snapshot.data[0].sensorIds)
                     : Container();
               }),
 
@@ -258,12 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 return snapshot.hasData
                     ? ItemListElectro(list: snapshot.data)
-                    : Text(
-                        "",
-                        style: TextStyle(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      );
+                    : Container();
               }),
         ],
       ),
@@ -641,10 +593,10 @@ class _ItemListElectroState extends State<ItemListElectro> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 270.0,
+      height: 100.0,
       child: ListView.builder(
           itemCount: widget.list == null ? 0 : widget.list.length,
-          scrollDirection: Axis.vertical,
+          physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemBuilder: (context, i) {
             id = widget.list[i]["_id"].toString();
@@ -688,7 +640,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => HomePage()));
+                                      builder: (context) => MyHomePage()));
                             });
                           },
                           controller: _btnController,
@@ -765,66 +717,108 @@ isactive =false;
   }
 }
 
-class ItemListchart extends StatelessWidget {
+class ItemListchart extends StatefulWidget {
   List list;
   ItemListchart({this.list});
+
+  @override
+  _ItemListchartState createState() => _ItemListchartState();
+}
+
+class _ItemListchartState extends State<ItemListchart> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
 
   ScrollController _controller = new ScrollController();
+  void _onValueChange(String value) {
+    setState(() {
+      _selectedId = value;
+    });
+  }
+
+  String _selectedId;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: list.length,
-        shrinkWrap: true,
-        itemBuilder: (context, i) {
+          itemCount: widget.list.length,
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemBuilder: (context, i) {
 //            DateTime t = DateTime.parse(list[i]['date_published'].toString());
 
-          return FutureBuilder<Sensor>(
-              future: databaseHelper2.getDevById(list[i].toString()),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
-
-                if (snapshot.hasData) {
-                  print("helloo" + snapshot.data.toString());
-                  String type = snapshot.data.sensorType;
-                  if (type != "electrovanne") {
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            color: Colors.white),
-                        child: Expanded(
-                          child: FutureBuilder(
-                              future: databaseHelper2
-                                  .getdataDeviceByID(snapshot.data.id),
-                              builder: (context, snapshot2) {
-                                if (snapshot2.hasError) {
-                                  print(snapshot2.error);
-                                  Text(
-                                    "",
-                                    style: TextStyle(
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                  );
-                                }
-                                return snapshot2.hasData
-                                    ? chart(snapshot2.data, type)
-                                    : Container();
-                              }),
-                        ),
-                      ),
-                    );
-                    // print("helloo"+snapshot.data.id);
+            return FutureBuilder<Sensor>(
+                future: databaseHelper2.getDevById(widget.list[i].toString()),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("there is problem !");
                   }
-                }
-                return Container();
-              });
-        });
+
+                  if (snapshot.hasData) {
+                    print("helloo" + snapshot.data.toString());
+                    String type = snapshot.data.sensorType;
+                    if (type != "electrovanne") {
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: Colors.white),
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 70,
+                                width: 70,
+                                child: AspectRatio(
+                                  child: FlatButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15)),
+                                    color: Colors.greenAccent,
+                                    child: Text("Update location",
+                                        style: TextStyle(color: Colors.white)),
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+
+                                          child: ChartHistory(
+                                            onValueChange: _onValueChange,
+                                            initialValue: _selectedId,
+                                            identifier: snapshot.data.id,
+                                            type: snapshot.data.sensorType,
+                                          ));
+                                    },
+                                  ),
+                                  aspectRatio: 8,
+                                ),
+                              ),
+                            FutureBuilder(
+                                    future: databaseHelper2
+                                        .getdataDeviceByID(snapshot.data.id),
+                                    builder: (context, snapshot2) {
+                                      if (snapshot2.hasError) {
+                                        print(snapshot2.error);
+                                        Text(
+                                          "",
+                                          style: TextStyle(
+                                            backgroundColor: Colors.transparent,
+                                          ),
+                                        );
+                                      }
+                                      return snapshot2.hasData
+                                          ? chart(snapshot2.data, type)
+                                          : Container();
+                                    }),
+
+                            ],
+                          ),
+                        ),
+                      );
+                      // print("helloo"+snapshot.data.id);
+                    }
+                  }
+                  return Container();
+                });
+          });
   }
 }
 

@@ -64,47 +64,55 @@ class _LocationsState extends State<Locations> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<Location>>(
+      body: Column(
+        children: [
+          FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-          future: databaseHelper2.AllLocationByUser(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              snapshot.data.forEach((Location) {
-                Markers = snapshot.data
-                    .map((Location) => Marker(
-                        markerId: MarkerId(Location.id),
-                        position: LatLng(
-                            Location.coordinates[0], Location.coordinates[1]),
-                        icon: BitmapDescriptor.defaultMarker,
-                        onTap: () => {},
-                        infoWindow: InfoWindow(
-                          title: Location.siteName,
-                          onTap: () => {
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) => LocationDetails( identifier: Location.id))),
-                          },
-                        )))
-                    .toList(growable: true);
-              });
-            }
-            print("Markers !!! :" + Markers.toString());
-            return GoogleMap(
-                  initialCameraPosition: _initialPosition,
-                  markers: Set<Marker>.of(Markers),
-                  mapType: MapType.hybrid,
-                  onMapCreated: (controller) {
-                    setState(() {
-                      _controller = controller;
-                    });
-                  },
-                  /*markers: markers.toSet(),
-                onTap: (cordinate){
-                  _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
-                  addMarker(cordinate);
-                  print("cord"+cordinate.toString());
-                },*/
+              future: databaseHelper2.AllLocationByUser(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  snapshot.data.forEach((Location) {
+                    Markers = snapshot.data
+                        .map((Location) => Marker(
+                            markerId: MarkerId(Location.id),
+                            position: LatLng(
+                                Location.coordinates[0], Location.coordinates[1]),
+                            icon: BitmapDescriptor.defaultMarker,
+                            onTap: () => {},
+                            infoWindow: InfoWindow(
+                              title: Location.siteName,
+                              onTap: () => {
+                                Navigator.push(
+                                    context, MaterialPageRoute(builder: (context) => LocationDetails( identifier: Location.id))),
+                              },
+                            )))
+                        .toList(growable: true);
+                  });
+                }
+                print("Markers !!! :" + Markers.toString());
+                return Container(
+                  height: 800,
+                  width: 600,
+                  child: GoogleMap(
+                        initialCameraPosition: _initialPosition,
+                        markers: Set<Marker>.of(Markers),
+                        mapType: MapType.hybrid,
+                        onMapCreated: (controller) {
+                          setState(() {
+                            _controller = controller;
+                          });
+                        },
+                        /*markers: markers.toSet(),
+                      onTap: (cordinate){
+                        _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
+                        addMarker(cordinate);
+                        print("cord"+cordinate.toString());
+                      },*/
+                      ),
                 );
-          }),
+              }),
+        ],
+      ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {

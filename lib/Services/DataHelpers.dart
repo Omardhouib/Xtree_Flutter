@@ -227,7 +227,6 @@ class DatabaseHelper2 {
       },
     );
     if (response.statusCode == 200) {
-      await Future.delayed(Duration(milliseconds: 800));
       // If the server did return a 200 OK response,
       return HomeLocation.fromJson(json.decode(response.body));
     } else {

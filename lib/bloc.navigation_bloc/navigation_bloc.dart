@@ -23,13 +23,13 @@ abstract class NavigationStates {}
 
 class NavigationBloc extends Bloc<NavigationEvents, NavigationStates> {
   @override
-  NavigationStates get initialState => HomePage();
+  NavigationStates get initialState => MyHomePage();
 
   @override
   Stream<NavigationStates> mapEventToState(NavigationEvents event) async* {
     switch (event) {
       case NavigationEvents.HomePageClickedEvent:
-        yield HomePage();
+        yield MyHomePage();
         break;
       case NavigationEvents.MyAccountClickedEvent:
         yield HomeDevice();

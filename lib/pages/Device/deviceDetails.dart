@@ -104,6 +104,7 @@ class _deviceDetailsState extends State<deviceDetails> {
                     onPressed: () {
                       showDialog(
                           context: context,
+
                           child: UpdateSens(
                             onValueChange: _onValueChange,
                             initialValue: _selectedId,

@@ -248,86 +248,89 @@ class _SideBarState extends State<SideBar>
   }
 
   Widget itemList({List list}) {
-    return ListView.builder(
-        itemCount: list == null ? 0 : list.length,
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemBuilder: (context, i) {
+    return Expanded(
+      child: ListView.builder(
+          itemCount: list == null ? 0 : list.length,
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          physics: NeverScrollableScrollPhysics(),
+          itemBuilder: (context, i) {
 //            DateTime t = DateTime.parse(list[i]['date_published'].toString());
 
-          return Container(
-            child: Column(
-              children: <Widget>[
-                if (list[i].sensorIds.length == 0)
-                  Row(
-                    children: [
-                      MenuItem(
-                        icon: Icons.place,
-                        title: list[i].siteName.toString(),
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      LocationDetails(identifier: list[i].id))),
-                        },
-                      ),
-                      Container(
-                        width: 17.0,
-                        height: 27.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                          color: Colors.red,
+            return Container(
+              child: Column(
+                children: <Widget>[
+                  if (list[i].sensorIds.length == 0)
+                    Row(
+                      children: [
+                        MenuItem(
+                          icon: Icons.place,
+                          title: list[i].siteName.toString(),
+                          onTap: () => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        LocationDetails(identifier: list[i].id))),
+                          },
                         ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          list[i].sensorIds.length.toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
+                        Container(
+                          width: 17.0,
+                          height: 27.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                            color: Colors.red,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            list[i].sensorIds.length.toString(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  )
-                else
-                  Row(
-                    children: [
-                      MenuItem(
-                        icon: Icons.place,
-                        title: list[i].siteName.toString(),
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      LocationDetails(identifier: list[i].id))),
-                        },
-                      ),
-                      Container(
-                        width: 17.0,
-                        height: 27.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                          color: Colors.green,
+                      ],
+                    )
+                  else
+                    Row(
+                      children: [
+                        MenuItem(
+                          icon: Icons.place,
+                          title: list[i].siteName.toString(),
+                          onTap: () => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        LocationDetails(identifier: list[i].id))),
+                          },
                         ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          //list[i].toString() ?? '',
-                          list[i].sensorIds.length.toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
+                        Container(
+                          width: 17.0,
+                          height: 27.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                            color: Colors.green,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            //list[i].toString() ?? '',
+                            list[i].sensorIds.length.toString(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                SizedBox(height: 20),
-              ],
-            ),
-          );
-        });
+                      ],
+                    ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            );
+          }),
+    );
   }
 }
 
