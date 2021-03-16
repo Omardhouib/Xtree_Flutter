@@ -19,8 +19,6 @@ import 'package:sidebar_animation/graphic.dart' as graphic;
 import 'package:flutter/gestures.dart';
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 
-
-
 class MyHomePage extends StatefulWidget with NavigationStates {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
@@ -43,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     var hour = DateTime.now().hour;
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.grey[200],
       body: ListView(
         scrollDirection: Axis.vertical,
         children: <Widget>[
@@ -52,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 Container(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(7, 50, 0, 25),
+                    padding: const EdgeInsets.fromLTRB(10, 50, 0, 25),
                     child: Row(
                       children: <Widget>[
                         Column(
@@ -97,12 +95,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
                           child: CircleAvatar(
-                            backgroundColor: Colors.blueGrey,
+                            backgroundColor: Colors.grey,
                             child: Icon(
                               Icons.perm_identity,
                               color: Colors.white,
                             ),
-                            radius: 35,
+                            radius: 33,
                           ),
                         ),
                       ],
@@ -153,12 +151,33 @@ class _MyHomePageState extends State<MyHomePage> {
                           clipBehavior: Clip.antiAliasWithSaveLayer,
                           color: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          elevation: 4,
-                          margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-                          child: Text(
-                            "Number of devices: " + snapshot.data.toString(),
+                          elevation: 5,
+                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.green,
+                                  child: Icon(
+                                    Icons.device_hub,
+                                    color: Colors.white,
+                                  ),
+                                  radius: 25,
+                                ),
+                              ),
+                              Text(
+                                "Total number of devices: " +
+                                    snapshot.data.toString(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       )
@@ -180,18 +199,161 @@ class _MyHomePageState extends State<MyHomePage> {
                           clipBehavior: Clip.antiAliasWithSaveLayer,
                           color: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          elevation: 4,
-                          margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-                          child: Text(
-                            "Number of locations: " + snapshot.data.toString(),
+                          elevation: 5,
+                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.red,
+                                  child: Icon(
+                                    Icons.place,
+                                    color: Colors.white,
+                                  ),
+                                  radius: 25,
+                                ),
+                              ),
+                              Text(
+                                "Total number of locations: " +
+                                    snapshot.data.toString(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       )
                     : Container();
               }),
-
+          Container(
+            height: 90,
+            child: Card(
+              semanticContainer: true,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              elevation: 5,
+              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.amber,
+                      child: Icon(
+                        Icons.schedule,
+                        color: Colors.white,
+                      ),
+                      radius: 25,
+                    ),
+                  ),
+                  Text(
+                    "Total number of SCHEDULES: 0",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+         /* Container(
+            height: 100,
+            child: Card(
+              semanticContainer: true,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              elevation: 5,
+              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+              child:  Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40.0,
+                          height: 10.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                            color: Colors.green,
+                          ),
+                        ),
+                        Text(
+                          "Humidity",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
+                        Container(
+                          width: 40.0,
+                          height: 10.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                            color: Colors.blue[800],
+                          ),
+                        ),
+                        Text(
+                          "Temperature",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 40.0,
+                        height: 10.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                          color: Colors.black,
+                        ),
+                      ),
+                      Text(
+                        "Soil temperature",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
+                      Container(
+                        width: 40.0,
+                        height: 10.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                          color: Colors.green,
+                        ),
+                      ),
+                      Text(
+                        "Temperature",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),*/
           FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
               future: databaseHelper2.AllLocationByUser(),
@@ -205,7 +367,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     : Container();
               }),
 
-          FutureBuilder(
+          /* FutureBuilder(
 //                future: databaseHelper.getData(),
               future: databaseHelper2.AllElectoByUser(),
               builder: (context, snapshot) {
@@ -216,7 +378,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 return snapshot.hasData
                     ? ItemListElectro(list: snapshot.data)
                     : Container();
-              }),
+              }),*/
         ],
       ),
     );
@@ -254,8 +416,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
   Widget Itemclass({List list}) {
     var hour = DateTime.now().hour;
+    DateTime date = DateTime.now();
+    String dateFormat = DateFormat('EEEE').format(date);
     //  final hour formattedDate = DateFormat.j().format(now);
     dynamic currentTime = DateFormat.j().format(DateTime.now());
     return SizedBox(
@@ -266,98 +431,169 @@ class _MyHomePageState extends State<MyHomePage> {
           itemExtent: 200.0,
           // ignore: missing_return
           itemBuilder: (context, i) {
+            int date = (list[i]["dt"]);
+            int zero = 100;
+            DateTime finalday = DateTime.fromMillisecondsSinceEpoch(
+                    int.parse(("$date" + "$zero")))
+                .toUtc();
+            String dateFormat = DateFormat('EEEE').format(finalday);
             var item = list[i];
-            if ((hour < 12) && (hour >= 6)) {
+            if ((hour < 17) && (hour >= 6)) {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                 child: Container(
-                  decoration: BoxDecoration(
+                  /* decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
+                       image: DecorationImage(
+                           image: NetworkImage(
+                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
+                           fit: BoxFit.cover),
                       gradient: LinearGradient(
                           begin: Alignment.bottomLeft,
                           end: Alignment.topRight,
                           colors: [
-                            Colors.blue[600],
-                            Colors.blue,
-                            Colors.blue[200]
-                          ])),
+                            Color(0xff152238),
+                            Color(0xff152238),
+                            Color(0xff152238),
+                          ])),*/
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                          image: NetworkImage(
+                              "https://images.unsplash.com/photo-1559628376-f3fe5f782a2e?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1000&q=80"),
+                          fit: BoxFit.cover)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Row(
-                        children: [
-                          if (list[i]["pop"] > 0.1)
-                            new Image.network(
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
+                        child: Text(
+                          list[i]["temp"]["morn"].round().toString() + "°C",
+                          style: TextStyle(color: Colors.white, fontSize: 35),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
+                        child: Text(
+                          dateFormat,
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
+                      if (list[i]["pop"] > 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(18, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/rain.png'),
-                          if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(18, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/overcast.png'),
-                          if (list[i]["pop"] == 0 && list[i]["clouds"] == 0)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["pop"] < 0.1 && list[i]["clouds"] < 1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(18, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
-                          Text(
-                            list[i]["temp"]["morn"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
-                          )
-                        ],
-                      ),
+                          ),
+                        ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(22, 0, 4, 0),
                             child: Text(
-                              list[i]["temp"]["min"].round().toString() + "/",
-                              style: TextStyle(color: Colors.black),
+                              list[i]["temp"]["min"].round().toString() + "°C",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ),
-                          Text(
-                            list[i]["temp"]["max"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Text(
-                              "humidity:",
-                              style: TextStyle(color: Colors.black),
+                              "/",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ),
-                          Text(
-                            list[i]["humidity"].toString() + "%",
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
+                            child: Text(
+                              list[i]["temp"]["max"].round().toString() + "°C",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 18),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                            child: Text(
+                              "Humidity: ",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: Text(
+                              list[i]["humidity"].toString() + "%",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
                               "Precipitation:",
-                              style: TextStyle(color: Colors.black),
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 16),
                             ),
                           ),
-                          Text(
-                            list[i]["pop"].toString() + "mm",
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Text(
+                              list[i]["pop"].toString() + "mm",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 16),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
                               "Uv:",
-                              style: TextStyle(color: Colors.black),
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 16),
                             ),
                           ),
-                          Text(
-                            list[i]["uvi"].toString(),
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Text(
+                              list[i]["uvi"].toString(),
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 16),
+                            ),
                           )
                         ],
                       ),
@@ -365,97 +601,163 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               );
-            } else if ((hour < 18) && (hour >= 12)) {
+            }
+            else if ((hour < 20) && (hour >= 17)) {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                 child: Container(
-                  decoration: BoxDecoration(
+                  /* decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
+                       image: DecorationImage(
+                           image: NetworkImage(
+                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
+                           fit: BoxFit.cover),
                       gradient: LinearGradient(
                           begin: Alignment.bottomLeft,
                           end: Alignment.topRight,
                           colors: [
-                            Colors.orange[600],
-                            Colors.orange,
-                            Colors.orange[200]
-                          ])),
+                            Color(0xff152238),
+                            Color(0xff152238),
+                            Color(0xff152238),
+                          ])),*/
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                          image: NetworkImage(
+                              "http://avante.biz/wp-content/uploads/Wallpapers-For-Phone-Android/Wallpapers-For-Phone-Android-036.jpg"),
+                          fit: BoxFit.cover)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Row(
-                        children: [
-                          if (list[i]["pop"] > 0.1)
-                            new Image.network(
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
+                        child: Text(
+                          list[i]["temp"]["eve"].round().toString() + "°C",
+                          style: TextStyle(color: Colors.white, fontSize: 35),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
+                        child: Text(
+                          dateFormat,
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
+                      if (list[i]["pop"] > 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(18, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/rain.png'),
-                          if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(18, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/overcast.png'),
-                          if (list[i]["pop"] == 0 && list[i]["clouds"] == 0)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["pop"] < 0.1 && list[i]["clouds"] < 1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(18, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
-                          Text(
-                            list[i]["temp"]["eve"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
-                          )
-                        ],
-                      ),
+                          ),
+                        ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(22, 0, 4, 0),
                             child: Text(
-                              list[i]["temp"]["min"].round().toString() + "/",
-                              style: TextStyle(color: Colors.black),
+                              list[i]["temp"]["min"].round().toString() + "°C",
+                              style:
+                              TextStyle(color: Colors.black, fontSize: 18),
                             ),
                           ),
-                          Text(
-                            list[i]["temp"]["max"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Text(
-                              "humidity:",
-                              style: TextStyle(color: Colors.black),
+                              "/",
+                              style:
+                              TextStyle(color: Colors.black, fontSize: 18),
                             ),
                           ),
-                          Text(
-                            list[i]["humidity"].toString() + "%",
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
+                            child: Text(
+                              list[i]["temp"]["max"].round().toString() + "°C",
+                              style:
+                              TextStyle(color: Colors.black, fontSize: 18),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                            child: Text(
+                              "Humidity: ",
+                              style:
+                              TextStyle(color: Colors.black, fontSize: 16),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: Text(
+                              list[i]["humidity"].toString() + "%",
+                              style:
+                              TextStyle(color: Colors.black, fontSize: 16),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
                               "Precipitation:",
-                              style: TextStyle(color: Colors.black),
+                              style:
+                              TextStyle(color: Colors.black, fontSize: 16),
                             ),
                           ),
-                          Text(
-                            list[i]["pop"].toString() + "mm",
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Text(
+                              list[i]["pop"].toString() + "mm",
+                              style:
+                              TextStyle(color: Colors.black, fontSize: 16),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
                               "Uv:",
-                              style: TextStyle(color: Colors.black),
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 16),
                             ),
                           ),
-                          Text(
-                            list[i]["uvi"].toString(),
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Text(
+                              list[i]["uvi"].toString(),
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 16),
+                            ),
                           )
                         ],
                       ),
@@ -465,101 +767,160 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             } else {
               return Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
+                padding: const EdgeInsets.fromLTRB(10, 0, 3, 0),
                 child: Container(
                   /* decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
+                       image: DecorationImage(
+                           image: NetworkImage(
+                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
+                           fit: BoxFit.cover),
                       gradient: LinearGradient(
                           begin: Alignment.bottomLeft,
                           end: Alignment.topRight,
                           colors: [
-                            Colors.blue,
-                            Colors.black,
-                            Colors.black
+                            Color(0xff152238),
+                            Color(0xff152238),
+                            Color(0xff152238),
                           ])),*/
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       image: DecorationImage(
                           image: NetworkImage(
-                              "https://i.pinimg.com/originals/ed/f8/5b/edf85bbb8f8fe3106edc9953c9897f35.jpg"),
+                              "https://image.freepik.com/free-vector/milky-way-night-star-sky-stars-dark-background_172933-70.jpg"),
                           fit: BoxFit.cover)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Row(
-                        children: [
-                          if (list[i]["pop"] > 0.1)
-                            new Image.network(
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
+                        child: Text(
+                          list[i]["temp"]["night"].round().toString() + "°C",
+                          style: TextStyle(color: Colors.white, fontSize: 35),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
+                        child: Text(
+                          dateFormat,
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
+                      if (list[i]["pop"] > 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(18, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/rain.png'),
-                          if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(18, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/overcast.png'),
-                          if (list[i]["pop"] == 0 && list[i]["clouds"] == 0)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["pop"] < 0.1 && list[i]["clouds"] < 1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(18, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
-                          Text(
-                            list[i]["temp"]["night"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.white),
-                          )
-                        ],
-                      ),
+                          ),
+                        ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(22, 0, 4, 0),
                             child: Text(
-                              list[i]["temp"]["min"].round().toString() + "/",
-                              style: TextStyle(color: Colors.white),
+                              list[i]["temp"]["min"].round().toString() + "°C",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ),
-                          Text(
-                            list[i]["temp"]["max"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.white),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Text(
-                              "humidity:",
-                              style: TextStyle(color: Colors.white),
+                              "/",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ),
-                          Text(
-                            list[i]["humidity"].toString() + "%",
-                            style: TextStyle(color: Colors.white),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
+                            child: Text(
+                              list[i]["temp"]["max"].round().toString() + "°C",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
+                            child: Text(
+                              "Humidity: ",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                            child: Text(
+                              list[i]["humidity"].toString() + "%",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
                               "Precipitation:",
-                              style: TextStyle(color: Colors.white),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
                             ),
                           ),
-                          Text(
-                            list[i]["pop"].toString() + "mm",
-                            style: TextStyle(color: Colors.white),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Text(
+                              list[i]["pop"].toString() + "mm",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
                               "Uv:",
-                              style: TextStyle(color: Colors.white),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
                             ),
                           ),
-                          Text(
-                            list[i]["uvi"].toString(),
-                            style: TextStyle(color: Colors.white),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Text(
+                              list[i]["uvi"].toString(),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
                           )
                         ],
                       ),
@@ -740,85 +1101,278 @@ class _ItemListchartState extends State<ItemListchart> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-          itemCount: widget.list.length,
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemBuilder: (context, i) {
+        itemCount: widget.list.length,
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemBuilder: (context, i) {
 //            DateTime t = DateTime.parse(list[i]['date_published'].toString());
 
-            return FutureBuilder<Sensor>(
-                future: databaseHelper2.getDevById(widget.list[i].toString()),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    print("there is problem !");
-                  }
+          return FutureBuilder<Sensor>(
+              future: databaseHelper2.getDevById(widget.list[i].toString()),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  print("there is problem !");
+                }
 
-                  if (snapshot.hasData) {
-                    print("helloo" + snapshot.data.toString());
-                    String type = snapshot.data.sensorType;
-                    if (type != "electrovanne") {
-                      return Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: Colors.white),
-                          child: Column(
-                            children: [
-                              Container(
-                                height: 70,
-                                width: 70,
-                                child: AspectRatio(
-                                  child: FlatButton(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15)),
-                                    color: Colors.greenAccent,
-                                    child: Text("Update location",
-                                        style: TextStyle(color: Colors.white)),
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-
-                                          child: ChartHistory(
-                                            onValueChange: _onValueChange,
-                                            initialValue: _selectedId,
-                                            identifier: snapshot.data.id,
-                                            type: snapshot.data.sensorType,
-                                          ));
-                                    },
+                if (snapshot.hasData) {
+                  //  print("helloo" + snapshot.data.toString());
+                  String type = snapshot.data.sensorType;
+                  if (type != "Relay") {
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.white),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                          /*  Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                    snapshot.data.name.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                  aspectRatio: 8,
-                                ),
-                              ),
-                            FutureBuilder(
-                                    future: databaseHelper2
-                                        .getdataDeviceByID(snapshot.data.id),
-                                    builder: (context, snapshot2) {
-                                      if (snapshot2.hasError) {
-                                        print(snapshot2.error);
-                                        Text(
-                                          "",
-                                          style: TextStyle(
-                                            backgroundColor: Colors.transparent,
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.fromLTRB(140, 10, 0, 0),
+                                  child: Container(
+                                    height: 60,
+                                    child: AspectRatio(
+                                      child: FlatButton(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(35)),
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.lightBlue,
+                                          child: Icon(
+                                            Icons.history,
+                                            color: Colors.white,
+                                            size: 30,
                                           ),
-                                        );
-                                      }
-                                      return snapshot2.hasData
-                                          ? chart(snapshot2.data, type)
-                                          : Container();
-                                    }),
+                                          radius: 28,
+                                        ),
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              child: ChartHistory(
+                                                onValueChange: _onValueChange,
+                                                initialValue: _selectedId,
+                                                identifier: snapshot.data.id,
+                                                type: snapshot.data.sensorType,
+                                              ));
+                                        },
+                                      ),
+                                      aspectRatio: 2,
+                                    ),
+                                  ),
+                                ),
 
-                            ],
-                          ),
+                              ],
+                            ),*/
+
+                               /* Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 10, 0, 0),
+                                  child: Text(
+                                    snapshot.data.name.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(80, 10, 0, 0),
+                                  child: Container(
+                                    height: 60,
+                                    child: AspectRatio(
+                                      child: FlatButton(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(35)),
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.lightBlue,
+                                          child: Icon(
+                                            Icons.history,
+                                            color: Colors.white,
+                                            size: 30,
+                                          ),
+                                          radius: 28,
+                                        ),
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              child: ChartHistory(
+                                                onValueChange: _onValueChange,
+                                                initialValue: _selectedId,
+                                                identifier: snapshot.data.id,
+                                                type: snapshot.data.sensorType,
+                                              ));
+                                        },
+                                      ),
+                                      aspectRatio: 2,
+                                    ),
+                                  ),*/
+                                  Container(
+                                    height: 90,
+                                    child: Card(
+                                      semanticContainer: true,
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      color: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20.0),
+                                      ),
+                                      elevation: 0,
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                            const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            child: Container(
+                                              height: 60,
+                                              child: AspectRatio(
+                                                child: FlatButton(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                      BorderRadius.circular(35)),
+                                                  child: CircleAvatar(
+                                                    backgroundColor: Colors.lightBlue,
+                                                    child: Icon(
+                                                      Icons.history,
+                                                      color: Colors.white,
+                                                      size: 30,
+                                                    ),
+                                                    radius: 28,
+                                                  ),
+                                                  onPressed: () {
+                                                    showDialog(
+                                                        context: context,
+                                                        child: ChartHistory(
+                                                          onValueChange: _onValueChange,
+                                                          initialValue: _selectedId,
+                                                          identifier: snapshot.data.id,
+                                                          type: snapshot.data.sensorType,
+                                                        ));
+                                                  },
+                                                ),
+                                                aspectRatio: 2,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            snapshot.data.name.toString(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+
+
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                            FutureBuilder(
+                                future: databaseHelper2
+                                    .getdataDeviceByID(snapshot.data.id),
+                                builder: (context, snapshot2) {
+                                  if (snapshot2.hasError) {
+                                    print(snapshot2.error);
+                                    Text(
+                                      "",
+                                      style: TextStyle(
+                                        backgroundColor: Colors.transparent,
+                                      ),
+                                    );
+                                  }
+                                  if (snapshot2.hasData) {
+                                    return
+                                      Column(
+                                        children: [
+                                          chart(snapshot2.data, type),
+                                          Container(
+                                            height: 90,
+                                            child: Card(
+                                              semanticContainer: true,
+                                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                                              color: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(20.0),
+                                              ),
+                                              elevation: 0,
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                      height: 60,
+                                                      child: CircleAvatar(
+                                                        backgroundColor: Colors.white,
+                                                        child: Icon(
+                                                          Icons.battery_charging_full,
+                                                          color: Colors.amberAccent,
+                                                          size: 30,
+                                                        ),
+                                                        radius: 28,
+                                                      ),
+                                                    ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                                                    child: Text(
+                                                      snapshot2.data[snapshot2.data.length-1]["batterie"].round().toString()+"%",
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    height: 60,
+                                                    child: CircleAvatar(
+                                                      backgroundColor: Colors.white,
+                                                      child: Icon(
+                                                        Icons.signal_cellular_4_bar,
+                                                        color: Colors.redAccent,
+                                                        size: 30,
+                                                      ),
+                                                      radius: 28,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "50%",
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+
+
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                  } else {
+                                    return Container();
+                                  }
+                                }),
+                          ],
                         ),
-                      );
-                      // print("helloo"+snapshot.data.id);
-                    }
+                      ),
+                    );
+                    // print("helloo"+snapshot.data.id);
                   }
-                  return Container();
-                });
-          });
+                }
+                return Container();
+              });
+        });
   }
 }
 

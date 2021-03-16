@@ -272,7 +272,7 @@ class LocationDetailsState extends State<LocationDetails> with NavigationStates 
                                         print(snapshot.error);
                                         print("mochkla lenaa *");
                                       }
-                                      if (snapshot.hasData && snapshot.data.sensorType != "electrovanne") {
+                                      if (snapshot.hasData && snapshot.data.sensorType != "Relay") {
                                           return Padding(
                                               padding: EdgeInsets.only(left: 24),
                                               child: GestureDetector(
@@ -294,7 +294,7 @@ class LocationDetailsState extends State<LocationDetails> with NavigationStates 
                                                 ),
                                               ));
                                       }
-                                      else if (snapshot.hasData && snapshot.data.sensorType == "electrovanne") {
+                                      else if (snapshot.hasData && snapshot.data.sensorType == "Relay") {
                                         return Padding(
                                             padding: EdgeInsets.only(left: 24),
                                               child: Text(

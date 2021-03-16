@@ -21,7 +21,18 @@ class _LocationsState extends State<Locations> {
       CameraPosition(target: LatLng(33.892166, 9.400138), zoom: 5.0);
   // Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   List<Marker> Markers = [];
-  List<Location> locations = [];
+  List<String> locations = [];
+  TextEditingController searchController = new TextEditingController();
+  String filter;
+  var items = List<String>();
+  @override  initState() {
+    searchController.addListener(() {
+      setState(() {
+        filter = searchController.text;
+      });
+    });
+  }
+
 
   /*Coord() {
      databaseHelper2.AllLocationByUser().then((locations) {
@@ -63,55 +74,123 @@ class _LocationsState extends State<Locations> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> locations = [];
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
-      body: Column(
-        children: [
-          FutureBuilder<List<Location>>(
+      resizeToAvoidBottomInset : false,
+      body: SizedBox(
+        height: screenHeight - keyboardHeight,
+        child: Column(
+          children: [
+            Padding(
+              padding: new EdgeInsets.fromLTRB(8.0, 100.0, 8.0, 30.0),
+              child: new TextField(
+                controller: searchController,
+                onChanged: (value) {
+                  filterSearchResults(value);
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search sites',
+                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(32.0)),
+                ),
+              ),
+            ),
+            FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.AllLocationByUser(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  snapshot.data.forEach((Location) {
-                    Markers = snapshot.data
-                        .map((Location) => Marker(
-                            markerId: MarkerId(Location.id),
-                            position: LatLng(
-                                Location.coordinates[0], Location.coordinates[1]),
-                            icon: BitmapDescriptor.defaultMarker,
-                            onTap: () => {},
-                            infoWindow: InfoWindow(
-                              title: Location.siteName,
-                              onTap: () => {
-                                Navigator.push(
-                                    context, MaterialPageRoute(builder: (context) => LocationDetails( identifier: Location.id))),
-                              },
-                            )))
-                        .toList(growable: true);
-                  });
-                }
-                print("Markers !!! :" + Markers.toString());
-                return Container(
-                  height: 800,
-                  width: 600,
-                  child: GoogleMap(
-                        initialCameraPosition: _initialPosition,
-                        markers: Set<Marker>.of(Markers),
-                        mapType: MapType.hybrid,
-                        onMapCreated: (controller) {
-                          setState(() {
-                            _controller = controller;
-                          });
-                        },
-                        /*markers: markers.toSet(),
-                      onTap: (cordinate){
-                        _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
-                        addMarker(cordinate);
-                        print("cord"+cordinate.toString());
-                      },*/
-                      ),
-                );
-              }),
-        ],
+                future: databaseHelper2.AllLocationByUser(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    snapshot.data.forEach((Location) {
+                      locations.add(Location.siteName);
+                      print("heello"+locations.toString());
+                      Markers = snapshot.data
+                          .map((Location) => Marker(
+                          markerId: MarkerId(Location.id),
+                          position: LatLng(
+                              Location.coordinates[0], Location.coordinates[1]),
+                          icon: BitmapDescriptor.defaultMarker,
+                          onTap: () => {},
+                          infoWindow: InfoWindow(
+                            title: Location.siteName,
+                            onTap: () => {
+                              Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) => LocationDetails( identifier: Location.id))),
+                            },
+                          )))
+                          .toList(growable: true);
+                    });
+                  }
+                  return Container(
+                    height: 200,
+                    width: 600,
+                    child: GoogleMap(
+                      initialCameraPosition: _initialPosition,
+                      markers: Set<Marker>.of(Markers),
+                      mapType: MapType.hybrid,
+                      onMapCreated: (controller) {
+                        setState(() {
+                          _controller = controller;
+                        });
+                      },
+                      /*markers: markers.toSet(),
+                        onTap: (cordinate){
+                          _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
+                          addMarker(cordinate);
+                          print("cord"+cordinate.toString());
+                        },*/
+                    ),
+                  );
+                }),
+            FutureBuilder<List<Location>>(
+//                future: databaseHelper.getData(),
+                future: databaseHelper2.AllLocationByUser(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("mochkla lenaa *");
+                  }
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                        itemCount: snapshot.data == null ? 0 : snapshot.data.length,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemBuilder: (context, i) {
+//            DateTime t = DateTime.parse(list[i]['date_published'].toString());
+
+                          return Container(
+                            child: Stack(
+                              children: <Widget>[
+                                Positioned(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 24),
+                                        child: Text(
+                                          'site name is',
+                                        ),
+                                      ),
+                                      Text(
+                                              //list[i].toString() ?? '',
+                                              snapshot.data[i].siteName,
+                                            ),
+
+                                      SizedBox(height: 10),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        });;
+                  } else {
+                    return Container();
+                  }
+                }),
+          ],
+        ),
       ),
 
       floatingActionButton: FloatingActionButton(
@@ -123,7 +202,31 @@ class _LocationsState extends State<Locations> {
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+  void filterSearchResults(String query) {
+    List<String> dummySearchList = List<String>();
+    dummySearchList.addAll(locations);
+    print("hello"+locations.toString());
+    if(query.isNotEmpty) {
+      List<String> dummyListData = List<String>();
+      dummySearchList.forEach((item) {
+        if(item.contains(query)) {
+          dummyListData.add(item);
+        }
+      });
+      setState(() {
+        items.clear();
+        items.addAll(dummyListData);
+      });
+      return;
+    } else {
+      setState(() {
+        items.clear();
+        items.addAll(locations);
+      });
+    }
+  }
 }
+
 
 /*class ItemList extends StatelessWidget{
   List list;
