@@ -12,7 +12,6 @@ import 'package:sidebar_animation/Models/LocationHome.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/classes/ChartHistory.dart';
-import 'package:sidebar_animation/classes/schedulePage.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import '../bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/constants.dart';
@@ -20,364 +19,247 @@ import 'package:sidebar_animation/graphic.dart' as graphic;
 import 'package:flutter/gestures.dart';
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 
-class MyHomePage extends StatefulWidget with NavigationStates {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class schedulePage extends StatefulWidget with NavigationStates {
+  schedulePage({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  schedulePageState createState() => schedulePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class schedulePageState extends State<schedulePage> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   final RoundedLoadingButtonController _btnController =
-      new RoundedLoadingButtonController();
+  new RoundedLoadingButtonController();
+  DateTime selectedDate = DateTime.now();
   List<dynamic> sensors = [];
+  final _formKey = GlobalKey<FormState>();
   @override
+  List<String> _locations = ['AI mode', 'Manuel mode']; // Option 2
+  String _selectedLocation;
+  String title;
+  final TextEditingController sitenameController = new TextEditingController();
+  final TextEditingController descriptionController =
+  new TextEditingController();
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+      });
+  }
   void initState() {
     super.initState();
   }
-  Future<bool> _onWillPop() async {
-    return (await showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit the App'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('No'),
-          ),
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: new Text('Yes'),
-          ),
-        ],
-      ),
-    )) ?? false;
-  }
-
   @override
   Widget build(BuildContext context) {
+    List<String> flavours = [];
+    String _chosenValue;
     var hour = DateTime.now().hour;
-    return new WillPopScope(
-        onWillPop: _onWillPop,
-        child: new Scaffold(
+    return Scaffold(
       backgroundColor: Colors.grey[200],
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: <Widget>[
-          Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body:Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+        child:  ListView(
+          scrollDirection: Axis.vertical,
+          children: <Widget>[
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 15, 0, 25),
+                      child: Row(
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              FutureBuilder<List<Location>>(
+//                future: databaseHelper.getData(),
+                                  future: databaseHelper2.AllLocationByUser(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError) {
+                                      print(snapshot.error);
+                                      print("mochkla lenaa last *");
+                                    }
+                                    if (snapshot.hasData) {
+                                      Location location = snapshot.data[0];
+                                      return Text(
+                                        location.siteName,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 30.0,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontStyle: FontStyle.normal,
+                                        ),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  }),
+                              Text(
+                                'Welcome Omar dhouib',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                  fontStyle: FontStyle.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.blue[100],
+                              child: Icon(
+                                Icons.perm_identity,
+                                size: 30,
+                                color: Colors.blue,
+                              ),
+                              radius: 33,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ]),
+            FutureBuilder(
+                future: databaseHelper2.Lastlocation(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("there is problem !");
+                  }
+
+                  return snapshot.hasData
+                      ? FutureBuilder(
+                      future: databaseHelper2.Getweather(snapshot.data.id),
+                      builder: (context, snapshot2) {
+                        if (snapshot2.hasError) {
+                          print(snapshot2.error);
+                          Container();
+                        }
+                        return snapshot2.hasData
+                            ? Itemclass(list: snapshot2.data)
+                            : Container();
+                      })
+                      : Container();
+                }),
+
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              ),
+            ),
+            Text('mode'),
+
+            DropdownButton(
+              hint: Text('Please choose the mode'), // Not necessary for Option 1
+              value: _selectedLocation,
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedLocation = newValue;
+                });
+              },
+              items: _locations.map((location) {
+                return DropdownMenuItem(
+                  child: new Text(location),
+                  value: location,
+                );
+              }).toList(),
+            ),
+            Text('Device name'),
+            Text('the of device'),
+            Text('Description'),
+            Text('status'),
+            Column(
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Container(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 50, 0, 25),
-                    child: Row(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            FutureBuilder<List<Location>>(
-//                future: databaseHelper.getData(),
-                                future: databaseHelper2.AllLocationByUser(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasError) {
-                                    print(snapshot.error);
-                                    print("mochkla lenaa last *");
-                                  }
-                                  if (snapshot.hasData) {
-                                    Location location = snapshot.data[0];
-                                    return Text(
-                                      location.siteName,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 30.0,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontStyle: FontStyle.normal,
-                                      ),
-                                    );
-                                  } else {
-                                    return Container();
-                                  }
-                                }),
-                            Text(
-                              'Welcome Omar dhouib',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.blue[100],
-                            child: Icon(
-                              Icons.perm_identity,
-                              size: 30,
-                              color: Colors.blue,
-                            ),
-                            radius: 33,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                Text("${selectedDate.toLocal()}".split(' ')[0]),
+                SizedBox(height: 20.0,),
+                RaisedButton(
+                  onPressed: () => _selectDate(context),
+                  child: Text('Select date'),
                 ),
-              ]),
-          FutureBuilder(
-              future: databaseHelper2.Lastlocation(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
-
-                return snapshot.hasData
-                    ? FutureBuilder(
-                        future: databaseHelper2.Getweather(snapshot.data.id),
-                        builder: (context, snapshot2) {
-                          if (snapshot2.hasError) {
-                            print(snapshot2.error);
-                            Container();
-                          }
-                          return snapshot2.hasData
-                              ? Itemclass(list: snapshot2.data)
-                              : Container();
-                        })
-                    : Container();
-              }),
-
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              ],
             ),
-          ),
-          FutureBuilder<int>(
-              future: databaseHelper2.NumberofDeviceByUser(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
-
-                return snapshot.hasData
-                    ? Container(
-                        height: 80,
-                        child: Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          elevation: 4,
-                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.green,
-                                  child: Icon(
-                                    Icons.device_hub,
-                                    color: Colors.white,
-                                  ),
-                                  radius: 25,
-                                ),
-                              ),
-                              Text(
-                                "Total number of DEVICES: " +
-                                    snapshot.data.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : Container();
-              }),
-          FutureBuilder<int>(
-              future: databaseHelper2.NumberofLocationByUser(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
-
-                return snapshot.hasData
-                    ? Container(
-                        height: 80,
-                        child: Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          elevation: 4,
-                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.red,
-                                  child: Icon(
-                                    Icons.place,
-                                    color: Colors.white,
-                                  ),
-                                  radius: 25,
-                                ),
-                              ),
-                              Text(
-                                "Total number of LOCATIONS: " +
-                                    snapshot.data.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : Container();
-              }),
-          Container(
-            height: 80,
-            child: Card(
-              semanticContainer: true,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              elevation: 4,
-              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.amber,
-                      child: Icon(
-                        Icons.schedule,
-                        color: Colors.white,
-                      ),
-                      radius: 25,
-                    ),
-                  ),
-                  Text(
-                    "Total number of SCHEDULES: 0",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
+            Text('T max'),
+            TextFormField(
+              validator: (value) {
+                if (value.isEmpty) {
+                  return "Site name cannot be empty !";
+                } else
+                  return null;
+              },
+              controller: sitenameController,
+              decoration: InputDecoration(
+                  icon: Icon(Icons.place, color: Colors.grey[400]),
+                  border: InputBorder.none,
+                  hintText: "80",
+                  hintStyle: TextStyle(color: Colors.grey[400])),
             ),
-          ),
-          
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: Colors.white
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
-                  child: Container(
-                  height: 60,
-                    width: 350,
-                    child: FlatButton(
-                      child: Text("SCHEDULE",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.blue[600],
-                      ),),
-                      onPressed: (){
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    schedulePage()));
-                      },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          side: BorderSide(color: Colors.blue[300],width: 1.5)
-
-                    ),
-                      color: Colors.blue[100],
-                      splashColor: Colors.blue[300],
-                      textColor: Colors.black,
-                    ),
-
-              ),
-                ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                    child: Text(
-                      "You can controle when to irrigate your land based on our AI or you can Schedule it by yourself.",
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w400
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            Text('T min'),
+            TextFormField(
+              validator: (value) {
+                if (value.isEmpty) {
+                  return "Site name cannot be empty !";
+                } else
+                  return null;
+              },
+              controller: descriptionController,
+              decoration: InputDecoration(
+                  icon: Icon(Icons.place, color: Colors.grey[400]),
+                  border: InputBorder.none,
+                  hintText: "20",
+                  hintStyle: TextStyle(color: Colors.grey[400])),
             ),
+            Text('Alerted by email'),
+
+          Form(
+            key: _formKey,
+            child: MultiSelectFormField(
+              context: context,
+              buttonText: 'FLAVOURS',
+              itemList: ['Chocolate', 'Caramel', 'Vanilla', 'Peanut Butter'],
+              questionText: 'Select Your Flavours',
+              validator: (flavours) =>
+              flavours.length == 0 ? 'Please select at least one flavor!' : null,
+              onSaved: (flavours) {
+                print(flavours);
+                // Logic to save selected flavours in the database
+              },
+            ),
+            onChanged: () {
+              if (_formKey.currentState.validate()) {
+                // Invokes the OnSaved Method
+                _formKey.currentState.save();
+              }
+            },
           ),
 
-          FutureBuilder<List<Location>>(
+            FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.AllLocationByUser(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("mochkla lenaa *");
-                }
-                return snapshot.hasData
-                    ? ItemListchart(list: snapshot.data[0].sensorIds)
-                    : Container();
-              }),
-
-          FutureBuilder(
-//                future: databaseHelper.getData(),
-              future: databaseHelper2.AllElectoByUser(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("mochkla lenaa electro *");
-                }
-                return snapshot.hasData
-                    ? ItemListElectro(list: snapshot.data)
-                    : Container();
-              }),
-        ],
-      ),
+                future: databaseHelper2.AllLocationByUser(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("mochkla lenaa *");
+                  }
+                  return snapshot.hasData
+                      ? ItemListchart(list: snapshot.data[0].sensorIds)
+                      : Container();
+                }),
+          ],
         ),
+      ),
     );
   }
 
@@ -398,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
             int date = (list[i]["dt"]);
             int zero = 100;
             DateTime finalday = DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(("$date" + "$zero")))
+                int.parse(("$date" + "$zero")))
                 .toUtc();
             String dateFormat = DateFormat('EEEE').format(finalday);
             var item = list[i];
@@ -802,7 +684,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               list[i]["temp"]["min"].round().toString() + "°C",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
                             ),
                           ),
                           Padding(
@@ -828,7 +710,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -836,7 +718,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               list[i]["humidity"].toString() + "%",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -848,7 +730,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -856,7 +738,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               list[i]["pop"].toString() + "mm",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -868,7 +750,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -876,7 +758,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               list[i]["uvi"].toString(),
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -888,231 +770,6 @@ class _MyHomePageState extends State<MyHomePage> {
             }
           }),
     );
-  }
-}
-
-class ItemListElectro extends StatefulWidget {
-  List list;
-  ItemListElectro({this.list});
-
-  @override
-  _ItemListElectroState createState() => _ItemListElectroState();
-}
-
-class _ItemListElectroState extends State<ItemListElectro> {
-  String id;
-  String status;
-  String active = "true";
-  final RoundedLoadingButtonController _btnController =
-      new RoundedLoadingButtonController();
-
-  ScrollController _controller = new ScrollController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.white),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-              child: Text(
-                "Relays:",
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            ListView.builder(
-                itemCount: widget.list == null ? 0 : widget.list.length,
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (context, i) {
-                  id = widget.list[i]["_id"].toString();
-                  if (widget.list[i]["status"].toString() == "true")
-                  return Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(10, 0, 140, 0),
-                                child: Text(
-                                  //list[i].toString() ?? '',
-                                  widget.list[i]["name"].toString(),
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(right: 94),
-                                child: Text(
-                                  "ON",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green[300]),
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.link_off),
-                                    iconSize: 30,
-                                    color: Colors.red,
-                                    onPressed: () {
-                                      print("hihih" + status);
-                                      status = widget.list[i]["status"].toString();
-                                      _doSomething();
-
-                                      setState(() {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    MyHomePage()));
-                                      });
-                                    },
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                                    child: Text(
-                                      "TURN OFF",
-                                      style:
-                                      TextStyle(fontSize: 12, color: Colors.grey),
-                                    ),
-                                  ),
-
-                                ],
-                              ),
-                            ],
-                          );
-                  else
-                    return Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(25, 0, 120, 0),
-                                  child: Text(
-                                    //list[i].toString() ?? '',
-                                    widget.list[i]["name"].toString(),
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(right: 110),
-                                  child: Text(
-                                    "OFF",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red[300]),
-                                  ),
-                                ),
-                                Column(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.flash_on),
-                                      color: Colors.green,
-                                      iconSize: 30,
-                                      onPressed: () {
-                                        print("hihih" + status);
-                                        status = widget.list[i]["status"].toString();
-                                        _doSomething();
-
-                                        setState(() {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SideBarLayout()));
-                                        });
-                                      },
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                                      child: Text(
-                                        "TURN ON",
-                                        style:
-                                        TextStyle(fontSize: 12, color: Colors.grey),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                }),
-          ],
-        ),
-      ),
-    );
-  }
-/*
-isactive =false;
-
-  isactive=!isactive;
-*/
-
-  void _doSomething() async {
-    Timer(Duration(seconds: 1), () {
-      print("button pressed ");
-      print("stauts" + status);
-      print("id" + id);
-      if (status == "true") {
-        status = "false";
-        On(id);
-        _btnController.stop();
-      } else if (status == "false") {
-        status = "true";
-        print("offfff");
-        Off(id);
-        _btnController.stop();
-      }
-      _btnController.stop();
-    });
-  }
-
-  On(String id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'token';
-    final value = prefs.get(key) ?? 0;
-    Map data = {'status': 01, 'SensorId': "$id"};
-    var jsonResponse = null;
-    var response = await http.post(
-        DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
-        headers: {"Content-Type": "application/json"},
-//        "http://192.168.56.81:3000/api/users/login",
-        body: json.encode(data));
-    print('statusCode  :' + response.statusCode.toString());
-    if (response.statusCode == 200) {
-      jsonResponse = json.decode(response.body);
-    }
-    print(response.body);
-  }
-
-  Off(String id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'token';
-    final value = prefs.get(key) ?? 0;
-    Map data = {'status': 00, 'SensorId': "$id"};
-    var jsonResponse = null;
-    var response = await http.post(
-        DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
-        headers: {"Content-Type": "application/json"},
-//        "http://192.168.56.81:3000/api/users/login",
-        body: json.encode(data));
-    print('statusCode  :' + response.statusCode.toString());
-    if (response.statusCode == 200) {
-      jsonResponse = json.decode(response.body);
-    }
-    print(response.body);
   }
 }
 
@@ -1256,11 +913,11 @@ class _ItemListchartState extends State<ItemListchart> {
                                           child: Card(
                                             semanticContainer: true,
                                             clipBehavior:
-                                                Clip.antiAliasWithSaveLayer,
+                                            Clip.antiAliasWithSaveLayer,
                                             color: Colors.white,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(20.0),
+                                              BorderRadius.circular(20.0),
                                             ),
                                             elevation: 0,
                                             child: Row(
@@ -1269,7 +926,7 @@ class _ItemListchartState extends State<ItemListchart> {
                                                   height: 60,
                                                   child: CircleAvatar(
                                                     backgroundColor:
-                                                        Colors.white,
+                                                    Colors.white,
                                                     child: Icon(
                                                       Icons
                                                           .battery_charging_full,
@@ -1281,19 +938,19 @@ class _ItemListchartState extends State<ItemListchart> {
                                                 ),
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          0, 0, 20, 0),
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 0, 20, 0),
                                                   child: Text(
                                                     snapshot2.data[snapshot2
-                                                                    .data
-                                                                    .length -
-                                                                1]["batterie"]
-                                                            .round()
-                                                            .toString() +
+                                                        .data
+                                                        .length -
+                                                        1]["batterie"]
+                                                        .round()
+                                                        .toString() +
                                                         "%",
                                                     style: TextStyle(
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       fontSize: 18,
                                                     ),
                                                   ),
@@ -1302,7 +959,7 @@ class _ItemListchartState extends State<ItemListchart> {
                                                   height: 60,
                                                   child: CircleAvatar(
                                                     backgroundColor:
-                                                        Colors.white,
+                                                    Colors.white,
                                                     child: Icon(
                                                       Icons
                                                           .signal_cellular_4_bar,
@@ -1563,13 +1220,13 @@ Widget chart(List data, String type) {
       );
     }
     else
-    print(' data is not empty');
+      print(' data is not empty');
     data = data.sublist(data.length - 10, data.length);
     print(data.length);
 
     data.forEach((element) {
       var hour =
-          DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+      DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
       var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
           .minute
           .toString();
@@ -1677,6 +1334,175 @@ Widget chart(List data, String type) {
             },
           ),
         ),
+      ],
+    );
+  }
+}
+
+class MultiSelectFormField extends FormField<List<String>> {
+  /// Holds the items to display on the dialog.
+  final List<String> itemList;
+
+  /// Enter text to show on the button.
+  final String buttonText;
+
+  /// Enter text to show question on the dialog
+  final String questionText;
+
+  // Constructor
+  MultiSelectFormField({
+    this.buttonText,
+    this.questionText,
+    this.itemList,
+    BuildContext context,
+    FormFieldSetter<List<String>> onSaved,
+    FormFieldValidator<List<String>> validator,
+    List<String> initialValue,
+  }) : super(
+    onSaved: onSaved,
+    validator: validator,
+    initialValue: initialValue ?? [], // Avoid Null
+    autovalidate: true,
+    builder: (FormFieldState<List<String>> state) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              InkWell(
+                  child: Card(
+                      elevation: 3,
+                      child: ClipPath(
+                          child: Container(
+                            height: 50,
+                            width: 200,
+                            color: Colors.blue,
+                            child: Center(
+                              //If value is null or no option is selected
+                              child: (state.value == null ||
+                                  state.value.length <= 0)
+
+                              // Show the buttonText as it is
+                                  ? Text(
+                                buttonText,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              )
+
+                              // Else show number of selected options
+                                  : Text(
+                                state.value.length == 1
+                                // SINGLE FLAVOR SELECTED
+                                    ? '${state.value.length.toString()} '
+                                    ' ${buttonText.substring(0, buttonText.length - 1)} SELECTED '
+                                // MULTIPLE FLAVOR SELECTED
+                                    : '${state.value.length.toString()} '
+                                    ' $buttonText SELECTED',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          clipper: ShapeBorderClipper(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(3))))),
+                  onTap: () async => state.didChange(await showDialog(
+                      context: context,
+                      builder: (_) => MultiSelectDialog(
+                        question: Text(questionText),
+                        answers: itemList,
+                      )) ??
+                      []))
+            ],
+          ),
+          // If validation fails, display an error
+          state.hasError
+              ? Center(
+            child: Text(
+              state.errorText,
+              style: TextStyle(color: Colors.red),
+            ),
+          )
+              : Container() //Else show an empty container
+        ],
+      );
+    },
+  );
+}
+
+class MultiSelectDialog extends StatefulWidget {
+  /// List to display the answer.
+  final List<String> answers;
+
+  /// Widget to display the question.
+  final Widget question;
+
+  /// Map that holds selected option with a boolean value
+  /// i.e. { 'a' : false}.
+  static Map<String, bool> mappedItem;
+
+  MultiSelectDialog({this.answers, this.question});
+
+  @override
+  _MultiSelectDialogState createState() => _MultiSelectDialogState();
+}
+
+class _MultiSelectDialogState extends State<MultiSelectDialog> {
+  /// List to hold the selected answer
+  /// i.e. ['a'] or ['a','b'] or ['a','b','c'] etc.
+  final List<String> selectedItems = [];
+
+  /// Function that converts the list answer to a map.
+  Map<String, bool> initMap() {
+    return MultiSelectDialog.mappedItem = Map.fromIterable(widget.answers,
+        key: (k) => k.toString(),
+        value: (v) {
+          if (v != true && v != false)
+            return false;
+          else
+            return v as bool;
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (MultiSelectDialog.mappedItem == null) {
+      initMap();
+    }
+    return SimpleDialog(
+      title: widget.question,
+      children: [
+        ...MultiSelectDialog.mappedItem.keys.map((String key) {
+          return StatefulBuilder(
+            builder: (_, StateSetter setState) => CheckboxListTile(
+                title: Text(key), // Displays the option
+                value: MultiSelectDialog.mappedItem[key], // Displays checked or unchecked value
+                controlAffinity: ListTileControlAffinity.platform,
+                onChanged: (value) => setState(() => MultiSelectDialog.mappedItem[key] = value)),
+          );
+        }).toList(),
+        Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+                child: Text('Submit'),
+                onPressed: () {
+                  // Clear the list
+                  selectedItems.clear();
+
+                  // Traverse each map entry
+                  MultiSelectDialog.mappedItem.forEach((key, value) {
+                    if (value == true) {
+                      selectedItems.add(key);
+                    }
+                  });
+
+                  // Close the Dialog & return selectedItems
+                  Navigator.pop(context, selectedItems);
+                }))
       ],
     );
   }
