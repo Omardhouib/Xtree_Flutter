@@ -36,6 +36,7 @@ class Sensor {
   String name;
   double uv;
 
+
   factory Sensor.fromJson(Map<String, dynamic> json) => Sensor(
     sensorCoordinates: List<double>.from(json["SensorCoordinates"].map((x) => x.toDouble())),
     createdDate: DateTime.parse(json["Created_date"]),
@@ -63,6 +64,11 @@ class Sensor {
     "name": name,
     "uv": uv,
   };
+
+  @override
+  String toString() {
+    return 'Sensor{sensorCoordinates: $sensorCoordinates, createdDate: $createdDate, status: $status, id: $id, rules: $rules, sensorIdentifier: $sensorIdentifier, sensorType: $sensorType, v: $v, description: $description, name: $name, uv: $uv}';
+  }
 }
 
 class Rule {

@@ -38,7 +38,7 @@ class schedulePageState extends State<schedulePage> {
   String _selectedLocation;
   final TextEditingController sitenameController = new TextEditingController();
   final TextEditingController descriptionController =
-      new TextEditingController();
+  new TextEditingController();
   Future<void> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
@@ -50,13 +50,8 @@ class schedulePageState extends State<schedulePage> {
         selectedDate = picked;
       });
   }
-  List<String> Elect = [];
   @override
   void initState() {
-    widget.Electro.forEach((element) {
-      //print("......"+element.name.toString());
-      Elect.add(element.name);
-    });
     super.initState();
   }
 
@@ -141,7 +136,7 @@ class schedulePageState extends State<schedulePage> {
             Text('mode'),
             DropdownButton(
               hint:
-                  Text('Please choose the mode'), // Not necessary for Option 1
+              Text('Please choose the mode'), // Not necessary for Option 1
               value: _selectedLocation,
               onChanged: (newValue) {
                 setState(() {
@@ -208,13 +203,13 @@ class schedulePageState extends State<schedulePage> {
               child: MultiSelectFormField(
                 context: context,
                 buttonText: 'Relays',
-                itemList: Elect,
+                itemList: widget.Electro,
                 questionText: 'Select Your Relays',
                 validator: (flavours) => flavours.length == 0
                     ? 'Please select at least one Relay!'
                     : null,
                 onSaved: (flavours) {
-                  print(flavours);
+                  print(widget.Electro);
                   // Logic to save selected flavours in the database
                 },
               ),
@@ -249,7 +244,7 @@ class schedulePageState extends State<schedulePage> {
             int date = (list[i]["dt"]);
             int zero = 100;
             DateTime finalday = DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(("$date" + "$zero")))
+                int.parse(("$date" + "$zero")))
                 .toUtc();
             String dateFormat = DateFormat('EEEE').format(finalday);
             var item = list[i];
@@ -371,7 +366,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -393,7 +388,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -415,7 +410,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -552,7 +547,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -574,7 +569,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -596,7 +591,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -733,7 +728,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -755,7 +750,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -777,7 +772,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -835,188 +830,188 @@ class _ItemListchartState extends State<ItemListchart> {
           if (snapshot.hasData) {
             //  print("helloo" + snapshot.data.toString());
             String type = snapshot.data.sensorType;
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.white),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 90,
-                        child: Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          elevation: 0,
-                          child: Row(
-                            children: [
-                              Padding(
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: Colors.white),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 90,
+                      child: Card(
+                        semanticContainer: true,
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        elevation: 0,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                  10, 0, 0, 0),
+                              child: Padding(
                                 padding: const EdgeInsets.fromLTRB(
-                                    10, 0, 0, 0),
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                      0, 0, 10, 0),
-                                  child: CircleAvatar(
-                                    radius: 25,
-                                    backgroundColor: Colors.lightBlue,
-                                    child: IconButton(
-                                      icon: Icon(Icons.history),
-                                      color: Colors.white,
-                                      iconSize: 30,
-                                      onPressed: () {
-                                        showDialog(
-                                            context: context,
-                                            child: ChartHistory(
-                                              onValueChange:
-                                              _onValueChange,
-                                              initialValue: _selectedId,
-                                              identifier:
-                                              snapshot.data.id,
-                                              type: snapshot
-                                                  .data.sensorType,
-                                              name: snapshot.data.name,
-                                            ));
-                                      },
-                                    ),
+                                    0, 0, 10, 0),
+                                child: CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor: Colors.lightBlue,
+                                  child: IconButton(
+                                    icon: Icon(Icons.history),
+                                    color: Colors.white,
+                                    iconSize: 30,
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          child: ChartHistory(
+                                            onValueChange:
+                                            _onValueChange,
+                                            initialValue: _selectedId,
+                                            identifier:
+                                            snapshot.data.id,
+                                            type: snapshot
+                                                .data.sensorType,
+                                            name: snapshot.data.name,
+                                          ));
+                                    },
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                    0, 22, 0, 0),
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      snapshot.data.name.toString(),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    Text(
-                                      snapshot.data.description
-                                          .toString(),
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      FutureBuilder(
-                          future: databaseHelper2
-                              .getdataDeviceByID(snapshot.data.id),
-                          builder: (context, snapshot2) {
-                            if (snapshot2.hasError) {
-                              print(snapshot2.error);
-                              Text(
-                                "",
-                                style: TextStyle(
-                                  backgroundColor: Colors.transparent,
-                                ),
-                              );
-                            }
-                            if (snapshot2.hasData) {
-                              return Column(
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                  0, 22, 0, 0),
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
                                 children: [
-                                  chart(snapshot2.data, type),
-                                  Container(
-                                    height: 90,
-                                    child: Card(
-                                      semanticContainer: true,
-                                      clipBehavior:
-                                      Clip.antiAliasWithSaveLayer,
-                                      color: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(20.0),
-                                      ),
-                                      elevation: 0,
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            height: 60,
-                                            child: CircleAvatar(
-                                              backgroundColor:
-                                              Colors.white,
-                                              child: Icon(
-                                                Icons
-                                                    .battery_charging_full,
-                                                color: Colors.amberAccent,
-                                                size: 30,
-                                              ),
-                                              radius: 28,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding:
-                                            const EdgeInsets.fromLTRB(
-                                                0, 0, 20, 0),
-                                            child: Text(
-                                              snapshot2.data[snapshot2
-                                                  .data
-                                                  .length -
-                                                  1]["batterie"]
-                                                  .round()
-                                                  .toString() +
-                                                  "%",
-                                              style: TextStyle(
-                                                fontWeight:
-                                                FontWeight.bold,
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 60,
-                                            child: CircleAvatar(
-                                              backgroundColor:
-                                              Colors.white,
-                                              child: Icon(
-                                                Icons
-                                                    .signal_cellular_4_bar,
-                                                color: Colors.redAccent,
-                                                size: 30,
-                                              ),
-                                              radius: 28,
-                                            ),
-                                          ),
-                                          Text(
-                                            "50%",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                  Text(
+                                    snapshot.data.name.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Text(
+                                    snapshot.data.description
+                                        .toString(),
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ],
-                              );
-                            } else {
-                              return Container();
-                            }
-                          }),
-                    ],
-                  ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    FutureBuilder(
+                        future: databaseHelper2
+                            .getdataDeviceByID(snapshot.data.id),
+                        builder: (context, snapshot2) {
+                          if (snapshot2.hasError) {
+                            print(snapshot2.error);
+                            Text(
+                              "",
+                              style: TextStyle(
+                                backgroundColor: Colors.transparent,
+                              ),
+                            );
+                          }
+                          if (snapshot2.hasData) {
+                            return Column(
+                              children: [
+                                chart(snapshot2.data, type),
+                                Container(
+                                  height: 90,
+                                  child: Card(
+                                    semanticContainer: true,
+                                    clipBehavior:
+                                    Clip.antiAliasWithSaveLayer,
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(20.0),
+                                    ),
+                                    elevation: 0,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          height: 60,
+                                          child: CircleAvatar(
+                                            backgroundColor:
+                                            Colors.white,
+                                            child: Icon(
+                                              Icons
+                                                  .battery_charging_full,
+                                              color: Colors.amberAccent,
+                                              size: 30,
+                                            ),
+                                            radius: 28,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                          const EdgeInsets.fromLTRB(
+                                              0, 0, 20, 0),
+                                          child: Text(
+                                            snapshot2.data[snapshot2
+                                                .data
+                                                .length -
+                                                1]["batterie"]
+                                                .round()
+                                                .toString() +
+                                                "%",
+                                            style: TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 60,
+                                          child: CircleAvatar(
+                                            backgroundColor:
+                                            Colors.white,
+                                            child: Icon(
+                                              Icons
+                                                  .signal_cellular_4_bar,
+                                              color: Colors.redAccent,
+                                              size: 30,
+                                            ),
+                                            radius: 28,
+                                          ),
+                                        ),
+                                        Text(
+                                          "50%",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                  ],
                 ),
-              );
-              // print("helloo"+snapshot.data.id);
+              ),
+            );
+            // print("helloo"+snapshot.data.id);
 
           }
           return Container();
@@ -1240,7 +1235,7 @@ Widget chart(List data, String type) {
 
     data.forEach((element) {
       var hour =
-          DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+      DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
       var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
           .minute
           .toString();
@@ -1351,7 +1346,7 @@ Widget chart(List data, String type) {
 
 class MultiSelectFormField extends FormField<List<String>> {
   /// Holds the items to display on the dialog.
-  final List<String> itemList;
+  final List<Sensor> itemList;
 
   /// Enter text to show on the button.
   final String buttonText;
@@ -1369,91 +1364,91 @@ class MultiSelectFormField extends FormField<List<String>> {
     FormFieldValidator<List<String>> validator,
     List<String> initialValue,
   }) : super(
-          onSaved: onSaved,
-          validator: validator,
-          initialValue: initialValue ?? [], // Avoid Null
-          autovalidate: true,
-          builder: (FormFieldState<List<String>> state) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    InkWell(
-                        child: Card(
-                            elevation: 3,
-                            child: ClipPath(
-                                child: Container(
-                                  height: 50,
-                                  width: 200,
-                                  color: Colors.blue,
-                                  child: Center(
-                                    //If value is null or no option is selected
-                                    child: (state.value == null ||
-                                            state.value.length <= 0)
+    onSaved: onSaved,
+    validator: validator,
+    initialValue: initialValue ?? [], // Avoid Null
+    autovalidate: true,
+    builder: (FormFieldState<List<String>> state) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              InkWell(
+                  child: Card(
+                      elevation: 3,
+                      child: ClipPath(
+                          child: Container(
+                            height: 50,
+                            width: 200,
+                            color: Colors.blue,
+                            child: Center(
+                              //If value is null or no option is selected
+                              child: (state.value == null ||
+                                  state.value.length <= 0)
 
-                                        // Show the buttonText as it is
-                                        ? Text(
-                                            buttonText,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          )
+                              // Show the buttonText as it is
+                                  ? Text(
+                                buttonText,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              )
 
-                                        // Else show number of selected options
-                                        : Text(
-                                            state.value.length == 1
-                                                // SINGLE FLAVOR SELECTED
-                                                ? '${state.value.length.toString()} '
-                                                    ' ${buttonText.substring(0, buttonText.length - 1)} SELECTED '
-                                                // MULTIPLE FLAVOR SELECTED
-                                                : '${state.value.length.toString()} '
-                                                    ' $buttonText SELECTED',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                  ),
-                                ),
-                                clipper: ShapeBorderClipper(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(3))))),
-                        onTap: () async => state.didChange(await showDialog(
-                                context: context,
-                                builder: (_) => MultiSelectDialog(
-                                      question: Text(questionText),
-                                      answers: itemList,
-                                    )) ??
-                            []))
-                  ],
-                ),
-                // If validation fails, display an error
-                state.hasError
-                    ? Center(
-                        child: Text(
-                          state.errorText,
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      )
-                    : Container() //Else show an empty container
-              ],
-            );
-          },
-        );
+                              // Else show number of selected options
+                                  : Text(
+                                state.value.length == 1
+                                // SINGLE FLAVOR SELECTED
+                                    ? '${state.value.length.toString()} '
+                                    ' ${buttonText.substring(0, buttonText.length - 1)} SELECTED '
+                                // MULTIPLE FLAVOR SELECTED
+                                    : '${state.value.length.toString()} '
+                                    ' $buttonText SELECTED',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          clipper: ShapeBorderClipper(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(3))))),
+                  onTap: () async => state.didChange(await showDialog(
+                      context: context,
+                      builder: (_) => MultiSelectDialog(
+                        question: Text(questionText),
+                        answers: itemList,
+                      )) ??
+                      []))
+            ],
+          ),
+          // If validation fails, display an error
+          state.hasError
+              ? Center(
+            child: Text(
+              state.errorText,
+              style: TextStyle(color: Colors.red),
+            ),
+          )
+              : Container() //Else show an empty container
+        ],
+      );
+    },
+  );
 }
 
 class MultiSelectDialog extends StatefulWidget {
   /// List to display the answer.
-  final List<String> answers;
+  final List<Sensor> answers;
 
   /// Widget to display the question.
   final Widget question;
 
   /// Map that holds selected option with a boolean value
   /// i.e. { 'a' : false}.
-  static Map<String, bool> mappedItem;
+  static Map<Sensor, bool> mappedItem;
 
   MultiSelectDialog({this.answers, this.question});
 
@@ -1464,12 +1459,12 @@ class MultiSelectDialog extends StatefulWidget {
 class _MultiSelectDialogState extends State<MultiSelectDialog> {
   /// List to hold the selected answer
   /// i.e. ['a'] or ['a','b'] or ['a','b','c'] etc.
-  final List<String> selectedItems = [];
+  final List<Sensor> selectedItems = [];
 
   /// Function that converts the list answer to a map.
-  Map<String, bool> initMap() {
+  Map<Sensor, bool> initMap() {
     return MultiSelectDialog.mappedItem = Map.fromIterable(widget.answers,
-        key: (k) => k.toString(),
+        key: (k) => k,
         value: (v) {
           if (v != true && v != false)
             return false;
@@ -1486,10 +1481,10 @@ class _MultiSelectDialogState extends State<MultiSelectDialog> {
     return SimpleDialog(
       title: widget.question,
       children: [
-        ...MultiSelectDialog.mappedItem.keys.map((String key) {
+        ...MultiSelectDialog.mappedItem.keys.map((Sensor key) {
           return StatefulBuilder(
             builder: (_, StateSetter setState) => CheckboxListTile(
-                title: Text(key), // Displays the option
+                title: Text(key.name), // Displays the option
                 value: MultiSelectDialog
                     .mappedItem[key], // Displays checked or unchecked value
                 controlAffinity: ListTileControlAffinity.platform,
@@ -1513,7 +1508,7 @@ class _MultiSelectDialogState extends State<MultiSelectDialog> {
                   });
 
                   // Close the Dialog & return selectedItems
-                  Navigator.pop(context, selectedItems);
+                  Navigator.pop(context);
                   print("......."+selectedItems.toString());
                 }))
       ],

@@ -146,17 +146,30 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ]),
-            FutureBuilder(
-                        future: databaseHelper2.Getweather(id),
-                        builder: (context, snapshot2) {
-                          if (snapshot2.hasError) {
-                            print(snapshot2.error);
-                            Container();
-                          }
-                          return snapshot2.hasData
-                              ? Itemclass(list: snapshot2.data)
-                              : Container();
-                        }),
+          FutureBuilder<LocationHome>(
+              future: getHomedetails,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  Container();
+                }
+                if (snapshot.hasData) {
+                  return FutureBuilder(
+                      future: databaseHelper2.Getweather(snapshot.data.locations.id),
+                      builder: (context, snapshot2) {
+                        if (snapshot2.hasError) {
+                          print(snapshot2.error);
+                          Container();
+                        }
+                        return snapshot2.hasData
+                            ? Itemclass(list: snapshot2.data)
+                            : Container();
+                      });
+                } else {
+                  return Container();
+                }
+              }),
+
 
           Container(
             child: Padding(
