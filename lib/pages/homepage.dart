@@ -13,6 +13,7 @@ import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/classes/ChartHistory.dart';
 import 'package:sidebar_animation/classes/schedulePage.dart';
+import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import '../bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/constants.dart';
@@ -29,12 +30,22 @@ class MyHomePage extends StatefulWidget with NavigationStates {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String id;
+  List<String> sens;
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   final RoundedLoadingButtonController _btnController =
       new RoundedLoadingButtonController();
   List<dynamic> sensors = [];
+  Future<LocationHome> getHomedetails;
+  Future<int> getSensNum;
+  Future<int> getLocNum;
+
   @override
   void initState() {
+    getHomedetails = databaseHelper2.getHomedetails();
+    getSensNum = databaseHelper2.NumberofDeviceByUser();
+    getLocNum = databaseHelper2.NumberofLocationByUser();
+
     super.initState();
   }
   Future<bool> _onWillPop() async {
@@ -81,16 +92,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            FutureBuilder<List<Location>>(
+                            FutureBuilder<LocationHome>(
 //                future: databaseHelper.getData(),
-                                future: databaseHelper2.AllLocationByUser(),
+                                future: getHomedetails,
                                 builder: (context, snapshot) {
                                   if (snapshot.hasError) {
                                     print(snapshot.error);
                                     print("mochkla lenaa last *");
                                   }
                                   if (snapshot.hasData) {
-                                    Location location = snapshot.data[0];
+                                    Location location = snapshot.data.locations;
+                                    id = snapshot.data.locations.id;
                                     return Text(
                                       location.siteName,
                                       textAlign: TextAlign.center,
@@ -134,17 +146,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ]),
-          FutureBuilder(
-              future: databaseHelper2.Lastlocation(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
-
-                return snapshot.hasData
-                    ? FutureBuilder(
-                        future: databaseHelper2.Getweather(snapshot.data.id),
+            FutureBuilder(
+                        future: databaseHelper2.Getweather(id),
                         builder: (context, snapshot2) {
                           if (snapshot2.hasError) {
                             print(snapshot2.error);
@@ -153,9 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           return snapshot2.hasData
                               ? Itemclass(list: snapshot2.data)
                               : Container();
-                        })
-                    : Container();
-              }),
+                        }),
 
           Container(
             child: Padding(
@@ -163,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           FutureBuilder<int>(
-              future: databaseHelper2.NumberofDeviceByUser(),
+              future: getSensNum,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
@@ -211,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     : Container();
               }),
           FutureBuilder<int>(
-              future: databaseHelper2.NumberofLocationByUser(),
+              future: getLocNum,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
@@ -293,87 +294,99 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: Colors.white
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
+          FutureBuilder<LocationHome>(
+              future: getHomedetails,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: Container(
-                  height: 60,
-                    width: 350,
-                    child: FlatButton(
-                      child: Text("SCHEDULE",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.blue[600],
-                      ),),
-                      onPressed: (){
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    schedulePage()));
-                      },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          side: BorderSide(color: Colors.blue[300],width: 1.5)
-
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: Colors.white
                     ),
-                      color: Colors.blue[100],
-                      splashColor: Colors.blue[300],
-                      textColor: Colors.black,
-                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
+                          child: Container(
+                            height: 60,
+                            width: 350,
+                            child: FlatButton(
+                              child: Text("SCHEDULE",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.blue[600],
+                                ),),
+                              onPressed: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            schedulePage(
+                                              sens: snapshot.data.sol,
+                                              location: snapshot.data.locations,
+                                              Electro: snapshot.data.electro
+                                            )));
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  side: BorderSide(color: Colors.blue[300],width: 1.5)
 
-              ),
-                ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                    child: Text(
-                      "You can controle when to irrigate your land based on our AI or you can Schedule it by yourself.",
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w400
-                      ),
+                              ),
+                              color: Colors.blue[100],
+                              splashColor: Colors.blue[300],
+                              textColor: Colors.black,
+                            ),
+
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                          child: Text(
+                            "You can controle when to irrigate your land based on our AI or you can Schedule it by yourself.",
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w400
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
+                );
+                } else {
+                  return Container();
+                }
+              }),
 
-          FutureBuilder<List<Location>>(
+
+          FutureBuilder<LocationHome>(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.AllLocationByUser(),
+              future: getHomedetails,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
                   print("mochkla lenaa *");
                 }
-                return snapshot.hasData
-                    ? ItemListchart(list: snapshot.data[0].sensorIds)
-                    : Container();
+                if (snapshot.hasData) {
+                  return ItemListchart(list: snapshot.data.locations.sensorIds);
+                } else {
+                  return Container();
+                }
               }),
 
-          FutureBuilder(
+          FutureBuilder<LocationHome>(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.AllElectoByUser(),
+              future: databaseHelper2.getHomedetails(),
               builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("mochkla lenaa electro *");
+                if (snapshot.hasData) {
+                  return ItemListElectro(list: snapshot.data.electro);
+                } else {
+                  return Container();
                 }
-                return snapshot.hasData
-                    ? ItemListElectro(list: snapshot.data)
-                    : Container();
               }),
         ],
       ),
@@ -386,7 +399,7 @@ class _MyHomePageState extends State<MyHomePage> {
     DateTime date = DateTime.now();
     String dateFormat = DateFormat('EEEE').format(date);
     //  final hour formattedDate = DateFormat.j().format(now);
-    dynamic currentTime = DateFormat.j().format(DateTime.now());
+    //dynamic currentTime = DateFormat.j().format(DateTime.now());
     return SizedBox(
       height: 290.0,
       child: ListView.builder(
@@ -903,6 +916,8 @@ class _ItemListElectroState extends State<ItemListElectro> {
   String id;
   String status;
   String active = "true";
+  bool  pressGeoON = false;
+  bool cmbscritta = false;
   final RoundedLoadingButtonController _btnController =
       new RoundedLoadingButtonController();
 
@@ -934,15 +949,16 @@ class _ItemListElectroState extends State<ItemListElectro> {
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, i) {
-                  id = widget.list[i]["_id"].toString();
-                  if (widget.list[i]["status"].toString() == "true")
+                  id = widget.list[i].id.toString();
+                  print("...."+cmbscritta.toString());
+                  if (widget.list[i].status != cmbscritta)
                   return Row(
                             children: [
                               Padding(
                                 padding: EdgeInsets.fromLTRB(10, 0, 140, 0),
                                 child: Text(
                                   //list[i].toString() ?? '',
-                                  widget.list[i]["name"].toString(),
+                                  widget.list[i].name.toString(),
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
@@ -966,17 +982,8 @@ class _ItemListElectroState extends State<ItemListElectro> {
                                     iconSize: 30,
                                     color: Colors.red,
                                     onPressed: () {
-                                      print("hihih" + status);
-                                      status = widget.list[i]["status"].toString();
+                                      status = widget.list[i].status.toString();
                                       _doSomething();
-
-                                      setState(() {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    MyHomePage()));
-                                      });
                                     },
                                   ),
                                   Padding(
@@ -992,62 +999,55 @@ class _ItemListElectroState extends State<ItemListElectro> {
                               ),
                             ],
                           );
-                  else
+                  else if (widget.list[i].status == cmbscritta){
                     return Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(25, 0, 120, 0),
-                                  child: Text(
-                                    //list[i].toString() ?? '',
-                                    widget.list[i]["name"].toString(),
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(right: 110),
-                                  child: Text(
-                                    "OFF",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red[300]),
-                                  ),
-                                ),
-                                Column(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.flash_on),
-                                      color: Colors.green,
-                                      iconSize: 30,
-                                      onPressed: () {
-                                        print("hihih" + status);
-                                        status = widget.list[i]["status"].toString();
-                                        _doSomething();
-
-                                        setState(() {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SideBarLayout()));
-                                        });
-                                      },
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                                      child: Text(
-                                        "TURN ON",
-                                        style:
-                                        TextStyle(fontSize: 12, color: Colors.grey),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(25, 0, 120, 0),
+                          child: Text(
+                            //list[i].toString() ?? '',
+                            widget.list[i].name.toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 94),
+                          child: Text(
+                            "OFF",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red[300]),
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.flash_on),
+                              color: Colors.green,
+                              iconSize: 30,
+                              onPressed: () {
+                                status = widget.list[i].status.toString();
+                                _doSomething();
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              child: Text(
+                                "TURN ON",
+                                style:
+                                TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }
+                  return Container();
                 }),
           ],
         ),
@@ -1068,14 +1068,22 @@ isactive =false;
       if (status == "true") {
         status = "false";
         On(id);
-        _btnController.stop();
+        setState(() {
+          pressGeoON = !pressGeoON;
+          cmbscritta = !cmbscritta;
+        });
+      //  _btnController.stop();
       } else if (status == "false") {
         status = "true";
         print("offfff");
         Off(id);
-        _btnController.stop();
+        setState(() {
+          pressGeoON = !pressGeoON;
+          cmbscritta = !cmbscritta;
+        });
+       // _btnController.stop();
       }
-      _btnController.stop();
+      //_btnController.stop();
     });
   }
 

@@ -176,7 +176,7 @@ class DatabaseHelper2 {
     return json.decode(response.body);
   }
 
-  Future<List> AllElectoByUser() async {
+  /*Future<List<Sensor>> AllElectoByUser() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final value = prefs.get(key) ?? 0;
@@ -188,10 +188,17 @@ class DatabaseHelper2 {
         //'Authorization': 'token $value'
       },
     );
-
-    await Future.delayed(Duration(milliseconds: 1800));
-    return json.decode(response.body);
-  }
+    await Future.delayed(Duration(milliseconds: 2100));
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      List<dynamic> body = jsonDecode(response.body);
+      List<Sensor> sens = body.map((dynamic item) => Sensor.fromJson(item)).toList();
+      //  await Future.delayed(Duration(milliseconds: 1200));
+      return sens;
+    } else {
+      throw "Can't get orders";
+    }
+  }*/
 
   Future<Location> Lastlocation() async {
     final prefs = await SharedPreferences.getInstance();
@@ -214,11 +221,13 @@ class DatabaseHelper2 {
       throw Exception('Failed to load album');
     }
   }
-  Future<HomeLocation> getlocationdetails() async {
+  //final AsyncMemoizer _memoizer = AsyncMemoizer();
+
+  Future<LocationHome> getHomedetails() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final value = prefs.get(key) ?? 0;
-    String myUrl = "$serverUrl/dashboard/getlocationdetails?token=" + value;
+    String myUrl = "$serverUrl/sensors/getElectroSensors?token=" + value;
     http.Response response = await http.get(
       myUrl,
       headers: {
@@ -227,8 +236,8 @@ class DatabaseHelper2 {
       },
     );
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      return HomeLocation.fromJson(json.decode(response.body));
+   //   await Future.delayed(Duration(milliseconds: 900));
+      return LocationHome.fromJson(json.decode(response.body));
     } else {
       // then throw an exception.
       throw Exception('Failed to load album');

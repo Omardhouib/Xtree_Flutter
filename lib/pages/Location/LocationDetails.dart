@@ -177,23 +177,41 @@ class LocationDetailsState extends State<LocationDetails> with NavigationStates 
             ),
           ),
 
+        /*FutureBuilder(
+          future: yourFuture(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              // future complete
+              // if error or data is false return error widget
+              if (snapshot.hasError) {
+                return _buildErrorWidget('SOMETHING WENT WRONG, TAP TO RELOAD');
+              }
 
-          FutureBuilder(
+              // return data widget
+              return _buildDataWidget();
+
+              // return loading widget while connection state is active
+            } else
+              return _buildLoadingWidget();
+          },
+        );*/
+
+
+          FutureBuilder<LocationHome>(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.AllElectoByUser(),
+              future: databaseHelper2.getHomedetails(),
               builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
                   print("mochkla lenaa electro *");
                 }
-                return snapshot.hasData
-                    ? ItemListElectro(list: snapshot.data)
-                    : Text(
-                  "",
-                  style:TextStyle(
-                    backgroundColor: Colors.transparent,
-                  ),
-                );
+                  return ItemListElectro(list: snapshot.data.electro);
+
+                }
+                else {
+                  return Container();
+                }
               }
           ),
           Row(

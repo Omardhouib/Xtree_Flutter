@@ -20,8 +20,10 @@ import 'package:flutter/gestures.dart';
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 
 class schedulePage extends StatefulWidget with NavigationStates {
-  schedulePage({Key key, this.title}) : super(key: key);
-  final String title;
+  Location location;
+  Sensor sens;
+  List<Sensor> Electro;
+  schedulePage({this.location, this.sens, this.Electro});
 
   @override
   schedulePageState createState() => schedulePageState();
@@ -29,18 +31,14 @@ class schedulePage extends StatefulWidget with NavigationStates {
 
 class schedulePageState extends State<schedulePage> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
-  final RoundedLoadingButtonController _btnController =
-  new RoundedLoadingButtonController();
   DateTime selectedDate = DateTime.now();
   List<dynamic> sensors = [];
   final _formKey = GlobalKey<FormState>();
-  @override
   List<String> _locations = ['AI mode', 'Manuel mode']; // Option 2
   String _selectedLocation;
-  String title;
   final TextEditingController sitenameController = new TextEditingController();
   final TextEditingController descriptionController =
-  new TextEditingController();
+      new TextEditingController();
   Future<void> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
@@ -52,9 +50,16 @@ class schedulePageState extends State<schedulePage> {
         selectedDate = picked;
       });
   }
+  List<String> Elect = [];
+  @override
   void initState() {
+    widget.Electro.forEach((element) {
+      //print("......"+element.name.toString());
+      Elect.add(element.name);
+    });
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     List<String> flavours = [];
@@ -62,9 +67,9 @@ class schedulePageState extends State<schedulePage> {
     var hour = DateTime.now().hour;
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      body:Padding(
+      body: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-        child:  ListView(
+        child: ListView(
           scrollDirection: Axis.vertical,
           children: <Widget>[
             Column(
@@ -78,30 +83,16 @@ class schedulePageState extends State<schedulePage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              FutureBuilder<List<Location>>(
-//                future: databaseHelper.getData(),
-                                  future: databaseHelper2.AllLocationByUser(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasError) {
-                                      print(snapshot.error);
-                                      print("mochkla lenaa last *");
-                                    }
-                                    if (snapshot.hasData) {
-                                      Location location = snapshot.data[0];
-                                      return Text(
-                                        location.siteName,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 30.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontStyle: FontStyle.normal,
-                                        ),
-                                      );
-                                    } else {
-                                      return Container();
-                                    }
-                                  }),
+                              Text(
+                                widget.location.siteName,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 30.0,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.normal,
+                                ),
+                              ),
                               Text(
                                 'Welcome Omar dhouib',
                                 textAlign: TextAlign.center,
@@ -132,37 +123,25 @@ class schedulePageState extends State<schedulePage> {
                   ),
                 ]),
             FutureBuilder(
-                future: databaseHelper2.Lastlocation(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    print("there is problem !");
+                future: databaseHelper2.Getweather(widget.location.id),
+                builder: (context, snapshot2) {
+                  if (snapshot2.hasError) {
+                    print(snapshot2.error);
+                    Container();
                   }
-
-                  return snapshot.hasData
-                      ? FutureBuilder(
-                      future: databaseHelper2.Getweather(snapshot.data.id),
-                      builder: (context, snapshot2) {
-                        if (snapshot2.hasError) {
-                          print(snapshot2.error);
-                          Container();
-                        }
-                        return snapshot2.hasData
-                            ? Itemclass(list: snapshot2.data)
-                            : Container();
-                      })
+                  return snapshot2.hasData
+                      ? Itemclass(list: snapshot2.data)
                       : Container();
                 }),
-
             Container(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               ),
             ),
             Text('mode'),
-
             DropdownButton(
-              hint: Text('Please choose the mode'), // Not necessary for Option 1
+              hint:
+                  Text('Please choose the mode'), // Not necessary for Option 1
               value: _selectedLocation,
               onChanged: (newValue) {
                 setState(() {
@@ -176,15 +155,17 @@ class schedulePageState extends State<schedulePage> {
                 );
               }).toList(),
             ),
-            Text('Device name'),
+            Text('Device name: '+widget.sens.name),
             Text('the of device'),
-            Text('Description'),
-            Text('status'),
+            Text('Description'+widget.sens.description),
+            Text('status'+widget.sens.status.toString()),
             Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text("${selectedDate.toLocal()}".split(' ')[0]),
-                SizedBox(height: 20.0,),
+                SizedBox(
+                  height: 20.0,
+                ),
                 RaisedButton(
                   onPressed: () => _selectDate(context),
                   child: Text('Select date'),
@@ -222,41 +203,29 @@ class schedulePageState extends State<schedulePage> {
                   hintStyle: TextStyle(color: Colors.grey[400])),
             ),
             Text('Alerted by email'),
-
-          Form(
-            key: _formKey,
-            child: MultiSelectFormField(
-              context: context,
-              buttonText: 'FLAVOURS',
-              itemList: ['Chocolate', 'Caramel', 'Vanilla', 'Peanut Butter'],
-              questionText: 'Select Your Flavours',
-              validator: (flavours) =>
-              flavours.length == 0 ? 'Please select at least one flavor!' : null,
-              onSaved: (flavours) {
-                print(flavours);
-                // Logic to save selected flavours in the database
+            Form(
+              key: _formKey,
+              child: MultiSelectFormField(
+                context: context,
+                buttonText: 'Relays',
+                itemList: Elect,
+                questionText: 'Select Your Relays',
+                validator: (flavours) => flavours.length == 0
+                    ? 'Please select at least one Relay!'
+                    : null,
+                onSaved: (flavours) {
+                  print(flavours);
+                  // Logic to save selected flavours in the database
+                },
+              ),
+              onChanged: () {
+                if (_formKey.currentState.validate()) {
+                  // Invokes the OnSaved Method
+                  _formKey.currentState.save();
+                }
               },
             ),
-            onChanged: () {
-              if (_formKey.currentState.validate()) {
-                // Invokes the OnSaved Method
-                _formKey.currentState.save();
-              }
-            },
-          ),
-
-            FutureBuilder<List<Location>>(
-//                future: databaseHelper.getData(),
-                future: databaseHelper2.AllLocationByUser(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    print("mochkla lenaa *");
-                  }
-                  return snapshot.hasData
-                      ? ItemListchart(list: snapshot.data[0].sensorIds)
-                      : Container();
-                }),
+            ItemListchart(sensor: widget.sens)
           ],
         ),
       ),
@@ -280,7 +249,7 @@ class schedulePageState extends State<schedulePage> {
             int date = (list[i]["dt"]);
             int zero = 100;
             DateTime finalday = DateTime.fromMillisecondsSinceEpoch(
-                int.parse(("$date" + "$zero")))
+                    int.parse(("$date" + "$zero")))
                 .toUtc();
             String dateFormat = DateFormat('EEEE').format(finalday);
             var item = list[i];
@@ -315,14 +284,20 @@ class schedulePageState extends State<schedulePage> {
                         padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
                         child: Text(
                           list[i]["temp"]["morn"].round().toString() + "°C",
-                          style: TextStyle(color: Colors.white, fontSize: 35,fontWeight: FontWeight.w400),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 35,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
                         child: Text(
                           dateFormat,
-                          style: TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.w300),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300),
                         ),
                       ),
                       if (list[i]["pop"] > 0.1)
@@ -361,23 +336,31 @@ class schedulePageState extends State<schedulePage> {
                             padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
                             child: Text(
                               list[i]["temp"]["min"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Text(
                               "/",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                             child: Text(
                               list[i]["temp"]["max"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
@@ -388,15 +371,17 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                             child: Text(
                               list[i]["humidity"].toString() + "%",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -408,15 +393,17 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["pop"].toString() + "mm",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -428,15 +415,17 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["uvi"].toString(),
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -476,14 +465,20 @@ class schedulePageState extends State<schedulePage> {
                         padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
                         child: Text(
                           list[i]["temp"]["eve"].round().toString() + "°C",
-                          style: TextStyle(color: Colors.white, fontSize: 35,fontWeight: FontWeight.w400),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 35,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
                         child: Text(
                           dateFormat,
-                          style: TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.w300),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300),
                         ),
                       ),
                       if (list[i]["pop"] > 0.1)
@@ -522,23 +517,31 @@ class schedulePageState extends State<schedulePage> {
                             padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
                             child: Text(
                               list[i]["temp"]["min"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Text(
                               "/",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                             child: Text(
                               list[i]["temp"]["max"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
@@ -549,15 +552,17 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                             child: Text(
                               list[i]["humidity"].toString() + "%",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -569,15 +574,17 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["pop"].toString() + "mm",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -589,15 +596,17 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["uvi"].toString(),
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -637,14 +646,20 @@ class schedulePageState extends State<schedulePage> {
                         padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
                         child: Text(
                           list[i]["temp"]["night"].round().toString() + "°C",
-                          style: TextStyle(color: Colors.white, fontSize: 35,fontWeight: FontWeight.w400),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 35,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
                         child: Text(
                           dateFormat,
-                          style: TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.w300),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300),
                         ),
                       ),
                       if (list[i]["pop"] > 0.1)
@@ -683,23 +698,31 @@ class schedulePageState extends State<schedulePage> {
                             padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
                             child: Text(
                               list[i]["temp"]["min"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Text(
                               "/",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                             child: Text(
                               list[i]["temp"]["max"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
@@ -710,15 +733,17 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                             child: Text(
                               list[i]["humidity"].toString() + "%",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -730,15 +755,17 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["pop"].toString() + "mm",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -750,15 +777,17 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["uvi"].toString(),
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -774,8 +803,8 @@ class schedulePageState extends State<schedulePage> {
 }
 
 class ItemListchart extends StatefulWidget {
-  List list;
-  ItemListchart({this.list});
+  Sensor sensor;
+  ItemListchart({this.sensor});
 
   @override
   _ItemListchartState createState() => _ItemListchartState();
@@ -795,206 +824,202 @@ class _ItemListchartState extends State<ItemListchart> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: widget.list.length,
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemBuilder: (context, i) {
-//            DateTime t = DateTime.parse(list[i]['date_published'].toString());
+    return FutureBuilder<Sensor>(
+        future: databaseHelper2.getDevById(widget.sensor.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print(snapshot.error);
+            print("there is problem !");
+          }
 
-          return FutureBuilder<Sensor>(
-              future: databaseHelper2.getDevById(widget.list[i].toString()),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
-
-                if (snapshot.hasData) {
-                  //  print("helloo" + snapshot.data.toString());
-                  String type = snapshot.data.sensorType;
-                  if (type != "Relay") {
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            color: Colors.white),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 90,
-                              child: Card(
-                                semanticContainer: true,
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
+          if (snapshot.hasData) {
+            //  print("helloo" + snapshot.data.toString());
+            String type = snapshot.data.sensorType;
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.white),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 90,
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          elevation: 0,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    10, 0, 0, 0),
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      0, 0, 10, 0),
+                                  child: CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor: Colors.lightBlue,
+                                    child: IconButton(
+                                      icon: Icon(Icons.history),
+                                      color: Colors.white,
+                                      iconSize: 30,
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            child: ChartHistory(
+                                              onValueChange:
+                                              _onValueChange,
+                                              initialValue: _selectedId,
+                                              identifier:
+                                              snapshot.data.id,
+                                              type: snapshot
+                                                  .data.sensorType,
+                                              name: snapshot.data.name,
+                                            ));
+                                      },
+                                    ),
+                                  ),
                                 ),
-                                elevation: 0,
-                                child: Row(
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    0, 22, 0, 0),
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                        child: CircleAvatar(
-                                          radius: 25,
-                                          backgroundColor: Colors.lightBlue,
-                                          child: IconButton(
-                                            icon: Icon(Icons.history),
-                                            color: Colors.white,
-                                            iconSize: 30,
-                                            onPressed: () {
-                                              showDialog(
-                                                  context: context,
-                                                  child: ChartHistory(
-                                                    onValueChange:
-                                                    _onValueChange,
-                                                    initialValue: _selectedId,
-                                                    identifier:
-                                                    snapshot.data.id,
-                                                    type: snapshot
-                                                        .data.sensorType,
-                                                    name: snapshot.data.name,
-                                                  ));
-                                            },
-                                          ),
-                                        ),
+                                    Text(
+                                      snapshot.data.name.toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20,
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(0, 22, 0, 0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            snapshot.data.name.toString(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                          Text(
-                                            snapshot.data.description.toString(),
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
+                                    Text(
+                                      snapshot.data.description
+                                          .toString(),
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                            FutureBuilder(
-                                future: databaseHelper2
-                                    .getdataDeviceByID(snapshot.data.id),
-                                builder: (context, snapshot2) {
-                                  if (snapshot2.hasError) {
-                                    print(snapshot2.error);
-                                    Text(
-                                      "",
-                                      style: TextStyle(
-                                        backgroundColor: Colors.transparent,
-                                      ),
-                                    );
-                                  }
-                                  if (snapshot2.hasData) {
-                                    return Column(
-                                      children: [
-                                        chart(snapshot2.data, type),
-                                        Container(
-                                          height: 90,
-                                          child: Card(
-                                            semanticContainer: true,
-                                            clipBehavior:
-                                            Clip.antiAliasWithSaveLayer,
-                                            color: Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(20.0),
-                                            ),
-                                            elevation: 0,
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 60,
-                                                  child: CircleAvatar(
-                                                    backgroundColor:
-                                                    Colors.white,
-                                                    child: Icon(
-                                                      Icons
-                                                          .battery_charging_full,
-                                                      color: Colors.amberAccent,
-                                                      size: 30,
-                                                    ),
-                                                    radius: 28,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      0, 0, 20, 0),
-                                                  child: Text(
-                                                    snapshot2.data[snapshot2
-                                                        .data
-                                                        .length -
-                                                        1]["batterie"]
-                                                        .round()
-                                                        .toString() +
-                                                        "%",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 18,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  height: 60,
-                                                  child: CircleAvatar(
-                                                    backgroundColor:
-                                                    Colors.white,
-                                                    child: Icon(
-                                                      Icons
-                                                          .signal_cellular_4_bar,
-                                                      color: Colors.redAccent,
-                                                      size: 30,
-                                                    ),
-                                                    radius: 28,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "50%",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return Container();
-                                  }
-                                }),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    );
-                    // print("helloo"+snapshot.data.id);
-                  }
-                }
-                return Container();
-              });
+                      FutureBuilder(
+                          future: databaseHelper2
+                              .getdataDeviceByID(snapshot.data.id),
+                          builder: (context, snapshot2) {
+                            if (snapshot2.hasError) {
+                              print(snapshot2.error);
+                              Text(
+                                "",
+                                style: TextStyle(
+                                  backgroundColor: Colors.transparent,
+                                ),
+                              );
+                            }
+                            if (snapshot2.hasData) {
+                              return Column(
+                                children: [
+                                  chart(snapshot2.data, type),
+                                  Container(
+                                    height: 90,
+                                    child: Card(
+                                      semanticContainer: true,
+                                      clipBehavior:
+                                      Clip.antiAliasWithSaveLayer,
+                                      color: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(20.0),
+                                      ),
+                                      elevation: 0,
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            height: 60,
+                                            child: CircleAvatar(
+                                              backgroundColor:
+                                              Colors.white,
+                                              child: Icon(
+                                                Icons
+                                                    .battery_charging_full,
+                                                color: Colors.amberAccent,
+                                                size: 30,
+                                              ),
+                                              radius: 28,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                            const EdgeInsets.fromLTRB(
+                                                0, 0, 20, 0),
+                                            child: Text(
+                                              snapshot2.data[snapshot2
+                                                  .data
+                                                  .length -
+                                                  1]["batterie"]
+                                                  .round()
+                                                  .toString() +
+                                                  "%",
+                                              style: TextStyle(
+                                                fontWeight:
+                                                FontWeight.bold,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            height: 60,
+                                            child: CircleAvatar(
+                                              backgroundColor:
+                                              Colors.white,
+                                              child: Icon(
+                                                Icons
+                                                    .signal_cellular_4_bar,
+                                                color: Colors.redAccent,
+                                                size: 30,
+                                              ),
+                                              radius: 28,
+                                            ),
+                                          ),
+                                          Text(
+                                            "50%",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
+                    ],
+                  ),
+                ),
+              );
+              // print("helloo"+snapshot.data.id);
+
+          }
+          return Container();
         });
   }
 }
@@ -1047,7 +1072,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.blue,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1057,8 +1081,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1075,7 +1098,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.green,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1085,8 +1107,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1103,7 +1124,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.amber,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1113,8 +1133,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1135,7 +1154,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.blue[900],
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1145,8 +1163,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1163,7 +1180,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.purple,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1173,8 +1189,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1206,8 +1221,8 @@ Widget chart(List data, String type) {
                   position: graphic.PositionAttr(field: 'index*value'),
                   color: graphic.ColorAttr(field: 'type'),
                   size: graphic.SizeAttr(field: 'value'),
-                  shape:
-                  graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+                  shape: graphic.ShapeAttr(
+                      values: [graphic.BasicLineShape(smooth: true)]),
                 )
               ],
               axes: {
@@ -1218,15 +1233,14 @@ Widget chart(List data, String type) {
           ),
         ],
       );
-    }
-    else
+    } else
       print(' data is not empty');
     data = data.sublist(data.length - 10, data.length);
     print(data.length);
 
     data.forEach((element) {
       var hour =
-      DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+          DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
       var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
           .minute
           .toString();
@@ -1253,7 +1267,6 @@ Widget chart(List data, String type) {
                       borderRadius: BorderRadius.all(Radius.circular(3.0)),
                       color: Colors.green,
                     ),
-
                   ),
                 ),
                 Padding(
@@ -1263,8 +1276,7 @@ Widget chart(List data, String type) {
                     style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 14,
-                        color: Colors.grey
-                    ),
+                        color: Colors.grey),
                   ),
                 ),
               ],
@@ -1281,7 +1293,6 @@ Widget chart(List data, String type) {
                       borderRadius: BorderRadius.all(Radius.circular(3.0)),
                       color: Colors.blue,
                     ),
-
                   ),
                 ),
                 Padding(
@@ -1291,8 +1302,7 @@ Widget chart(List data, String type) {
                     style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 14,
-                        color: Colors.grey
-                    ),
+                        color: Colors.grey),
                   ),
                 ),
               ],
@@ -1324,8 +1334,8 @@ Widget chart(List data, String type) {
                 position: graphic.PositionAttr(field: 'index*value'),
                 color: graphic.ColorAttr(field: 'type'),
                 size: graphic.SizeAttr(field: 'value'),
-                shape:
-                graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+                shape: graphic.ShapeAttr(
+                    values: [graphic.BasicLineShape(smooth: true)]),
               )
             ],
             axes: {
@@ -1359,79 +1369,79 @@ class MultiSelectFormField extends FormField<List<String>> {
     FormFieldValidator<List<String>> validator,
     List<String> initialValue,
   }) : super(
-    onSaved: onSaved,
-    validator: validator,
-    initialValue: initialValue ?? [], // Avoid Null
-    autovalidate: true,
-    builder: (FormFieldState<List<String>> state) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              InkWell(
-                  child: Card(
-                      elevation: 3,
-                      child: ClipPath(
-                          child: Container(
-                            height: 50,
-                            width: 200,
-                            color: Colors.blue,
-                            child: Center(
-                              //If value is null or no option is selected
-                              child: (state.value == null ||
-                                  state.value.length <= 0)
+          onSaved: onSaved,
+          validator: validator,
+          initialValue: initialValue ?? [], // Avoid Null
+          autovalidate: true,
+          builder: (FormFieldState<List<String>> state) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    InkWell(
+                        child: Card(
+                            elevation: 3,
+                            child: ClipPath(
+                                child: Container(
+                                  height: 50,
+                                  width: 200,
+                                  color: Colors.blue,
+                                  child: Center(
+                                    //If value is null or no option is selected
+                                    child: (state.value == null ||
+                                            state.value.length <= 0)
 
-                              // Show the buttonText as it is
-                                  ? Text(
-                                buttonText,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              )
+                                        // Show the buttonText as it is
+                                        ? Text(
+                                            buttonText,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          )
 
-                              // Else show number of selected options
-                                  : Text(
-                                state.value.length == 1
-                                // SINGLE FLAVOR SELECTED
-                                    ? '${state.value.length.toString()} '
-                                    ' ${buttonText.substring(0, buttonText.length - 1)} SELECTED '
-                                // MULTIPLE FLAVOR SELECTED
-                                    : '${state.value.length.toString()} '
-                                    ' $buttonText SELECTED',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          clipper: ShapeBorderClipper(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(3))))),
-                  onTap: () async => state.didChange(await showDialog(
-                      context: context,
-                      builder: (_) => MultiSelectDialog(
-                        question: Text(questionText),
-                        answers: itemList,
-                      )) ??
-                      []))
-            ],
-          ),
-          // If validation fails, display an error
-          state.hasError
-              ? Center(
-            child: Text(
-              state.errorText,
-              style: TextStyle(color: Colors.red),
-            ),
-          )
-              : Container() //Else show an empty container
-        ],
-      );
-    },
-  );
+                                        // Else show number of selected options
+                                        : Text(
+                                            state.value.length == 1
+                                                // SINGLE FLAVOR SELECTED
+                                                ? '${state.value.length.toString()} '
+                                                    ' ${buttonText.substring(0, buttonText.length - 1)} SELECTED '
+                                                // MULTIPLE FLAVOR SELECTED
+                                                : '${state.value.length.toString()} '
+                                                    ' $buttonText SELECTED',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                  ),
+                                ),
+                                clipper: ShapeBorderClipper(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(3))))),
+                        onTap: () async => state.didChange(await showDialog(
+                                context: context,
+                                builder: (_) => MultiSelectDialog(
+                                      question: Text(questionText),
+                                      answers: itemList,
+                                    )) ??
+                            []))
+                  ],
+                ),
+                // If validation fails, display an error
+                state.hasError
+                    ? Center(
+                        child: Text(
+                          state.errorText,
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      )
+                    : Container() //Else show an empty container
+              ],
+            );
+          },
+        );
 }
 
 class MultiSelectDialog extends StatefulWidget {
@@ -1480,9 +1490,11 @@ class _MultiSelectDialogState extends State<MultiSelectDialog> {
           return StatefulBuilder(
             builder: (_, StateSetter setState) => CheckboxListTile(
                 title: Text(key), // Displays the option
-                value: MultiSelectDialog.mappedItem[key], // Displays checked or unchecked value
+                value: MultiSelectDialog
+                    .mappedItem[key], // Displays checked or unchecked value
                 controlAffinity: ListTileControlAffinity.platform,
-                onChanged: (value) => setState(() => MultiSelectDialog.mappedItem[key] = value)),
+                onChanged: (value) =>
+                    setState(() => MultiSelectDialog.mappedItem[key] = value)),
           );
         }).toList(),
         Align(
@@ -1502,6 +1514,7 @@ class _MultiSelectDialogState extends State<MultiSelectDialog> {
 
                   // Close the Dialog & return selectedItems
                   Navigator.pop(context, selectedItems);
+                  print("......."+selectedItems.toString());
                 }))
       ],
     );
