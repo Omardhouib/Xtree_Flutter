@@ -34,11 +34,348 @@ class schedulePageState extends State<schedulePage> {
   DateTime selectedDate = DateTime.now();
   List<dynamic> sensors = [];
   final _formKey = GlobalKey<FormState>();
-  List<String> _locations = ['AI mode', 'Manuel mode']; // Option 2
+  List<String> _mode = ['Manuel mode', 'AI mode']; // Option 2
   String _selectedLocation;
+  String _selectedGender = null;
+  bool toast= true;
   final TextEditingController sitenameController = new TextEditingController();
   final TextEditingController descriptionController =
-  new TextEditingController();
+      new TextEditingController();
+  _renderWidget() {
+    if (_selectedLocation == "Manuel mode") {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0), color: Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device name: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.name,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device description: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.description,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device status: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.status.toString(),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'Start date:  ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        "${selectedDate.toLocal()}".split(' ')[0],
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                        child: Container(
+                          width: 180,
+                          height: 40,
+                          child: FlatButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                side: BorderSide(
+                                    color: Colors.blue[300], width: 1.5)),
+                            onPressed: () => _selectDate(context),
+                            color: Colors.transparent,
+                            textColor: Colors.blue,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today,
+                                  color: Colors.blue,
+                                ),
+                                Text(
+                                  '      Select date',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'T max:  ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Container(
+                        width: 80,
+                        height: 50,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "T max cannot be empty !";
+                            } else
+                              return null;
+                          },
+                          controller: sitenameController,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(10.0),
+                              borderSide: BorderSide(
+                                  color: Colors.blue[300], width: 1.0),
+                            ),
+                            hintText: "80",
+                            hintStyle: TextStyle(color: Colors.grey[400]),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        child: Text(
+                          'T min:  ',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      Container(
+                        width: 80,
+                        height: 50,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "T min cannot be empty !";
+                            } else
+                              return null;
+                          },
+                          controller: descriptionController,
+                          decoration: InputDecoration(
+                              border: new OutlineInputBorder(
+                                borderRadius: new BorderRadius.circular(10.0),
+                                borderSide: BorderSide(
+                                    color: Colors.blue[300], width: 1.5),
+                              ),
+                              hintText: "20",
+                              hintStyle: TextStyle(color: Colors.grey[400])),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Alert type: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        'Email',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Relays:     ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 13, 0, 0),
+                        child: Form(
+                          key: _formKey,
+                          child: MultiSelectFormField(
+                            context: context,
+                            buttonText: 'Relays',
+                            itemList: widget.Electro,
+                            questionText: 'Select Your Relays',
+                            validator: (flavours) => flavours.length == 0
+                                ? 'Please select at least one Relay!'
+                                : null,
+                            onSaved: (flavours) {
+                              print(widget.Electro);
+                              // Logic to save selected flavours in the database
+                            },
+                          ),
+                          onChanged: () {
+                            if (_formKey.currentState.validate()) {
+                              // Invokes the OnSaved Method
+                              _formKey.currentState.save();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(37, 40, 0, 5),
+                  child: Container(
+                    height: 45,
+                    width: 350,
+                    child: FlatButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.save,
+                            color: Colors.blue,
+                          ),
+                          Text(
+                            '  Save',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                      onPressed: (){
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7.0),
+                          side: BorderSide(color: Colors.grey,width: 1.5)
+
+                      ),
+                      color: Colors.white,
+                      splashColor: Colors.grey,
+                      textColor: Colors.black,
+                    ),
+
+                  ),
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(58, 0, 5, 0),
+                      child: Container(
+                        height: 45,
+                        width: 150,
+                        child: FlatButton(
+                          child: Text("Start process",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),),
+                          onPressed: (){
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7.0),
+                              side: BorderSide(color: Colors.black,width: 0.5)
+
+                          ),
+                          color: Colors.green,
+                          splashColor: Colors.green,
+                          textColor: Colors.black,
+                        ),
+
+                      ),
+                    ),
+                    Container(
+                      height: 45,
+                      width: 150,
+                      child: FlatButton(
+                        child: Text("Stop process",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),),
+                        onPressed: (){
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7.0),
+                            side: BorderSide(color: Colors.black,width: 0.5)
+
+                        ),
+                        color: Colors.red,
+                        splashColor: Colors.red,
+                        textColor: Colors.black,
+                      ),
+
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ); // this could be any Widget
+    }
+    else if (_selectedLocation == "AI mode"){
+      if("hello" == "hi"){
+        return Container();
+      }
+      else Fluttertoast.showToast(
+          msg: "AI mode activated with success!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 10,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 10.0);
+    }
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
@@ -50,6 +387,7 @@ class schedulePageState extends State<schedulePage> {
         selectedDate = picked;
       });
   }
+
   @override
   void initState() {
     super.initState();
@@ -133,98 +471,73 @@ class schedulePageState extends State<schedulePage> {
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               ),
             ),
-            Text('mode'),
-            DropdownButton(
-              hint:
-              Text('Please choose the mode'), // Not necessary for Option 1
-              value: _selectedLocation,
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedLocation = newValue;
-                });
-              },
-              items: _locations.map((location) {
-                return DropdownMenuItem(
-                  child: new Text(location),
-                  value: location,
-                );
-              }).toList(),
-            ),
-            Text('Device name: '+widget.sens.name),
-            Text('the of device'),
-            Text('Description'+widget.sens.description),
-            Text('status'+widget.sens.status.toString()),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text("${selectedDate.toLocal()}".split(' ')[0]),
-                SizedBox(
-                  height: 20.0,
-                ),
-                RaisedButton(
-                  onPressed: () => _selectDate(context),
-                  child: Text('Select date'),
-                ),
-              ],
-            ),
-            Text('T max'),
-            TextFormField(
-              validator: (value) {
-                if (value.isEmpty) {
-                  return "Site name cannot be empty !";
-                } else
-                  return null;
-              },
-              controller: sitenameController,
-              decoration: InputDecoration(
-                  icon: Icon(Icons.place, color: Colors.grey[400]),
-                  border: InputBorder.none,
-                  hintText: "80",
-                  hintStyle: TextStyle(color: Colors.grey[400])),
-            ),
-            Text('T min'),
-            TextFormField(
-              validator: (value) {
-                if (value.isEmpty) {
-                  return "Site name cannot be empty !";
-                } else
-                  return null;
-              },
-              controller: descriptionController,
-              decoration: InputDecoration(
-                  icon: Icon(Icons.place, color: Colors.grey[400]),
-                  border: InputBorder.none,
-                  hintText: "20",
-                  hintStyle: TextStyle(color: Colors.grey[400])),
-            ),
-            Text('Alerted by email'),
-            Form(
-              key: _formKey,
-              child: MultiSelectFormField(
-                context: context,
-                buttonText: 'Relays',
-                itemList: widget.Electro,
-                questionText: 'Select Your Relays',
-                validator: (flavours) => flavours.length == 0
-                    ? 'Please select at least one Relay!'
-                    : null,
-                onSaved: (flavours) {
-                  print(widget.Electro);
-                  // Logic to save selected flavours in the database
-                },
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+              child: Text(
+                'Irrigation mode: ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
-              onChanged: () {
-                if (_formKey.currentState.validate()) {
-                  // Invokes the OnSaved Method
-                  _formKey.currentState.save();
-                }
-              },
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: Border.all(color: Colors.grey[300], width: 4),
+                    color: Colors.white),
+                child: DropdownButton(
+                  hint: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    child: Text(
+                      'Please choose the mode',
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                    ),
+                  ), // Not necessary for Option 1
+                  value: _selectedLocation,
+                  onChanged: (newValue) {
+                    if (newValue == 'Manuel mode') {
+                      setState(() {
+                        _selectedLocation = newValue; // A, B or C
+                      });
+                    } else if (newValue == 'AI mode') {
+                      setState(() {
+                        _selectedLocation = newValue; // A, B or C
+                      });
+                    }
+                  },
+                  items: _mode.map((mode) {
+                    return DropdownMenuItem(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Text(
+                          mode,
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      value: mode,
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+            Container(child: _renderWidget()),
             ItemListchart(sensor: widget.sens)
           ],
         ),
       ),
     );
+  }
+
+  List<DropdownMenuItem<String>> _dropDownItem() {
+    List<String> ddl = ['AI mode', 'Manuel mode'];
+    return ddl
+        .map((value) => DropdownMenuItem(
+              value: value,
+              child: Text(value),
+            ))
+        .toList();
   }
 
   Widget Itemclass({List list}) {
@@ -244,7 +557,7 @@ class schedulePageState extends State<schedulePage> {
             int date = (list[i]["dt"]);
             int zero = 100;
             DateTime finalday = DateTime.fromMillisecondsSinceEpoch(
-                int.parse(("$date" + "$zero")))
+                    int.parse(("$date" + "$zero")))
                 .toUtc();
             String dateFormat = DateFormat('EEEE').format(finalday);
             var item = list[i];
@@ -366,7 +679,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -388,7 +701,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -410,7 +723,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -547,7 +860,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -569,7 +882,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -591,7 +904,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -728,7 +1041,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -750,7 +1063,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -772,7 +1085,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -852,11 +1165,9 @@ class _ItemListchartState extends State<ItemListchart> {
                         child: Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                  10, 0, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                               child: Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                    0, 0, 10, 0),
+                                padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                                 child: CircleAvatar(
                                   radius: 25,
                                   backgroundColor: Colors.lightBlue,
@@ -868,13 +1179,10 @@ class _ItemListchartState extends State<ItemListchart> {
                                       showDialog(
                                           context: context,
                                           child: ChartHistory(
-                                            onValueChange:
-                                            _onValueChange,
+                                            onValueChange: _onValueChange,
                                             initialValue: _selectedId,
-                                            identifier:
-                                            snapshot.data.id,
-                                            type: snapshot
-                                                .data.sensorType,
+                                            identifier: snapshot.data.id,
+                                            type: snapshot.data.sensorType,
                                             name: snapshot.data.name,
                                           ));
                                     },
@@ -883,11 +1191,9 @@ class _ItemListchartState extends State<ItemListchart> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                  0, 22, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(0, 22, 0, 0),
                               child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     snapshot.data.name.toString(),
@@ -897,8 +1203,7 @@ class _ItemListchartState extends State<ItemListchart> {
                                     ),
                                   ),
                                   Text(
-                                    snapshot.data.description
-                                        .toString(),
+                                    snapshot.data.description.toString(),
                                     style: TextStyle(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.w500,
@@ -913,8 +1218,8 @@ class _ItemListchartState extends State<ItemListchart> {
                       ),
                     ),
                     FutureBuilder(
-                        future: databaseHelper2
-                            .getdataDeviceByID(snapshot.data.id),
+                        future:
+                            databaseHelper2.getdataDeviceByID(snapshot.data.id),
                         builder: (context, snapshot2) {
                           if (snapshot2.hasError) {
                             print(snapshot2.error);
@@ -933,12 +1238,10 @@ class _ItemListchartState extends State<ItemListchart> {
                                   height: 90,
                                   child: Card(
                                     semanticContainer: true,
-                                    clipBehavior:
-                                    Clip.antiAliasWithSaveLayer,
+                                    clipBehavior: Clip.antiAliasWithSaveLayer,
                                     color: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(20.0),
+                                      borderRadius: BorderRadius.circular(20.0),
                                     ),
                                     elevation: 0,
                                     child: Row(
@@ -946,11 +1249,9 @@ class _ItemListchartState extends State<ItemListchart> {
                                         Container(
                                           height: 60,
                                           child: CircleAvatar(
-                                            backgroundColor:
-                                            Colors.white,
+                                            backgroundColor: Colors.white,
                                             child: Icon(
-                                              Icons
-                                                  .battery_charging_full,
+                                              Icons.battery_charging_full,
                                               color: Colors.amberAccent,
                                               size: 30,
                                             ),
@@ -958,20 +1259,17 @@ class _ItemListchartState extends State<ItemListchart> {
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                          const EdgeInsets.fromLTRB(
+                                          padding: const EdgeInsets.fromLTRB(
                                               0, 0, 20, 0),
                                           child: Text(
-                                            snapshot2.data[snapshot2
-                                                .data
-                                                .length -
-                                                1]["batterie"]
-                                                .round()
-                                                .toString() +
+                                            snapshot2.data[
+                                                        snapshot2.data.length -
+                                                            1]["batterie"]
+                                                    .round()
+                                                    .toString() +
                                                 "%",
                                             style: TextStyle(
-                                              fontWeight:
-                                              FontWeight.bold,
+                                              fontWeight: FontWeight.bold,
                                               fontSize: 18,
                                             ),
                                           ),
@@ -979,11 +1277,9 @@ class _ItemListchartState extends State<ItemListchart> {
                                         Container(
                                           height: 60,
                                           child: CircleAvatar(
-                                            backgroundColor:
-                                            Colors.white,
+                                            backgroundColor: Colors.white,
                                             child: Icon(
-                                              Icons
-                                                  .signal_cellular_4_bar,
+                                              Icons.signal_cellular_4_bar,
                                               color: Colors.redAccent,
                                               size: 30,
                                             ),
@@ -1025,10 +1321,10 @@ Widget chart(List data, String type) {
     if (type == "CarteDeSol") {
       print(' data is not empty');
       data = data.sublist(data.length - 10, data.length);
-      print(data.length);
+      //print(data.length);
 
       data.forEach((element) {
-        print(element.toString());
+        //  print(element.toString());
         var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
             .hour
             .toString();
@@ -1040,7 +1336,7 @@ Widget chart(List data, String type) {
         var hum3 = element["humdity3"];
         var tot = (hum1 + hum2 + hum3) / 3;
         String time = hour + ":" + minute;
-        print(time);
+        // print(time);
         adjustData.add({"type": "humdity1", "index": time, "value": hum1});
         adjustData.add({"type": "humdity2", "index": time, "value": hum2});
         adjustData.add({"type": "humdity3", "index": time, "value": hum3});
@@ -1231,16 +1527,16 @@ Widget chart(List data, String type) {
     } else
       print(' data is not empty');
     data = data.sublist(data.length - 10, data.length);
-    print(data.length);
+    //print(data.length);
 
     data.forEach((element) {
       var hour =
-      DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+          DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
       var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
           .minute
           .toString();
       String time = hour + ":" + minute;
-      print("hello " + element.toString());
+      // print("hello " + element.toString());
       adjustData.add(
           {"type": "temp", "index": time, "value": element["temperature"]});
       adjustData
@@ -1364,79 +1660,87 @@ class MultiSelectFormField extends FormField<List<String>> {
     FormFieldValidator<List<String>> validator,
     List<String> initialValue,
   }) : super(
-    onSaved: onSaved,
-    validator: validator,
-    initialValue: initialValue ?? [], // Avoid Null
-    autovalidate: true,
-    builder: (FormFieldState<List<String>> state) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              InkWell(
-                  child: Card(
-                      elevation: 3,
-                      child: ClipPath(
-                          child: Container(
-                            height: 50,
-                            width: 200,
-                            color: Colors.blue,
+          onSaved: onSaved,
+          validator: validator,
+          initialValue: initialValue ?? [], // Avoid Null
+          autovalidate: true,
+          builder: (FormFieldState<List<String>> state) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    InkWell(
+                        child: Container(
+                          width: 180,
+                          height: 40,
+                          child: FlatButton(
                             child: Center(
                               //If value is null or no option is selected
                               child: (state.value == null ||
-                                  state.value.length <= 0)
+                                      state.value.length <= 0)
 
-                              // Show the buttonText as it is
-                                  ? Text(
-                                buttonText,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              )
-
-                              // Else show number of selected options
+                                  // Show the buttonText as it is
+                                  ? Row(
+                                      children: [
+                                        Icon(
+                                          Icons.developer_board,
+                                          color: Colors.blue,
+                                        ),
+                                        Text(
+                                          '      Select relays',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500, color: Colors.blue),
+                                        ),
+                                      ],
+                                    )
+                                  // Else show number of selected options
                                   : Text(
-                                state.value.length == 1
-                                // SINGLE FLAVOR SELECTED
-                                    ? '${state.value.length.toString()} '
-                                    ' ${buttonText.substring(0, buttonText.length - 1)} SELECTED '
-                                // MULTIPLE FLAVOR SELECTED
-                                    : '${state.value.length.toString()} '
-                                    ' $buttonText SELECTED',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                                      state.value.length == 1
+                                          // SINGLE FLAVOR SELECTED
+                                          ? '${state.value.length.toString()} '
+                                              ' ${buttonText.substring(0, buttonText.length - 1)} SELECTED '
+                                          // MULTIPLE FLAVOR SELECTED
+                                          : '${state.value.length.toString()} '
+                                              ' $buttonText SELECTED',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                             ),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                side: BorderSide(
+                                    color: Colors.blue[300], width: 1.5)),
                           ),
-                          clipper: ShapeBorderClipper(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(3))))),
-                  onTap: () async => state.didChange(await showDialog(
-                      context: context,
-                      builder: (_) => MultiSelectDialog(
-                        question: Text(questionText),
-                        answers: itemList,
-                      )) ??
-                      []))
-            ],
-          ),
-          // If validation fails, display an error
-          state.hasError
-              ? Center(
-            child: Text(
-              state.errorText,
-              style: TextStyle(color: Colors.red),
-            ),
-          )
-              : Container() //Else show an empty container
-        ],
-      );
-    },
-  );
+                        ),
+                        onTap: () async => state.didChange(await showDialog(
+                                context: context,
+                                builder: (_) => MultiSelectDialog(
+                                      question: Text(questionText),
+                                      answers: itemList,
+                                    )) ??
+                            []))
+                  ],
+                ),
+                // If validation fails, display an error
+                state.hasError
+                    ? Center(
+                        child: Text(
+                          state.errorText,
+                          style: TextStyle(
+                              color: Colors.red[400],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      )
+                    : Container() //Else show an empty container
+              ],
+            );
+          },
+        );
 }
 
 class MultiSelectDialog extends StatefulWidget {
@@ -1479,12 +1783,19 @@ class _MultiSelectDialogState extends State<MultiSelectDialog> {
       initMap();
     }
     return SimpleDialog(
+      elevation: 10,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
       title: widget.question,
       children: [
         ...MultiSelectDialog.mappedItem.keys.map((Sensor key) {
           return StatefulBuilder(
             builder: (_, StateSetter setState) => CheckboxListTile(
-                title: Text(key.name), // Displays the option
+                title: Text(
+                  key.name,
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+                ), // Displays the option
                 value: MultiSelectDialog
                     .mappedItem[key], // Displays checked or unchecked value
                 controlAffinity: ListTileControlAffinity.platform,
@@ -1494,23 +1805,30 @@ class _MultiSelectDialogState extends State<MultiSelectDialog> {
         }).toList(),
         Align(
             alignment: Alignment.center,
-            child: RaisedButton(
-                child: Text('Submit'),
-                onPressed: () {
-                  // Clear the list
-                  selectedItems.clear();
+            child: Container(
+              width: 200,
+              child: FlatButton(
+                  child: Text('Select'),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7.0),
+                      side: BorderSide(color: Colors.blue[300], width: 1.5)),
+                  textColor: Colors.blue,
+                  onPressed: () {
+                    // Clear the list
+                    selectedItems.clear();
 
-                  // Traverse each map entry
-                  MultiSelectDialog.mappedItem.forEach((key, value) {
-                    if (value == true) {
-                      selectedItems.add(key);
-                    }
-                  });
+                    // Traverse each map entry
+                    MultiSelectDialog.mappedItem.forEach((key, value) {
+                      if (value == true) {
+                        selectedItems.add(key);
+                      }
+                    });
 
-                  // Close the Dialog & return selectedItems
-                  Navigator.pop(context);
-                  print("......."+selectedItems.toString());
-                }))
+                    // Close the Dialog & return selectedItems
+                    Navigator.pop(context);
+                    print("......." + selectedItems.toString());
+                  }),
+            ))
       ],
     );
   }
