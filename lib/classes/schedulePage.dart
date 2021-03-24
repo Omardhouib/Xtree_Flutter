@@ -1,3 +1,4 @@
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -9,9 +10,11 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Models/LocationHome.dart';
+import 'package:sidebar_animation/Models/Relay.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/classes/ChartHistory.dart';
+import 'package:sidebar_animation/classes/MultiSelectFormField.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import '../bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/constants.dart';
@@ -23,7 +26,8 @@ class schedulePage extends StatefulWidget with NavigationStates {
   Location location;
   Sensor sens;
   List<Sensor> Electro;
-  schedulePage({this.location, this.sens, this.Electro});
+  List<Sensor> relay;
+  schedulePage({this.location, this.sens, this.Electro, this.relay});
 
   @override
   schedulePageState createState() => schedulePageState();
@@ -33,16 +37,20 @@ class schedulePageState extends State<schedulePage> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   DateTime selectedDate = DateTime.now();
   List<dynamic> sensors = [];
+  List<dynamic> Elec = [];
   final _formKey = GlobalKey<FormState>();
   List<String> _mode = ['Manuel mode', 'AI mode']; // Option 2
   String _selectedLocation;
   String _selectedGender = null;
   bool toast= true;
-  final TextEditingController sitenameController = new TextEditingController();
-  final TextEditingController descriptionController =
-      new TextEditingController();
+  final TextEditingController TmaxController = new TextEditingController();
+  final TextEditingController TminController =
+  new TextEditingController();
   _renderWidget() {
     if (_selectedLocation == "Manuel mode") {
+      widget.Electro.forEach((element) {
+        Elec.add({"item_id": element.id, "item_text": element.name});
+      });
       return Padding(
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: Container(
@@ -171,7 +179,7 @@ class schedulePageState extends State<schedulePage> {
                             } else
                               return null;
                           },
-                          controller: sitenameController,
+                          controller: TmaxController,
                           decoration: InputDecoration(
                             border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(10.0),
@@ -201,7 +209,7 @@ class schedulePageState extends State<schedulePage> {
                             } else
                               return null;
                           },
-                          controller: descriptionController,
+                          controller: TminController,
                           decoration: InputDecoration(
                               border: new OutlineInputBorder(
                                 borderRadius: new BorderRadius.circular(10.0),
@@ -291,6 +299,7 @@ class schedulePageState extends State<schedulePage> {
                         ],
                       ),
                       onPressed: (){
+                        _doSomething();
                       },
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(7.0),
@@ -491,7 +500,7 @@ class schedulePageState extends State<schedulePage> {
                     child: Text(
                       'Please choose the mode',
                       style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                     ),
                   ), // Not necessary for Option 1
                   value: _selectedLocation,
@@ -530,13 +539,120 @@ class schedulePageState extends State<schedulePage> {
     );
   }
 
+
+  // DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
+  final _key = GlobalKey<FormState>();
+  List<dynamic> NotifSelection = [];
+  void _doSomething() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'Electro';
+    final value = Relay.relayFromJson(prefs.get(key)) ?? 0;
+
+    NotifSelection.add({"item_id": 1, "item_text": "Email"});
+    print("button pressed ");
+    print(" max" + TmaxController.text);
+    print(" min" + TminController.text);
+    print(" date" + selectedDate.toIso8601String()+"Z");
+    print(" relays" + value.toString());
+    print(" relays" + NotifSelection.toString());
+    if (TmaxController.text.isEmpty){
+      Fluttertoast.showToast(
+          msg: "T Max Cannot be empty!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 10,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 10.0);
+    }
+    else if (TminController.text.isEmpty){
+      Fluttertoast.showToast(
+          msg: "T Min Cannot be empty!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 10,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 10.0);
+    }
+    else if (int.parse(TmaxController.text) < int.parse(TminController.text) ){
+      Fluttertoast.showToast(
+          msg: "T Min Cannot be greater than T Max!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 10,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 10.0);
+    }
+    else if (int.parse(TmaxController.text) == int.parse(TminController.text) ){
+      Fluttertoast.showToast(
+          msg: "T Max and T Min Cannot be equal!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 10,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 10.0);
+    }
+    AddRules(widget.sens.id, NotifSelection, selectedDate, TmaxController.text, TminController.text, value);
+    NotifSelection.clear();
+    print(" relays" + value.toString());
+    print(" relays" + NotifSelection.toString());
+
+
+  }
+
+  void AddRules(String id, List NotifSelection, DateTime startDate, String Tmax, String Tmin, Object value) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final token = prefs.get(key) ?? 0;
+    var jsonResponse = null;
+    List<dynamic> RelayConfiguration = [];
+    RelayConfiguration.add({"NotifSelection": NotifSelection, "RelaySelection": value, "date": selectedDate.toIso8601String(), "TMax": Tmax, "TMin": Tmin});
+    Map data = {
+      "SensorId": "$id",
+      "Rules": RelayConfiguration
+    };    String myUrl = DatabaseHelper2.serverUrl + "/sensors/AddRules?token=" + token;
+    var response = await http.post(myUrl,
+        headers: {"Content-Type": "application/json"},
+        body:
+        json.encode(data)
+    );
+    if (response.statusCode == 200) {
+      jsonResponse = json.decode(response.body);
+
+      if (jsonResponse['message'] == "schedule saved") {
+        await Fluttertoast.showToast(
+            msg: "Schedule saved !",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 10.0);
+        NotifSelection.clear();
+      } else if (jsonResponse['status'] == "err"){
+        await Fluttertoast.showToast(
+            msg: "Something goes wrong !",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 10.0);
+      }
+    }
+  }
+
   List<DropdownMenuItem<String>> _dropDownItem() {
     List<String> ddl = ['AI mode', 'Manuel mode'];
     return ddl
         .map((value) => DropdownMenuItem(
-              value: value,
-              child: Text(value),
-            ))
+      value: value,
+      child: Text(value),
+    ))
         .toList();
   }
 
@@ -557,7 +673,7 @@ class schedulePageState extends State<schedulePage> {
             int date = (list[i]["dt"]);
             int zero = 100;
             DateTime finalday = DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(("$date" + "$zero")))
+                int.parse(("$date" + "$zero")))
                 .toUtc();
             String dateFormat = DateFormat('EEEE').format(finalday);
             var item = list[i];
@@ -679,7 +795,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -701,7 +817,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -723,7 +839,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -860,7 +976,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -882,7 +998,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -904,7 +1020,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -1041,7 +1157,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -1063,7 +1179,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -1085,7 +1201,7 @@ class schedulePageState extends State<schedulePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
@@ -1219,7 +1335,7 @@ class _ItemListchartState extends State<ItemListchart> {
                     ),
                     FutureBuilder(
                         future:
-                            databaseHelper2.getdataDeviceByID(snapshot.data.id),
+                        databaseHelper2.getdataDeviceByID(snapshot.data.id),
                         builder: (context, snapshot2) {
                           if (snapshot2.hasError) {
                             print(snapshot2.error);
@@ -1263,10 +1379,10 @@ class _ItemListchartState extends State<ItemListchart> {
                                               0, 0, 20, 0),
                                           child: Text(
                                             snapshot2.data[
-                                                        snapshot2.data.length -
-                                                            1]["batterie"]
-                                                    .round()
-                                                    .toString() +
+                                            snapshot2.data.length -
+                                                1]["batterie"]
+                                                .round()
+                                                .toString() +
                                                 "%",
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -1531,7 +1647,7 @@ Widget chart(List data, String type) {
 
     data.forEach((element) {
       var hour =
-          DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+      DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
       var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
           .minute
           .toString();
@@ -1635,200 +1751,6 @@ Widget chart(List data, String type) {
             },
           ),
         ),
-      ],
-    );
-  }
-}
-
-class MultiSelectFormField extends FormField<List<String>> {
-  /// Holds the items to display on the dialog.
-  final List<Sensor> itemList;
-
-  /// Enter text to show on the button.
-  final String buttonText;
-
-  /// Enter text to show question on the dialog
-  final String questionText;
-
-  // Constructor
-  MultiSelectFormField({
-    this.buttonText,
-    this.questionText,
-    this.itemList,
-    BuildContext context,
-    FormFieldSetter<List<String>> onSaved,
-    FormFieldValidator<List<String>> validator,
-    List<String> initialValue,
-  }) : super(
-          onSaved: onSaved,
-          validator: validator,
-          initialValue: initialValue ?? [], // Avoid Null
-          autovalidate: true,
-          builder: (FormFieldState<List<String>> state) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    InkWell(
-                        child: Container(
-                          width: 180,
-                          height: 40,
-                          child: FlatButton(
-                            child: Center(
-                              //If value is null or no option is selected
-                              child: (state.value == null ||
-                                      state.value.length <= 0)
-
-                                  // Show the buttonText as it is
-                                  ? Row(
-                                      children: [
-                                        Icon(
-                                          Icons.developer_board,
-                                          color: Colors.blue,
-                                        ),
-                                        Text(
-                                          '      Select relays',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500, color: Colors.blue),
-                                        ),
-                                      ],
-                                    )
-                                  // Else show number of selected options
-                                  : Text(
-                                      state.value.length == 1
-                                          // SINGLE FLAVOR SELECTED
-                                          ? '${state.value.length.toString()} '
-                                              ' ${buttonText.substring(0, buttonText.length - 1)} SELECTED '
-                                          // MULTIPLE FLAVOR SELECTED
-                                          : '${state.value.length.toString()} '
-                                              ' $buttonText SELECTED',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                            ),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                side: BorderSide(
-                                    color: Colors.blue[300], width: 1.5)),
-                          ),
-                        ),
-                        onTap: () async => state.didChange(await showDialog(
-                                context: context,
-                                builder: (_) => MultiSelectDialog(
-                                      question: Text(questionText),
-                                      answers: itemList,
-                                    )) ??
-                            []))
-                  ],
-                ),
-                // If validation fails, display an error
-                state.hasError
-                    ? Center(
-                        child: Text(
-                          state.errorText,
-                          style: TextStyle(
-                              color: Colors.red[400],
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      )
-                    : Container() //Else show an empty container
-              ],
-            );
-          },
-        );
-}
-
-class MultiSelectDialog extends StatefulWidget {
-  /// List to display the answer.
-  final List<Sensor> answers;
-
-  /// Widget to display the question.
-  final Widget question;
-
-  /// Map that holds selected option with a boolean value
-  /// i.e. { 'a' : false}.
-  static Map<Sensor, bool> mappedItem;
-
-  MultiSelectDialog({this.answers, this.question});
-
-  @override
-  _MultiSelectDialogState createState() => _MultiSelectDialogState();
-}
-
-class _MultiSelectDialogState extends State<MultiSelectDialog> {
-  /// List to hold the selected answer
-  /// i.e. ['a'] or ['a','b'] or ['a','b','c'] etc.
-  final List<Sensor> selectedItems = [];
-
-  /// Function that converts the list answer to a map.
-  Map<Sensor, bool> initMap() {
-    return MultiSelectDialog.mappedItem = Map.fromIterable(widget.answers,
-        key: (k) => k,
-        value: (v) {
-          if (v != true && v != false)
-            return false;
-          else
-            return v as bool;
-        });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (MultiSelectDialog.mappedItem == null) {
-      initMap();
-    }
-    return SimpleDialog(
-      elevation: 10,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      title: widget.question,
-      children: [
-        ...MultiSelectDialog.mappedItem.keys.map((Sensor key) {
-          return StatefulBuilder(
-            builder: (_, StateSetter setState) => CheckboxListTile(
-                title: Text(
-                  key.name,
-                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
-                ), // Displays the option
-                value: MultiSelectDialog
-                    .mappedItem[key], // Displays checked or unchecked value
-                controlAffinity: ListTileControlAffinity.platform,
-                onChanged: (value) =>
-                    setState(() => MultiSelectDialog.mappedItem[key] = value)),
-          );
-        }).toList(),
-        Align(
-            alignment: Alignment.center,
-            child: Container(
-              width: 200,
-              child: FlatButton(
-                  child: Text('Select'),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7.0),
-                      side: BorderSide(color: Colors.blue[300], width: 1.5)),
-                  textColor: Colors.blue,
-                  onPressed: () {
-                    // Clear the list
-                    selectedItems.clear();
-
-                    // Traverse each map entry
-                    MultiSelectDialog.mappedItem.forEach((key, value) {
-                      if (value == true) {
-                        selectedItems.add(key);
-                      }
-                    });
-
-                    // Close the Dialog & return selectedItems
-                    Navigator.pop(context);
-                    print("......." + selectedItems.toString());
-                  }),
-            ))
       ],
     );
   }

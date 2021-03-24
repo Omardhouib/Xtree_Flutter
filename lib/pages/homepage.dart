@@ -39,12 +39,16 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<LocationHome> getHomedetails;
   Future<int> getSensNum;
   Future<int> getLocNum;
+  Future<List> Sensors;
+  Future<Location> lastloc;
 
   @override
   void initState() {
     getHomedetails = databaseHelper2.getHomedetails();
     getSensNum = databaseHelper2.NumberofDeviceByUser();
     getLocNum = databaseHelper2.NumberofLocationByUser();
+    Sensors = databaseHelper2.AllDeviceByUser1();
+    lastloc = databaseHelper2.Lastlocation();
 
     super.initState();
   }
@@ -611,7 +615,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(10.0),
                       image: DecorationImage(
                           image: NetworkImage(
-                              "https://lh3.googleusercontent.com/proxy/KYHQGmm33PKCV_kLI5i1rO9o_Jxi8Li67L_z-q84SWLr32bQdXS8LLS0p9E6Oj8Ije3teyNy2rssAaobRP44gVqBt8ppWUbjebw5Tr7d7hj5veYNLeBi2rWD9mi-c595aCwc"),
+                              "https://image.freepik.com/free-photo/oyster-farm-sea-beautiful-sky-sunset-background_1150-10229.jpg"),
                           fit: BoxFit.cover)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

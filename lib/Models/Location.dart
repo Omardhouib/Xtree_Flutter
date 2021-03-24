@@ -1,23 +1,24 @@
 // To parse this JSON data, do
 //
 //     final location = locationFromJson(jsonString);
+
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-List<Location> locationFromJson(String str) => List<Location>.from(json.decode(str).map((x) => Location.fromJson(x)));
+Location locationFromJson(String str) => Location.fromJson(json.decode(str));
 
-String locationToJson(List<Location> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String locationToJson(Location data) => json.encode(data.toJson());
 
 class Location {
   Location({
-    this.automaticIrrigation,
+    @required this.automaticIrrigation,
     @required this.coordinates,
-    this.createdDate,
-    this.sensorIds,
-    this.id,
+    @required this.createdDate,
+    @required this.sensorIds,
+    @required this.id,
     @required this.siteName,
     @required this.description,
-    this.v,
+    @required this.v,
   });
 
   bool automaticIrrigation;
@@ -43,7 +44,7 @@ class Location {
   Map<String, dynamic> toJson() => {
     "AutomaticIrrigation": automaticIrrigation,
     "Coordinates": List<dynamic>.from(coordinates.map((x) => x)),
-    "Created_date": createdDate,
+    "Created_date": createdDate.toIso8601String(),
     "Sensor_ids": List<dynamic>.from(sensorIds.map((x) => x)),
     "_id": id,
     "SiteName": siteName,
