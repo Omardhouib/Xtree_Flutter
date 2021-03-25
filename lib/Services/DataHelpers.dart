@@ -371,6 +371,25 @@ class DatabaseHelper2 {
       // then throw an exception.
       throw Exception('Failed to load album');
     }
+  }Future<Sensor> getSolDeviceById(String ID) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key) ?? 0;
+
+    String myUrl = "$serverUrl/sensors/getSolDeviceByid/$ID?token=" + value;
+    http.Response response = await http.get(myUrl,
+        headers: {
+          'Accept': 'application/json',
+        });
+    if (response.statusCode == 200) {
+      await Future.delayed(Duration(milliseconds: 800));
+
+      // If the server did return a 200 OK response,
+      return Sensor.fromJson(json.decode(response.body));
+    } else {
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
   Future<Sensor> getDevById(String ID) async {
     final prefs = await SharedPreferences.getInstance();

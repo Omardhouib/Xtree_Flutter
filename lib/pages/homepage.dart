@@ -31,7 +31,10 @@ class MyHomePage extends StatefulWidget with NavigationStates {
 
 class _MyHomePageState extends State<MyHomePage> {
   String id;
+  String sensId;
+  bool status;
   List<String> sens;
+  Sensor Solsens;
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   final RoundedLoadingButtonController _btnController =
       new RoundedLoadingButtonController();
@@ -39,16 +42,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<LocationHome> getHomedetails;
   Future<int> getSensNum;
   Future<int> getLocNum;
-  Future<List> Sensors;
-  Future<Location> lastloc;
 
   @override
   void initState() {
     getHomedetails = databaseHelper2.getHomedetails();
     getSensNum = databaseHelper2.NumberofDeviceByUser();
     getLocNum = databaseHelper2.NumberofLocationByUser();
-    Sensors = databaseHelper2.AllDeviceByUser1();
-    lastloc = databaseHelper2.Lastlocation();
 
     super.initState();
   }
@@ -276,104 +275,228 @@ class _MyHomePageState extends State<MyHomePage> {
                       )
                     : Container();
               }),
-          Container(
-            height: 80,
-            child: Card(
-              semanticContainer: true,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              elevation: 4,
-              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.amber,
-                      child: Icon(
-                        Icons.schedule,
+          FutureBuilder<LocationHome>(
+              future: getHomedetails,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  print("there is problem !");
+                }
+
+                if (snapshot.hasData) {
+                  snapshot.data.sol.rules.forEach((element) {
+                    status = element.status;
+                  });
+                  if (status == true){
+                   // print("status:"+status.toString());
+                    return Container(
+                      height: 80,
+                      child: Card(
+                        semanticContainer: true,
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
                         color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        elevation: 4,
+                        margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                              child: CircleAvatar(
+                                backgroundColor: Colors.amber,
+                                child: Icon(
+                                  Icons.schedule,
+                                  color: Colors.white,
+                                ),
+                                radius: 25,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "SCHEDULES STATE:    ",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Container(
+                                  //color: Colors.green,
+                                  height: 20.0, // height of the button
+                                  width: 20.0, // width of the button
+                                  decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      border: Border.all(
+                                          color: Colors.grey[350],
+                                          width: 3.0,
+                                          style: BorderStyle.solid),
+                                      shape: BoxShape.circle),
+                                ),
+                                Text(
+                                  "  ACTIVE",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,color: Colors.green
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      radius: 25,
+                    );
+                  }
+                  else
+                  //  print("status:"+status.toString());
+                    return Container(
+                    height: 80,
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      elevation: 4,
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.amber,
+                              child: Icon(
+                                Icons.schedule,
+                                color: Colors.white,
+                              ),
+                              radius: 25,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "SCHEDULES STATE:    ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Container(
+                                //color: Colors.green,
+                                height: 20.0, // height of the button
+                                width: 20.0, // width of the button
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    border: Border.all(
+                                        color: Colors.grey[350],
+                                        width: 3.0,
+                                        style: BorderStyle.solid),
+                                    shape: BoxShape.circle),
+                              ),
+                              Text(
+                                "  INACTIVE",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,color: Colors.red
+                                ),
+                              ),
+
+
+
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Text(
-                    "Total number of SCHEDULES: 0",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+                  );
+
+                } else {
+                  return Container();
+                }
+              }),
+
           FutureBuilder<LocationHome>(
               future: getHomedetails,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.white
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
-                          child: Container(
-                            height: 60,
-                            width: 350,
-                            child: FlatButton(
-                              child: Text("SCHEDULE",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.blue[600],
-                                ),),
-                              onPressed: (){
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            schedulePage(
-                                              sens: snapshot.data.sol,
-                                              location: snapshot.data.locations,
-                                              Electro: snapshot.data.electro
-                                            )));
-                              },
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                  side: BorderSide(color: Colors.blue[300],width: 1.5)
-
+                  snapshot.data.locations.sensorIds.forEach((element) {
+                     sensId = element;
+                     print("element: "+element);
+                  });
+                  return FutureBuilder<Sensor>(
+                      future: databaseHelper2.getSolDeviceById(sensId),
+                      builder: (context, snapshot2) {
+                        if (snapshot2.hasError) {
+                          print(snapshot2.error);
+                          print("mochkla lenaa *");
+                        }
+                        if (snapshot2.hasData) {
+                          print("sensdata: "+snapshot2.data.toString());
+                          return Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color: Colors.white
                               ),
-                              color: Colors.blue[100],
-                              splashColor: Colors.blue[300],
-                              textColor: Colors.black,
-                            ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
+                                    child: Container(
+                                      height: 60,
+                                      width: 350,
+                                      child: FlatButton(
+                                        child: Text("SCHEDULE",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.blue[600],
+                                          ),),
+                                        onPressed: (){
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      schedulePage(
+                                                          sens: snapshot2.data,
+                                                          location: snapshot.data.locations,
+                                                          Electro: snapshot.data.electro
+                                                      )));
+                                        },
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(30.0),
+                                            side: BorderSide(color: Colors.blue[300],width: 1.5)
 
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                          child: Text(
-                            "You can controle when to irrigate your land based on our AI or you can Schedule it by yourself.",
-                            style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w400
+                                        ),
+                                        color: Colors.blue[100],
+                                        splashColor: Colors.blue[300],
+                                        textColor: Colors.black,
+                                      ),
+
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                    child: Text(
+                                      "You can controle when to irrigate your land based on our AI or you can Schedule it by yourself.",
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.w400
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+                          );
+                        } else {
+                          return Container();
+                        }
+                      });
                 } else {
                   return Container();
                 }
@@ -995,7 +1118,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
                               Column(
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.link_off),
+                                    icon: Icon(Icons.flash_off),
                                     iconSize: 30,
                                     color: Colors.red,
                                     onPressed: () {
@@ -1151,8 +1274,6 @@ class ItemListchart extends StatefulWidget {
 
 class _ItemListchartState extends State<ItemListchart> {
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
-
-  ScrollController _controller = new ScrollController();
   void _onValueChange(String value) {
     setState(() {
       _selectedId = value;

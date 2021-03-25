@@ -63,6 +63,11 @@ class Sensor {
     "name": name,
     "uv": uv,
   };
+
+  @override
+  String toString() {
+    return 'Sensor{sensorCoordinates: $sensorCoordinates, createdDate: $createdDate, status: $status, id: $id, rules: $rules, sensorIdentifier: $sensorIdentifier, sensorType: $sensorType, v: $v, description: $description, name: $name, uv: $uv}';
+  }
 }
 
 class Rule {

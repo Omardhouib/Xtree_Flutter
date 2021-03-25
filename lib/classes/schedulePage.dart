@@ -15,6 +15,7 @@ import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/classes/ChartHistory.dart';
 import 'package:sidebar_animation/classes/MultiSelectFormField.dart';
+import 'package:sidebar_animation/pages/homepage.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import '../bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/constants.dart';
@@ -327,6 +328,7 @@ class schedulePageState extends State<schedulePage> {
                               color: Colors.black,
                             ),),
                           onPressed: (){
+                            TurnOn(widget.sens.id);
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(7.0),
@@ -350,6 +352,7 @@ class schedulePageState extends State<schedulePage> {
                             color: Colors.black,
                           ),),
                         onPressed: (){
+                          TurnOff(widget.sens.id);
                         },
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(7.0),
@@ -646,6 +649,75 @@ class schedulePageState extends State<schedulePage> {
     }
   }
 
+
+  TurnOff(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key) ?? 0;
+    Map data = {'ProcessState': false, 'SensorId': "$id"};
+    var jsonResponse = null;
+    var response = await http.post(
+        DatabaseHelper2.serverUrl + "/dashboard/ProcessConfiguration?token=" + value,
+        headers: {"Content-Type": "application/json"},
+//        "http://192.168.56.81:3000/api/users/login",
+        body: json.encode(data));
+    print('statusCode  :' + response.statusCode.toString());
+    if (response.statusCode == 200) {
+      jsonResponse = json.decode(response.body);
+      if (jsonResponse['message'] == "Process Stopped") {
+        await Fluttertoast.showToast(
+            msg: "Process Stopped !",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 10.0);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SideBarLayout(
+                    )));
+      }
+    }
+    print(response.body);
+  }
+
+  TurnOn(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key) ?? 0;
+    Map data = {'ProcessState': true, 'SensorId': "$id"};
+    var jsonResponse = null;
+    var response = await http.post(
+        DatabaseHelper2.serverUrl + "/dashboard/ProcessConfiguration?token=" + value,
+        headers: {"Content-Type": "application/json"},
+//        "http://192.168.56.81:3000/api/users/login",
+        body: json.encode(data));
+    print('statusCode  :' + response.statusCode.toString());
+    if (response.statusCode == 200) {
+      jsonResponse = json.decode(response.body);
+      if (jsonResponse['message'] == "Process Started") {
+        await Fluttertoast.showToast(
+            msg: "Process Started !",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 10.0);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SideBarLayout(
+                    )));
+      }
+    }
+    print(response.body);
+  }
+
   List<DropdownMenuItem<String>> _dropDownItem() {
     List<String> ddl = ['AI mode', 'Manuel mode'];
     return ddl
@@ -880,7 +952,7 @@ class schedulePageState extends State<schedulePage> {
                       borderRadius: BorderRadius.circular(10.0),
                       image: DecorationImage(
                           image: NetworkImage(
-                              "https://lh3.googleusercontent.com/proxy/KYHQGmm33PKCV_kLI5i1rO9o_Jxi8Li67L_z-q84SWLr32bQdXS8LLS0p9E6Oj8Ije3teyNy2rssAaobRP44gVqBt8ppWUbjebw5Tr7d7hj5veYNLeBi2rWD9mi-c595aCwc"),
+                              "https://image.freepik.com/free-photo/oyster-farm-sea-beautiful-sky-sunset-background_1150-10229.jpg"),
                           fit: BoxFit.cover)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

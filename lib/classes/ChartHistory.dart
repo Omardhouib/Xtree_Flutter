@@ -24,6 +24,21 @@ class ChartHistoryState extends State<ChartHistory> {
   String identifier;
   String type;
   String name;
+  num Time;
+  num DateS;
+  List<dynamic> data= [];
+  DateTime selectedDate = DateTime.now();
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +64,54 @@ class ChartHistoryState extends State<ChartHistory> {
                 ),
               ),
               SizedBox(
-                height: 30,
+                height: 10,
               ),
-              FutureBuilder(
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+
+                    Text(
+                      "${selectedDate.toLocal()}".split(' ')[0],
+                      style: TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w400),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                      child: Container(
+                        width: 140,
+                        height: 30,
+                        child: FlatButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              side: BorderSide(
+                                  color: Colors.blue[300], width: 1.5)),
+                          onPressed: () => _selectDate(context),
+                          color: Colors.transparent,
+                          textColor: Colors.blue,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                color: Colors.blue,
+                                size: 20,
+                              ),
+                              Text(
+                                '   Select date',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              FutureBuilder<List>(
 //                future: databaseHelper.getData(),
                   future: databaseHelper2.getdataDeviceByID(widget.identifier),
                   builder: (context, snapshot) {
@@ -60,6 +120,19 @@ class ChartHistoryState extends State<ChartHistory> {
                       print("mochkla lenaa *");
                     }
                     if (snapshot.hasData) {
+                      /*print("first:"+snapshot.data[0]["time"].toString());
+                      snapshot.data.forEach((element) {
+                       int time = (element['time']);
+                         Time  = element['time'];
+                       DateS = (selectedDate.millisecondsSinceEpoch / (1000));
+                       print("timeee"+Time.toString());
+                       print("selecteddate: "+DateS.toString());
+                       if(DateS >= Time){
+                         data.add(element);
+                         print("elemnt"+element.toString());
+                       }
+
+                      });*/
                       return Column(
                         children: [
                           chart(snapshot.data, type),
