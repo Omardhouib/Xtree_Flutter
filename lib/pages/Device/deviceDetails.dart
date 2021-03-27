@@ -3,6 +3,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/pages/Device/UpdateSens.dart';
+import 'package:sidebar_animation/pages/homepage.dart';
 import '../../bloc.navigation_bloc/navigation_bloc.dart';
 import 'dart:async';
 import 'package:sidebar_animation/graphic.dart' as graphic;
@@ -28,7 +29,6 @@ class _deviceDetailsState extends State<deviceDetails> {
       _selectedId = value;
     });
   }
-
   String _selectedId;
 
   @override
@@ -137,7 +137,7 @@ class _deviceDetailsState extends State<deviceDetails> {
   }
 }
 
-Widget chart(List data, String type) {
+/*Widget chart(List data, String type) {
   List<dynamic> adjustData = [];
   if (data.isNotEmpty) {
     if (type == "CarteDeSol") {
@@ -223,4 +223,4 @@ Widget chart(List data, String type) {
       },
     ),
   );
-}
+}*/

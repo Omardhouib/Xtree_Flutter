@@ -135,21 +135,6 @@ class _SideBarState extends State<SideBar>
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.device_hub),
-                        title: Text(
-                          "My devices",
-                          style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        onTap: () {
-                          onIconPressed();
-                          BlocProvider.of<NavigationBloc>(context)
-                              .add(NavigationEvents.MyAccountClickedEvent);
-                        },
-                      ),
-                      ListTile(
                         leading: Icon(Icons.place),
                         title: Text(
                           "My sites",
@@ -162,6 +147,21 @@ class _SideBarState extends State<SideBar>
                           onIconPressed();
                           BlocProvider.of<NavigationBloc>(context)
                               .add(NavigationEvents.MyOrdersClickedEvent);
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.device_hub),
+                        title: Text(
+                          "My devices",
+                          style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal),
+                        ),
+                        onTap: () {
+                          onIconPressed();
+                          BlocProvider.of<NavigationBloc>(context)
+                              .add(NavigationEvents.MyAccountClickedEvent);
                         },
                       ),
                       Divider(

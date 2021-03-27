@@ -32,7 +32,7 @@ class NavigationBloc extends Bloc<NavigationEvents, NavigationStates> {
         yield MyHomePage();
         break;
       case NavigationEvents.MyAccountClickedEvent:
-        yield HomeDevice();
+        yield Devices();
         break;
       case NavigationEvents.MyOrdersClickedEvent:
         yield HomeLocation();

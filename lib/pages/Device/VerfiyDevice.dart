@@ -13,125 +13,74 @@ import 'package:http/http.dart' as http;
 import 'package:sidebar_animation/pages/Device/AddDevice.dart';
 
 class VerfiyDevice extends StatefulWidget {
-  VerfiyDevice({Key key, this.title}) : super(key: key);
+  VerfiyDevice({Key key, this.title, this.onValueChange, this.initialValue}) : super(key: key);
   final String title;
+  final String initialValue;
+  final void Function(String) onValueChange;
   @override
   VerfiyDeviceState createState() => VerfiyDeviceState();
 }
 
 class VerfiyDeviceState extends State<VerfiyDevice> {
-  GoogleMapController _controller;
-  final CameraPosition _initialPosition = CameraPosition(target: LatLng(33.892166, 9.400138), zoom: 5.0);
-  List<Marker> Markers = [];
-  List<Location> locations = [];
-  final List<Marker> markers = [];
   bool _isLoading = false;
   bool t3ada = false;
   bool faregh = false;
   final RoundedLoadingButtonController _btnController =
   new RoundedLoadingButtonController();
   final TextEditingController DevicenameController = new TextEditingController();
-  final TextEditingController descriptionController =
-  new TextEditingController();
-  LatLng coordiante;
-  addMarker(cordinate) {
-    int id = Random().nextInt(1);
-    setState(() {
-      markers
-          .add(Marker(position: cordinate, markerId: MarkerId(id.toString())));
-      coordiante = cordinate;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final _key = GlobalKey<FormState>();
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Form(
-                key: _key,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 150, 10, 0),
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(color: Colors.grey[100]))),
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return "Device name cannot be empty !";
-                          } else
-                            return null;
-                        },
-                        controller: DevicenameController,
-                        decoration: InputDecoration(
-                            icon: Icon(Icons.place, color: Colors.grey[400]),
-                            border: InputBorder.none,
-                            hintText: "Site name",
-                            hintStyle: TextStyle(color: Colors.grey[400])),
+    return AlertDialog(
+        shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+    contentPadding: EdgeInsets.only(top: 10.0),
+        content: SingleChildScrollView(
+           child: Column(
+              children: [
+                Form(
+                  key: _key,
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: Colors.grey[100]))),
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "Device name cannot be empty !";
+                            } else
+                              return null;
+                          },
+                          controller: DevicenameController,
+                          decoration: InputDecoration(
+                              icon: Icon(Icons.add, color: Colors.grey[400]),
+                              border: InputBorder.none,
+                              hintText: "Device identifier",
+                              hintStyle: TextStyle(color: Colors.grey[400])),
+                        ),
                       ),
-                    ),
-                    /*Container(
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(color: Colors.grey[100]))),
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return "Description cannot be empty !";
-                          } else
-                            return null;
-                        },
-                        controller: descriptionController,
-                        decoration: InputDecoration(
-                            icon: Icon(Icons.email, color: Colors.grey[400]),
-                            border: InputBorder.none,
-                            hintText: "Description",
-                            hintStyle: TextStyle(color: Colors.grey[400])),
-                      ),
-                    ),*/
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            /*  Expanded(
-                child: GoogleMap(
-                  initialCameraPosition: _initialPosition,
-                  mapType: MapType.normal,
-                  onMapCreated: (controller) {
-                    setState(() {
-                      _controller = controller;
-                    });
-                  },
-                  markers: markers.toSet(),
-                  onTap: (cordinate) {
-                    _controller
-                        .animateCamera(CameraUpdate.newLatLng(cordinate));
-                    addMarker(cordinate);
-
-                  },
+                SizedBox(
+                  height: 10,
                 ),
-              ),*/
-              SizedBox(
-                height: 30,
-              ),
-              buttonSection(),
-            ],
+          Container(
+            width: 150,
+            child: FlatButton(
+              color: Colors.amberAccent,
+              child: Text("Add", style: TextStyle(color: Colors.white)),
+              onPressed: _doSomething,
+            ),
           ),
-        ],
-      ),
-     /* floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _controller.animateCamera(CameraUpdate.zoomOut());
-        },
-        child: Icon(Icons.zoom_out),
-      ),*/
-    );
+              ],
+            ),
+      )
+      );
   }
 
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
@@ -143,7 +92,6 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
      /* print(" description" + descriptionController.text);
       print(" Coordinates" + coordiante.toString());*/
       Addlocation(DevicenameController.text);
-      _btnController.stop();
     });
   }
 
@@ -152,17 +100,8 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
     final key = 'token';
     final value = prefs.get(key) ?? 0;
     var jsonResponse = null;
-   /* List<double> coordt = new List<double>();
-    coordt.add(coord.latitude);
-    coordt.add(coord.longitude);
-    print("hello"+coordt.toString());
-    print("hello"+description);
-    print("hello"+sitename);*/
     Map data = {
-      "Sensorid": "$sitename"/*,
-      "Coordinates": coordt,
-      "Description": "$description"*/
-
+      "Sensorid": "$sitename"
     };
     String myUrl = DatabaseHelper2.serverUrl + "/sensors/find?token=" + value;
     var response = await http.post(myUrl,
@@ -192,7 +131,7 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
                 builder: (BuildContext context) => AddDevice(
                     identifier: jsonResponse["SensorFoundId"])),
             (Route<dynamic> route) => true);
-      } else if ((jsonResponse['message'] == "Already in use")) {
+      } else if ((jsonResponse['message'] == "Already in use !")) {
         await Fluttertoast.showToast(
             msg: "Already in use",
             toastLength: Toast.LENGTH_SHORT,
@@ -215,11 +154,11 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
     }
   }
 
-  buttonSection() {
+  /*buttonSection() {
     return Container(
       height: 50,
       child: AspectRatio(
-        child: RoundedLoadingButton(
+        child: FlatButton(
           color: Colors.amberAccent,
           child: Text("Add", style: TextStyle(color: Colors.white)),
           controller: _btnController,
@@ -228,5 +167,5 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
         aspectRatio: 8,
       ),
     );
-  }
+  }*/
 }
