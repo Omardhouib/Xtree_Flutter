@@ -22,6 +22,12 @@ class VerfiyDevice extends StatefulWidget {
 }
 
 class VerfiyDeviceState extends State<VerfiyDevice> {
+  void _onValueChange(String value) {
+    setState(() {
+      _selectedId = value;
+    });
+  }
+  String _selectedId;
   bool _isLoading = false;
   bool t3ada = false;
   bool faregh = false;
@@ -126,11 +132,13 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 10.0);
-        await Navigator.of(context).pushAndRemoveUntil(
-             MaterialPageRoute(
-                builder: (BuildContext context) => AddDevice(
-                    identifier: jsonResponse["SensorFoundId"])),
-            (Route<dynamic> route) => true);
+        showDialog(
+            context: context,
+            child: AddDevice(
+              identifier: jsonResponse["SensorFoundId"],
+              onValueChange: _onValueChange,
+              initialValue: _selectedId,
+            ));
       } else if ((jsonResponse['message'] == "Already in use !")) {
         await Fluttertoast.showToast(
             msg: "Already in use",
@@ -141,7 +149,7 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
             textColor: Colors.white,
             fontSize: 10.0);
       }
-      else if ((jsonResponse['message'] == "No Sensor Found !")) {
+      else if ((jsonResponse['message'] == "No Sensor Found!")) {
         await Fluttertoast.showToast(
             msg: "No Sensor Found !",
             toastLength: Toast.LENGTH_SHORT,

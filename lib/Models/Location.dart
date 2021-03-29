@@ -51,4 +51,9 @@ class Location {
     "Description": description,
     "__v": v,
   };
+
+  @override
+  String toString() {
+    return 'Location{automaticIrrigation: $automaticIrrigation, coordinates: $coordinates, createdDate: $createdDate, sensorIds: $sensorIds, id: $id, siteName: $siteName, description: $description, v: $v}';
+  }
 }

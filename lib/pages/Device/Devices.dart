@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/pages/Device/UpdateSens.dart';
 import 'package:sidebar_animation/pages/Device/VerfiyDevice.dart';
+import 'package:sidebar_animation/pages/Device/deleteDevVerifyLoc.dart';
 import 'package:sidebar_animation/pages/Device/deviceDetails.dart';
 import 'package:sidebar_animation/pages/homepage.dart';
 import '../../bloc.navigation_bloc/navigation_bloc.dart';
@@ -80,24 +81,45 @@ class _DevicesState extends State<Devices> {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              width: 200,
-              height: 130,
-              decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          Container(
+            height: 90,
+            child: Card(
+              semanticContainer: true,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
               color: Colors.white,
-            ),
-              child: Column(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              elevation: 4,
+              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+              child: Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 18, 0, 20),
-                    child: IconButton(
-                      icon: Icon(
+                    padding:
+                    const EdgeInsets.fromLTRB(15, 0, 40, 0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.amberAccent,
+                      child: Icon(
+                        Icons.add_circle,
+                        color: Colors.white,
+                      ),
+                      radius: 25,
+                    ),
+                  ),
+                  Text(
+                    "ADD DEVICE ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(120, 0, 0, 0),
+                    child: FlatButton(
+                      child: Icon(
                         Icons.add_circle_outline,
-                        color: Colors.amber,
-                        size: 50,
+                        color: Colors.amberAccent,
+                        size: 35,
                       ),
                       onPressed: (){
                         showDialog(
@@ -109,14 +131,58 @@ class _DevicesState extends State<Devices> {
                       },
                     ),
                   ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 90,
+            child: Card(
+              semanticContainer: true,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              elevation: 4,
+              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+              child: Row(
+                children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                    child: Text(
-                        "ADD DEVICE",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
+                    padding:
+                    const EdgeInsets.fromLTRB(15, 0, 40, 0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.red,
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
                       ),
+                      radius: 25,
+                    ),
+                  ),
+                  Text(
+                    "DELETE DEVICE ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(90, 0, 0, 0),
+                    child: FlatButton(
+                      child: Icon(
+                        Icons.delete_outline,
+                        color: Colors.red,
+                        size: 35,
+                      ),
+                      onPressed: (){
+                        showDialog(
+                            context: context,
+                            child: deleteDevVerifyLoc(
+                              onValueChange: _onValueChange,
+                              initialValue: _selectedId,
+                            ));
+                      },
                     ),
                   ),
                 ],
@@ -218,7 +284,7 @@ class _ItemListState extends State<ItemList> {
                                 child: Padding(
                                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                   child: Container(
-                                    width: 250,
+                                    width: 280,
                                     child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
@@ -268,18 +334,9 @@ class _ItemListState extends State<ItemList> {
                                       onValueChange: _onValueChange,
                                       initialValue: _selectedId,
                                       identifier: widget.list[i]["_id"],
+                                      name: widget.list[i]["name"]
                                     ));
                               },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                                size: 27,
-                              ),
                             ),
                           ),
                         ],

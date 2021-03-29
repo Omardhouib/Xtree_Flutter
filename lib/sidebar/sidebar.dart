@@ -19,14 +19,17 @@ class SideBar extends StatefulWidget with NavigationStates {
 
 class _SideBarState extends State<SideBar>
     with SingleTickerProviderStateMixin<SideBar> {
+  DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   AnimationController _animationController;
   StreamController<bool> isSidebarOpenedStreamController;
   Stream<bool> isSidebarOpenedStream;
   StreamSink<bool> isSidebarOpenedSink;
   final _animationDuration = const Duration(milliseconds: 350);
+  Future<List<Location>> AllLocation;
 
   @override
   void initState() {
+    AllLocation = databaseHelper2.AllLocationByUser();
     super.initState();
     _animationController =
         AnimationController(vsync: this, duration: _animationDuration);
@@ -185,6 +188,13 @@ class _SideBarState extends State<SideBar>
                               return Container();
                             }
                           }),
+                      Divider(
+                        height: 64,
+                        thickness: 0.9,
+                        color: Colors.grey[400].withOpacity(0.3),
+                        indent: 32,
+                        endIndent: 32,
+                      ),
                       ListTile(
                         leading: Icon(Icons.settings),
                         title: Text(
@@ -248,12 +258,12 @@ class _SideBarState extends State<SideBar>
   }
 
   Widget itemList({List list}) {
-    return Expanded(
+    return Container(
+      height: 350,
       child: ListView.builder(
           itemCount: list == null ? 0 : list.length,
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
-          physics: NeverScrollableScrollPhysics(),
           itemBuilder: (context, i) {
 //            DateTime t = DateTime.parse(list[i]['date_published'].toString());
 

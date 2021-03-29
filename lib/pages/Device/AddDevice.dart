@@ -10,11 +10,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:http/http.dart' as http;
+import 'package:sidebar_animation/pages/Device/Devices.dart';
+import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 
 class AddDevice extends StatefulWidget {
-  AddDevice({Key key, this.title, this.identifier}) : super(key: key);
+  AddDevice({Key key, this.title, this.identifier, this.onValueChange, this.initialValue}) : super(key: key);
   final String title;
   final String identifier;
+  final String initialValue;
+  final void Function(String) onValueChange;
   @override
   AddDeviceState createState() => AddDeviceState();
 }
@@ -52,16 +56,26 @@ class AddDeviceState extends State<AddDevice> {
   Widget build(BuildContext context) {
     final _key = GlobalKey<FormState>();
      identifier = widget.identifier;
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: Stack(
-        children: [
-          Column(
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+      contentPadding: EdgeInsets.only(top: 10.0),
+      content: SingleChildScrollView(
+        child: Column(
             children: [
               Form(
                 key: _key,
                 child: Column(
                   children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        "Add Device",style: TextStyle(
+                        fontSize: 23,
+                        fontWeight: FontWeight.w500
+                      ),
+                      ),
+                    ),
                     Container(
                       padding: EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
@@ -76,9 +90,9 @@ class AddDeviceState extends State<AddDevice> {
                         },
                         controller: DevicenameController,
                         decoration: InputDecoration(
-                            icon: Icon(Icons.place, color: Colors.grey[400]),
+                            icon: Icon(Icons.device_hub, color: Colors.grey[400]),
                             border: InputBorder.none,
-                            hintText: "Site name",
+                            hintText: "Device name",
                             hintStyle: TextStyle(color: Colors.grey[400])),
                       ),
                     ),
@@ -90,15 +104,15 @@ class AddDeviceState extends State<AddDevice> {
                       child: TextFormField(
                         validator: (value) {
                           if (value.isEmpty) {
-                            return "Description cannot be empty !";
+                            return "Device description cannot be empty !";
                           } else
                             return null;
                         },
                         controller: descriptionController,
                         decoration: InputDecoration(
-                            icon: Icon(Icons.email, color: Colors.grey[400]),
+                            icon: Icon(Icons.description, color: Colors.grey[400]),
                             border: InputBorder.none,
-                            hintText: "Description",
+                            hintText: "Device description",
                             hintStyle: TextStyle(color: Colors.grey[400])),
                       ),
                     ),
@@ -114,7 +128,7 @@ class AddDeviceState extends State<AddDevice> {
                   builder: (context,snapshot) {
                     if (snapshot.hasData) {
                       snapshot.data.forEach((Location) {
-                        print("beforee: "+Location.coordinates[0].toString());
+                     //   print("beforee: "+Location.coordinates[0].toString());
                         Markers = snapshot.data.map((Location) => Marker(
                             markerId: MarkerId(Location.id),
                             position: LatLng(Location.coordinates[0], Location.coordinates[1]),
@@ -122,7 +136,7 @@ class AddDeviceState extends State<AddDevice> {
                             onTap: ()  {
 
                               /*print("coorddd111"+Location.coordinates.toString()),*/
-                              print("coorddd111"+Location.id.toString());
+                          //    print("coorddd111"+Location.id.toString());
                               coordt.add(Location.coordinates[0]);
                               coordt.add(Location.coordinates[1]);
                                id=Location.id;
@@ -130,45 +144,53 @@ class AddDeviceState extends State<AddDevice> {
                             setState(() {});
                             },
                             infoWindow: InfoWindow(title: Location.siteName,onTap: () => {
-                              print("coorddd"+Location.coordinates.toString())
+                         //     print("coorddd"+Location.coordinates.toString())
                             },)
                         )).toList(growable: true);
-                        print("Markers berfore!!! :"+Markers.toString());
+                      //  print("Markers berfore!!! :"+Markers.toString());
                       });
                     }
-                    print("Markers !!! :"+Markers.toString());
-                    return Expanded(
-                        child:GoogleMap(
-                      initialCameraPosition: _initialPosition,
-                      markers: Set<Marker>.of(Markers),
-                      mapType: MapType.hybrid,
-                      onMapCreated: (controller){
-                        setState(() {
-                          _controller = controller;
-                        });
-                      },
-                      /*markers: markers.toSet(),
+                    //print("Markers !!! :"+Markers.toString());
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: Container(
+                        height: 600,
+                        width: 400,
+                          child:GoogleMap(
+                        initialCameraPosition: _initialPosition,
+                        markers: Set<Marker>.of(Markers),
+                        mapType: MapType.hybrid,
+                        onMapCreated: (controller){
+                          setState(() {
+                            _controller = controller;
+                          });
+                        },
+                        /*markers: markers.toSet(),
             onTap: (cordinate){
               _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
               addMarker(cordinate);
               print("cord"+cordinate.toString());
             },*/
 
-                    ),
+                      ),
+                      ),
                     );
 
                   }),
-              buttonSection(),
+              Container(
+                width: 300,
+                child: FlatButton(
+                  color: Colors.amberAccent,
+                  child: Text("Add", style: TextStyle(color: Colors.white)),
+                  onPressed: _doSomething,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
             ],
           ),
-        ],
       ),
-      /* floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _controller.animateCamera(CameraUpdate.zoomOut());
-        },
-        child: Icon(Icons.zoom_out),
-      ),*/
     );
   }
 
@@ -184,7 +206,6 @@ class AddDeviceState extends State<AddDevice> {
       print(" Sens id: " + identifier.toString());
 
       Addlocation(DevicenameController.text, descriptionController.text, identifier, id, coordt);
-      _btnController.stop();
     });
   }
 
@@ -220,6 +241,13 @@ class AddDeviceState extends State<AddDevice> {
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 10.0);
+        coordt.clear();
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SideBarLayout(
+                    )));
       } else if ((jsonResponse['message'] == "Some kind of error !")) {
         await Fluttertoast.showToast(
             msg: "Some kind of error !",
@@ -229,22 +257,9 @@ class AddDeviceState extends State<AddDevice> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 10.0);
+        coordt.clear();
       }
     }
   }
 
-  buttonSection() {
-    return Container(
-      height: 50,
-      child: AspectRatio(
-        child: RoundedLoadingButton(
-          color: Colors.amberAccent,
-          child: Text("Add", style: TextStyle(color: Colors.white)),
-          controller: _btnController,
-          onPressed: _doSomething,
-        ),
-        aspectRatio: 8,
-      ),
-    );
-  }
 }

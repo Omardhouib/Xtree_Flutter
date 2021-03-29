@@ -95,7 +95,7 @@ class LocationDetailsState extends State<LocationDetails> with NavigationStates 
                                 }
                             ),
                             Text(
-                              'Home' + hour.toString(),
+                              'Welcome Omar Dhouib',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 16.0,
@@ -177,36 +177,16 @@ class LocationDetailsState extends State<LocationDetails> with NavigationStates 
             ),
           ),
 
-        /*FutureBuilder(
-          future: yourFuture(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              // future complete
-              // if error or data is false return error widget
-              if (snapshot.hasError) {
-                return _buildErrorWidget('SOMETHING WENT WRONG, TAP TO RELOAD');
-              }
-
-              // return data widget
-              return _buildDataWidget();
-
-              // return loading widget while connection state is active
-            } else
-              return _buildLoadingWidget();
-          },
-        );*/
-
-
-          FutureBuilder<LocationHome>(
+          FutureBuilder<Location>(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.getHomedetails(),
+              future: databaseHelper2.getLocationByid(identifier),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
                   print("mochkla lenaa electro *");
                 }
-                  return ItemListElectro(list: snapshot.data.electro);
+                  return ItemListElectro(list: snapshot.data.sensorIds);
 
                 }
                 else {
@@ -343,144 +323,181 @@ class LocationDetailsState extends State<LocationDetails> with NavigationStates 
   }
 
 
-  Widget _buildProgrammCard() {
-    return Container(
-      height: 90,
-      child: Card(
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        elevation: 4,
-        margin: EdgeInsets.fromLTRB(14, 0, 14, 14),
-        child: FutureBuilder(
-//                future: databaseHelper.getData(),
-            future: databaseHelper2.Lastlocation(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                print(snapshot.error);
-                print("mochkla lenaa last *");
-              }
-              return snapshot.hasData
-                  ? Text("Location :" + snapshot.data.siteName)
-                  : Text(
-                "",
-                style:TextStyle(
-                  backgroundColor: Colors.transparent,
-                ),
-              );
-            }),
-      ),
-    );
-  }
-
   Widget Itemclass({List list}) {
-
     var hour = DateTime.now().hour;
+    DateTime date = DateTime.now();
+    String dateFormat = DateFormat('EEEE').format(date);
     //  final hour formattedDate = DateFormat.j().format(now);
-    dynamic currentTime = DateFormat.j().format(DateTime.now());
+    //dynamic currentTime = DateFormat.j().format(DateTime.now());
     return SizedBox(
-      height: 270.0,
+      height: 290.0,
       child: ListView.builder(
-          itemCount: list.length,
+          itemCount: 6,
           scrollDirection: Axis.horizontal,
           itemExtent: 200.0,
           // ignore: missing_return
           itemBuilder: (context, i) {
+            int date = (list[i]["dt"]);
+            int zero = 100;
+            DateTime finalday = DateTime.fromMillisecondsSinceEpoch(
+                int.parse(("$date" + "$zero")))
+                .toUtc();
+            String dateFormat = DateFormat('EEEE').format(finalday);
             var item = list[i];
-            if ((hour < 12) && (hour >= 6)) {
+            if ((hour < 17) && (hour >= 6)) {
               return Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
+                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                 child: Container(
-                  decoration: BoxDecoration(
+                  /* decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
+                       image: DecorationImage(
+                           image: NetworkImage(
+                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
+                           fit: BoxFit.cover),
                       gradient: LinearGradient(
                           begin: Alignment.bottomLeft,
                           end: Alignment.topRight,
                           colors: [
-                            Colors.blue[600],
-                            Colors.blue,
-                            Colors.blue[200]
-                          ])),
+                            Color(0xff152238),
+                            Color(0xff152238),
+                            Color(0xff152238),
+                          ])),*/
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                          image: NetworkImage(
+                              "https://images.unsplash.com/photo-1559628376-f3fe5f782a2e?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1000&q=80"),
+                          fit: BoxFit.cover)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Row(
-                        children: [
-                          if (list[i]["pop"] > 0.1)
-                            new Image.network(
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
+                        child: Text(
+                          list[i]["temp"]["morn"].round().toString() + "°C",
+                          style: TextStyle(color: Colors.white, fontSize: 35,fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
+                        child: Text(
+                          dateFormat,
+                          style: TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.w300),
+                        ),
+                      ),
+                      if (list[i]["pop"] > 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/rain.png'),
-                          if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/overcast.png'),
-                          if (list[i]["pop"] == 0 && list[i]["clouds"] == 0)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["pop"] < 0.1 && list[i]["clouds"] < 1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
-                          Text(
-                            list[i]["temp"]["morn"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
+                            child: Text(
+                              list[i]["temp"]["min"].round().toString() + "°C",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: Text(
+                              "/",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
+                            child: Text(
+                              list[i]["temp"]["max"].round().toString() + "°C",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
                             child: Text(
-                              list[i]["temp"]["min"].round().toString() + "/",
-                              style: TextStyle(color: Colors.black),
+                              "Humidity: ",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
-                          Text(
-                            list[i]["temp"]["max"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                            child: Text(
+                              list[i]["humidity"].toString() + "%",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
-                              "humidity:",
-                              style: TextStyle(color: Colors.black),
+                              "Precipitation: ",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
-                          Text(
-                            list[i]["humidity"].toString() + "%",
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Text(
+                              list[i]["pop"].toString() + "mm",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
-                              "Precipitation:",
-                              style: TextStyle(color: Colors.black),
+                              "Uv: ",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
-                          Text(
-                            list[i]["pop"].toString() + "mm",
-                            style: TextStyle(color: Colors.black),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
-                              "Uv:",
-                              style: TextStyle(color: Colors.black),
+                              list[i]["uvi"].toString(),
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
                             ),
-                          ),
-                          Text(
-                            list[i]["uvi"].toString(),
-                            style: TextStyle(color: Colors.black),
                           )
                         ],
                       ),
@@ -488,98 +505,160 @@ class LocationDetailsState extends State<LocationDetails> with NavigationStates 
                   ),
                 ),
               );
-            }
-            else if ((hour < 18) && (hour >= 12)) {
+            } else if ((hour < 20) && (hour >= 17)) {
               return Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
+                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                 child: Container(
-                  decoration: BoxDecoration(
+                  /* decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
+                       image: DecorationImage(
+                           image: NetworkImage(
+                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
+                           fit: BoxFit.cover),
                       gradient: LinearGradient(
                           begin: Alignment.bottomLeft,
                           end: Alignment.topRight,
                           colors: [
-                            Colors.orange[600],
-                            Colors.orange,
-                            Colors.orange[200]
-                          ])),
+                            Color(0xff152238),
+                            Color(0xff152238),
+                            Color(0xff152238),
+                          ])),*/
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                          image: NetworkImage(
+                              "https://image.freepik.com/free-photo/oyster-farm-sea-beautiful-sky-sunset-background_1150-10229.jpg"),
+                          fit: BoxFit.cover)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Row(
-                        children: [
-                          if (list[i]["pop"] > 0.1)
-                            new Image.network(
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
+                        child: Text(
+                          list[i]["temp"]["eve"].round().toString() + "°C",
+                          style: TextStyle(color: Colors.white, fontSize: 35,fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
+                        child: Text(
+                          dateFormat,
+                          style: TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.w300),
+                        ),
+                      ),
+                      if (list[i]["pop"] > 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/rain.png'),
-                          if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/overcast.png'),
-                          if (list[i]["pop"] == 0 && list[i]["clouds"] == 0)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["pop"] < 0.1 && list[i]["clouds"] < 1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
-                          Text(
-                            list[i]["temp"]["eve"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
+                            child: Text(
+                              list[i]["temp"]["min"].round().toString() + "°C",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: Text(
+                              "/",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
+                            child: Text(
+                              list[i]["temp"]["max"].round().toString() + "°C",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
                             child: Text(
-                              list[i]["temp"]["min"].round().toString() + "/",
-                              style: TextStyle(color: Colors.black),
+                              "Humidity: ",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
-                          Text(
-                            list[i]["temp"]["max"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                            child: Text(
+                              list[i]["humidity"].toString() + "%",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
-                              "humidity:",
-                              style: TextStyle(color: Colors.black),
+                              "Precipitation: ",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
-                          Text(
-                            list[i]["humidity"].toString() + "%",
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Text(
+                              list[i]["pop"].toString() + "mm",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
-                              "Precipitation:",
-                              style: TextStyle(color: Colors.black),
+                              "Uv: ",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
-                          Text(
-                            list[i]["pop"].toString() + "mm",
-                            style: TextStyle(color: Colors.black),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
-                              "Uv:",
-                              style: TextStyle(color: Colors.black),
+                              list[i]["uvi"].toString(),
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
                             ),
-                          ),
-                          Text(
-                            list[i]["uvi"].toString(),
-                            style: TextStyle(color: Colors.black),
                           )
                         ],
                       ),
@@ -587,98 +666,160 @@ class LocationDetailsState extends State<LocationDetails> with NavigationStates 
                   ),
                 ),
               );
-            }
-            else {
+            } else {
               return Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
+                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                 child: Container(
-                  decoration: BoxDecoration(
+                  /* decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
+                       image: DecorationImage(
+                           image: NetworkImage(
+                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
+                           fit: BoxFit.cover),
                       gradient: LinearGradient(
                           begin: Alignment.bottomLeft,
                           end: Alignment.topRight,
                           colors: [
-                            Colors.black,
-                            Colors.white10,
-                            Colors.white12
-                          ])),
+                            Color(0xff152238),
+                            Color(0xff152238),
+                            Color(0xff152238),
+                          ])),*/
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                          image: NetworkImage(
+                              "https://image.freepik.com/free-vector/milky-way-night-star-sky-stars-dark-background_172933-70.jpg"),
+                          fit: BoxFit.cover)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Row(
-                        children: [
-                          if (list[i]["pop"] > 0.1)
-                            new Image.network(
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
+                        child: Text(
+                          list[i]["temp"]["night"].round().toString() + "°C",
+                          style: TextStyle(color: Colors.white, fontSize: 35,fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
+                        child: Text(
+                          dateFormat,
+                          style: TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.w300),
+                        ),
+                      ),
+                      if (list[i]["pop"] > 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/rain.png'),
-                          if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/overcast.png'),
-                          if (list[i]["pop"] == 0 && list[i]["clouds"] == 0)
-                            new Image.network(
+                          ),
+                        ),
+                      if (list[i]["pop"] < 0.1 && list[i]["clouds"] < 1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: new Image.network(
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
-                          Text(
-                            list[i]["temp"]["night"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
+                            child: Text(
+                              list[i]["temp"]["min"].round().toString() + "°C",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: Text(
+                              "/",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
+                            child: Text(
+                              list[i]["temp"]["max"].round().toString() + "°C",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
                             child: Text(
-                              list[i]["temp"]["min"].round().toString() + "/",
-                              style: TextStyle(color: Colors.black),
+                              "Humidity: ",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
-                          Text(
-                            list[i]["temp"]["max"].round().toString() + "°C",
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                            child: Text(
+                              list[i]["humidity"].toString() + "%",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
-                              "humidity:",
-                              style: TextStyle(color: Colors.black),
+                              "Precipitation: ",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
-                          Text(
-                            list[i]["humidity"].toString() + "%",
-                            style: TextStyle(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Text(
+                              list[i]["pop"].toString() + "mm",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: Text(
-                              "Precipitation:",
-                              style: TextStyle(color: Colors.black),
+                              "Uv: ",
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
-                          Text(
-                            list[i]["pop"].toString() + "mm",
-                            style: TextStyle(color: Colors.black),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
                           Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
-                              "Uv:",
-                              style: TextStyle(color: Colors.black),
+                              list[i]["uvi"].toString(),
+                              style:
+                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
                             ),
-                          ),
-                          Text(
-                            list[i]["uvi"].toString(),
-                            style: TextStyle(color: Colors.black),
                           )
                         ],
                       ),
@@ -708,72 +849,36 @@ class _ItemListElectroState extends State<ItemListElectro> {
   String active = "true";
   final RoundedLoadingButtonController _btnController =
   new RoundedLoadingButtonController();
-
+  DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   ScrollController _controller = new ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 270.0,
-      child: ListView.builder(
+    return ListView.builder(
           itemCount: widget.list == null ? 0 : widget.list.length,
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemBuilder: (context, i) {
 
-            id = widget.list[i]["_id"].toString();
-            return Column(
-              children: <Widget>[
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 14),
-                      child: Text(
-                        'Device name is ',
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 44),
-                      child: Text(
-                        //list[i].toString() ?? '',
-                        widget.list[i]["name"].toString(),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 44),
-                      child:Text(
-                        status = widget.list[i]["status"].toString(),
-                      ),
-                    ),
-                    Container(
-                      height: 50,
-                      width: 100,
-                      child: AspectRatio(
-                        child: RoundedLoadingButton(
-                          color: Colors.amberAccent,
-                          child: Text("Login",
-                              style: TextStyle(color: Colors.white)),
-                          onPressed: () {
-                            print("hihih"+status);
-                            status = widget.list[i]["status"].toString();
-                            _doSomething();
+           print("listt"+widget.list.toString());
+            return FutureBuilder<Sensor>(
+                future: databaseHelper2.getDevById(widget.list[i]),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("there is problem !");
+                  }
+                  if (snapshot.hasData){
+                    print("sens: "+snapshot.data.toString());
+                    /*if(snapshot.data.sensorType == "Relay"){
+                      return
+                    }
+                    else return Container();*/
+                  }
+                  return Container();
+                });
+          });
 
-                            setState(() {
-                              Navigator.push(
-                                  context, MaterialPageRoute(builder: (context) => MyHomePage()));
-                            });
-                          },
-                          controller: _btnController,
-                        ),
-                        aspectRatio: 8,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          }),
-    );
   }
 /*
 isactive =false;

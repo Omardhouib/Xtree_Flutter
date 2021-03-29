@@ -11,8 +11,10 @@ import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
+import 'package:sidebar_animation/pages/Location/AllLocations.dart';
 import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
+import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 
 class UpdateLoc extends StatefulWidget with NavigationStates{
   UpdateLoc(
@@ -20,9 +22,11 @@ class UpdateLoc extends StatefulWidget with NavigationStates{
       this.title,
       this.onValueChange,
       this.initialValue,
-      this.identifier})
+      this.identifier,
+      this.name})
       : super(key: key);
   String identifier;
+  String name;
   final String initialValue;
   final void Function(String) onValueChange;
   final String title;
@@ -34,7 +38,7 @@ class UpdateLocState extends State<UpdateLoc> {
   String identifier;
   GoogleMapController _controller;
   final CameraPosition _initialPosition =
-      CameraPosition(target: LatLng(24.903623, 67.198367));
+  CameraPosition(target: LatLng(33.892166, 9.400138), zoom: 6.0);
   final List<Marker> markers = [];
   bool _isLoading = false;
   bool t3ada = false;
@@ -65,6 +69,15 @@ class UpdateLocState extends State<UpdateLoc> {
         content: SingleChildScrollView(
           child: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  "Update Location: "+widget.name,style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500
+                ),
+                ),
+              ),
               Form(
                 key: _key,
                 child: Column(
@@ -85,7 +98,7 @@ class UpdateLocState extends State<UpdateLoc> {
                         decoration: InputDecoration(
                             icon: Icon(Icons.place, color: Colors.grey[400]),
                             border: InputBorder.none,
-                            hintText: "Site name",
+                            hintText: "New site name",
                             hintStyle: TextStyle(color: Colors.grey[400])),
                       ),
                     ),
@@ -103,9 +116,9 @@ class UpdateLocState extends State<UpdateLoc> {
                         },
                         controller: descriptionController,
                         decoration: InputDecoration(
-                            icon: Icon(Icons.email, color: Colors.grey[400]),
+                            icon: Icon(Icons.description, color: Colors.grey[400]),
                             border: InputBorder.none,
-                            hintText: "Description",
+                            hintText: "New description",
                             hintStyle: TextStyle(color: Colors.grey[400])),
                       ),
                     ),
@@ -131,12 +144,57 @@ class UpdateLocState extends State<UpdateLoc> {
                   },
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
-              buttonSection(),
-              SizedBox(
-                height: 30,
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  width: 250,
+                  height: 40,
+                  child: AspectRatio(
+                    child: FlatButton(
+                      color: Colors.amberAccent,
+                      child: Text("Update Location", style: TextStyle(color: Colors.white)),
+                      onPressed:(){
+                        if(sitenameController.text == ""){
+                          Fluttertoast.showToast(
+                              msg: "Please define your site name !",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 5,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 10.0);
+
+                        }
+                        else if(descriptionController.text == ""){
+                          Fluttertoast.showToast(
+                              msg: "Please define your description !",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 5,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 10.0);
+
+                        }
+                        else if(coordiante == null){
+                          Fluttertoast.showToast(
+                              msg: "Please select a new place on the map !",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 5,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 10.0);
+
+                        }
+                        else {
+                          _doSomething();
+                        }
+                      }
+                    ),
+                    aspectRatio: 8,
+                  ),
+                ),
               ),
             ],
           ),
@@ -153,7 +211,6 @@ class UpdateLocState extends State<UpdateLoc> {
       print(" Coordinates" + coordiante.toString());
       Addlocation(identifier, sitenameController.text, coordiante,
           descriptionController.text);
-      _btnController.stop();
     });
   }
 
@@ -188,6 +245,12 @@ class UpdateLocState extends State<UpdateLoc> {
           backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 10.0);
+      Navigator.of(context)
+          .push(new MaterialPageRoute(
+          builder: (context) =>
+              SideBarLayout(
+              )));
+
     } else {
       await Fluttertoast.showToast(
           msg: "Error !",
@@ -197,6 +260,7 @@ class UpdateLocState extends State<UpdateLoc> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 10.0);
+      Navigator.pop(context, true);
     }
   }
 
@@ -206,7 +270,7 @@ class UpdateLocState extends State<UpdateLoc> {
       child: AspectRatio(
         child: RoundedLoadingButton(
           color: Colors.amberAccent,
-          child: Text("Add", style: TextStyle(color: Colors.white)),
+          child: Text("Update", style: TextStyle(color: Colors.white)),
           controller: _btnController,
           onPressed: () {
              if(sitenameController.text == ""){
@@ -218,7 +282,6 @@ class UpdateLocState extends State<UpdateLoc> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 10.0);
-            _btnController.reset();
             }
              else if(descriptionController.text == ""){
                Fluttertoast.showToast(
@@ -229,7 +292,7 @@ class UpdateLocState extends State<UpdateLoc> {
                    backgroundColor: Colors.red,
                    textColor: Colors.white,
                    fontSize: 10.0);
-               _btnController.reset();
+
              }
              else if(coordiante == null){
                Fluttertoast.showToast(
@@ -240,7 +303,7 @@ class UpdateLocState extends State<UpdateLoc> {
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
                   fontSize: 10.0);
-               _btnController.reset();
+
             }
             else {
               _doSomething();

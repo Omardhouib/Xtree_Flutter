@@ -5,7 +5,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:search_map_place/search_map_place.dart';
 import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
+import 'package:sidebar_animation/pages/Location/AddLocation.dart';
+import 'package:sidebar_animation/pages/Location/DeleteLocation.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
+import 'package:sidebar_animation/pages/Location/UpdateLoc.dart';
 
 import '../../bloc.navigation_bloc/navigation_bloc.dart';
 
@@ -19,286 +22,379 @@ class _LocationsState extends State<Locations> {
   GoogleMapController _controller;
   final CameraPosition _initialPosition =
       CameraPosition(target: LatLng(33.892166, 9.400138), zoom: 5.0);
-  // Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  // ignore: non_constant_identifier_names
   List<Marker> Markers = [];
   List<String> locations = [];
-  TextEditingController searchController = new TextEditingController();
-  String filter;
-  var items = List<String>();
-  @override  initState() {
-    searchController.addListener(() {
-      setState(() {
-        filter = searchController.text;
-      });
+  // ignore: non_constant_identifier_names
+  Future<List<Location>> Alllocation;
+  void _onValueChange(String value) {
+    setState(() {
+      _selectedId = value;
     });
   }
-
-
-  /*Coord() {
-     databaseHelper2.AllLocationByUser().then((locations) {
-       print("heloooooooo"+locations.toString());
-       if(locations.isNotEmpty){
-         for(int i=0; i < locations.length; i++){
-           initMarker(locations[i], locations[i].id);
-         }
-       }
-    });
-
-  }
+  String _selectedId;
   @override
-  void initstate(){
-    Coord();
-    super.initState();
+  void initState() {
+    setState(() {
+      Alllocation = databaseHelper2.AllLocationByUser();
+      super.initState();
+    });
+
   }
-
- */ /* addMarker(cordinate){
-    int id = Random().nextInt(1);
-    setState(() {
-      markers.add(Marker(position: cordinate, markerId: MarkerId(id.toString())));
-    });
-  }*/ /*
-
-  void initMarker(specify, specifyId) async{
-    var markerIdVal = specifyId;
-    final MarkerId markerId = MarkerId(markerIdVal);
-    final Marker marker = Marker(
-       markerId: markerId,
-       position: LatLng(specify.coordinates[0], specify.coordinates[1]),
-        infoWindow: InfoWindow(title: specify.siteName)
-    );
-    setState(() {
-      markers[markerId] = marker;
-    });
-}
-*/
 
   @override
   Widget build(BuildContext context) {
     List<String> locations = [];
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    List<Location> loc = [];
     return Scaffold(
-      resizeToAvoidBottomInset : false,
-      body: SizedBox(
-        height: screenHeight - keyboardHeight,
-        child: Column(
-          children: [
-            Padding(
-              padding: new EdgeInsets.fromLTRB(8.0, 100.0, 8.0, 30.0),
-              child: new TextField(
-                controller: searchController,
-                onChanged: (value) {
-                  filterSearchResults(value);
-                },
-                decoration: InputDecoration(
-                  hintText: 'Search sites',
-                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(32.0)),
-                ),
+      backgroundColor: Colors.grey[200],
+      body: Column(
+        children: [
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 80, 0, 10),
+              child: Row(
+                children: <Widget>[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        "Locations",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 30.0,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.normal,
+                        ),
+                      ),
+                      Text(
+                        'Welcome Omar dhouib',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.blue[100],
+                      child: Icon(
+                        Icons.perm_identity,
+                        size: 30,
+                        color: Colors.blue,
+                      ),
+                      radius: 33,
+                    ),
+                  ),
+                ],
               ),
             ),
-            FutureBuilder<List<Location>>(
+          ),
+          FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-                future: databaseHelper2.AllLocationByUser(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    snapshot.data.forEach((Location) {
-                      locations.add(Location.siteName);
-                      print("heello"+locations.toString());
-                      Markers = snapshot.data
-                          .map((Location) => Marker(
-                          markerId: MarkerId(Location.id),
-                          position: LatLng(
-                              Location.coordinates[0], Location.coordinates[1]),
-                          icon: BitmapDescriptor.defaultMarker,
-                          onTap: () => {},
-                          infoWindow: InfoWindow(
-                            title: Location.siteName,
-                            onTap: () => {
-                              Navigator.push(
-                                  context, MaterialPageRoute(builder: (context) => LocationDetails( identifier: Location.id))),
-                            },
-                          )))
-                          .toList(growable: true);
-                    });
-                  }
-                  return Container(
-                    height: 200,
-                    width: 600,
-                    child: GoogleMap(
-                      initialCameraPosition: _initialPosition,
-                      markers: Set<Marker>.of(Markers),
-                      mapType: MapType.hybrid,
-                      onMapCreated: (controller) {
-                        setState(() {
-                          _controller = controller;
-                        });
-                      },
-                      /*markers: markers.toSet(),
-                        onTap: (cordinate){
-                          _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
-                          addMarker(cordinate);
-                          print("cord"+cordinate.toString());
-                        },*/
-                    ),
-                  );
-                }),
-            FutureBuilder<List<Location>>(
-//                future: databaseHelper.getData(),
-                future: databaseHelper2.AllLocationByUser(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    print("mochkla lenaa *");
-                  }
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                        itemCount: snapshot.data == null ? 0 : snapshot.data.length,
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemBuilder: (context, i) {
-//            DateTime t = DateTime.parse(list[i]['date_published'].toString());
-
-                          return Container(
-                            child: Stack(
-                              children: <Widget>[
-                                Positioned(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 24),
-                                        child: Text(
-                                          'site name is',
-                                        ),
-                                      ),
-                                      Text(
-                                              //list[i].toString() ?? '',
-                                              snapshot.data[i].siteName,
-                                            ),
-
-                                      SizedBox(height: 10),
-                                    ],
+              future: Alllocation,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  //
+                  print("loc"+snapshot.data.length.toString());
+                  // ignore: non_constant_identifier_names
+                  snapshot.data.forEach((Location) {
+                    locations.add(Location.siteName);
+                  //  print("heello" + locations.toString());
+                    Markers = snapshot.data
+                        .map((Location) => Marker(
+                            markerId: MarkerId(Location.id),
+                            position: LatLng(Location.coordinates[0],
+                                Location.coordinates[1]),
+                            icon: BitmapDescriptor.defaultMarker,
+                            onTap: () => {},
+                            infoWindow: InfoWindow(
+                              title: Location.siteName,
+                              onTap: () => {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LocationDetails(
+                                            identifier: Location.id))),
+                              },
+                            )))
+                        .toList(growable: true);
+                  });
+                }
+                return Column(
+                  children: [
+                    ItemList(list: snapshot.data),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      child: Container(
+                        height: 90,
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          elevation: 4,
+                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding:
+                                const EdgeInsets.fromLTRB(15, 0, 40, 0),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.blue,
+                                  child: Icon(
+                                    Icons.add_circle,
+                                    color: Colors.white,
                                   ),
+                                  radius: 25,
                                 ),
-                              ],
-                            ),
-                          );
-                        });;
-                  } else {
-                    return Container();
-                  }
-                }),
-          ],
-        ),
-      ),
+                              ),
+                              Text(
+                                "ADD LOCATION ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(90, 0, 0, 0),
+                                child: FlatButton(
+                                  child: Icon(
+                                    Icons.add_circle_outline,
+                                    color: Colors.blue,
+                                    size: 35,
+                                  ),
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        child: AddLocation(
+                                          onValueChange: _onValueChange,
+                                          initialValue: _selectedId,
+                                        ));
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      child: Container(
+                        height: 350,
+                        width: 600,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                          color: Colors.white,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: GoogleMap(
+                            initialCameraPosition: _initialPosition,
+                            markers: Set<Marker>.of(Markers),
+                            mapType: MapType.normal,
+                            onMapCreated: (controller) {
+                              setState(() {
+                                _controller = controller;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _controller.animateCamera(CameraUpdate.zoomOut());
-        },
-        child: Icon(Icons.zoom_out),
+                  ],
+                );
+              }),
+        ],
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
-  void filterSearchResults(String query) {
-    List<String> dummySearchList = List<String>();
-    dummySearchList.addAll(locations);
-    print("hello"+locations.toString());
-    if(query.isNotEmpty) {
-      List<String> dummyListData = List<String>();
-      dummySearchList.forEach((item) {
-        if(item.contains(query)) {
-          dummyListData.add(item);
-        }
-      });
-      setState(() {
-        items.clear();
-        items.addAll(dummyListData);
-      });
-      return;
-    } else {
-      setState(() {
-        items.clear();
-        items.addAll(locations);
-      });
-    }
-  }
 }
 
-
-/*class ItemList extends StatelessWidget{
+class ItemList extends StatefulWidget {
   List list;
   ItemList({this.list});
 
+  @override
+  _ItemListState createState() => _ItemListState();
+}
+
+class _ItemListState extends State<ItemList> {
+  String type;
+  void _onValueChange(String value) {
+    setState(() {
+      _selectedId = value;
+    });
+  }
+
+
+  String _selectedId;
   ScrollController _controller = new ScrollController();
 
+  DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: list == null ? 0 : list.length,
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemBuilder: (context, i) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+      child: Container(
+        height: 370,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.0),
+            border: Border.all(color: Colors.transparent,width: 2)
+        ),
+        child: ListView.builder(
+            itemCount: widget.list == null ? 0 : widget.list.length,
+            shrinkWrap: true,
+            itemBuilder: (context, i) {
+              return Container(
+                height: 90,
+                child: Card(
+                  semanticContainer: true,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  elevation: 3,
+                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Colors.grey[300],
+                                child: Icon(
+                                  Icons.place,
+                                  color: Colors.red,
+                                ),
+                                radius: 25,
+                              ),
+                              GestureDetector(
+                                /* onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => deviceDetails(
+                                          list:widget.list,
+                                          index: i,
+                                          identifier: widget.list[i]["_id"]
 
-//            DateTime t = DateTime.parse(list[i]['date_published'].toString());
-
-          return Container(
-            margin: EdgeInsets.symmetric(vertical: 2),
-
-            height: MediaQuery.of(context).size.height * 0.3,
-            width: MediaQuery.of(context).size.width * 0.7,
-
-            child: Stack(
-              children: <Widget>[
-                Positioned(
-//                    top: 60,
-                  top: MediaQuery.of(context).size.height * 0.08,
-                  left: MediaQuery.of(context).size.width / 3.2,
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 24),
-                        child: Text(
-                          'Location name is',
+                                      ),
+                                    ),
+                                  );
+                                },*/
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                  child: Container(
+                                    width: 230,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => LocationDetails(
+                                                        identifier: widget.list[i].id)));
+                                          },
+                                          child: Text(
+                                            widget.list[i].siteName,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          //list[i].toString() ?? '',
+                                          "Description: " +
+                                              widget.list[i].description,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 11,
+                                              color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.edit,
+                                    color: Colors.green,
+                                    size: 27,
+                                  ),
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        child: UpdateLoc(
+                                            onValueChange: _onValueChange,
+                                            initialValue: _selectedId,
+                                            identifier: widget.list[i].id,
+                                            name: widget.list[i].siteName
+                                        ));
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                    size: 27,
+                                  ),
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        child: DeleteLocation(
+                                            onValueChange: _onValueChange,
+                                            initialValue: _selectedId,
+                                            identifier: widget.list[i].id,
+                                            name: widget.list[i].siteName
+                                        ));
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 24),
-                        child:
-                        Text(
-                          list[i]['SiteName'],
-                        ),
-                      ),
-                      SizedBox(height: 10),
-
-
-                    ],
+                        /*Divider(
+                          height: 34,
+                          thickness: 0.9,
+                          color: Colors.grey[400].withOpacity(0.3),
+                          indent: 40,
+                          endIndent: 40,
+                        ),*/
+                      ],
+                    ),
                   ),
                 ),
-
-              ],
-            ),
-          );
-        });
-
+              );
+            }),
+      ),
+    );
   }
-}*/
-/* FutureBuilder(
-//                future: databaseHelper.getData(),
-          future: databaseHelper2.AllLocationByUser(),
-          builder: (context,snapshot) {
-            if (snapshot.hasError)
-            {
-              print(snapshot.error);
-              print("mochkla lenaa *");
-            }
-            return snapshot.hasData
-                ?  ItemList(list: snapshot.data)
-                :  Center(child: CircularProgressIndicator(
-            ),
-            );
-          }
-      ),*/
+}

@@ -17,10 +17,11 @@ import 'package:sidebar_animation/pages/Device/deviceDetails.dart';
 import 'package:sidebar_animation/pages/homepage.dart';
 
 class UpdateSens extends StatefulWidget with NavigationStates {
-  UpdateSens({Key key, this.title, this.onValueChange, this.initialValue, this.identifier}) : super(key: key);
+  UpdateSens({Key key, this.title, this.onValueChange, this.initialValue, this.identifier, this.name}) : super(key: key);
   final String title;
   final String identifier;
   final String initialValue;
+  String name;
   final void Function(String) onValueChange;
   @override
   UpdateSensState createState() => UpdateSensState();
@@ -66,6 +67,15 @@ class UpdateSensState extends State<UpdateSens> {
       content: SingleChildScrollView(
       child: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  "Update Device: "+widget.name,style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500
+                ),
+                ),
+              ),
               Form(
                 key: _key,
                 child: Column(
@@ -86,7 +96,7 @@ class UpdateSensState extends State<UpdateSens> {
                         decoration: InputDecoration(
                             icon: Icon(Icons.place, color: Colors.grey[400]),
                             border: InputBorder.none,
-                            hintText: "Site name",
+                            hintText: "New Device Name",
                             hintStyle: TextStyle(color: Colors.grey[400])),
                       ),
                     ),
@@ -106,7 +116,7 @@ class UpdateSensState extends State<UpdateSens> {
                         decoration: InputDecoration(
                             icon: Icon(Icons.email, color: Colors.grey[400]),
                             border: InputBorder.none,
-                            hintText: "Description",
+                            hintText: "New Description",
                             hintStyle: TextStyle(color: Colors.grey[400])),
                       ),
                     ),
@@ -147,7 +157,7 @@ class UpdateSensState extends State<UpdateSens> {
                       child:GoogleMap(
                         initialCameraPosition: _initialPosition,
                         markers: Set<Marker>.of(Markers),
-                        mapType: MapType.hybrid,
+                        mapType: MapType.normal,
                         onMapCreated: (controller){
                           setState(() {
                             _controller = controller;
@@ -157,7 +167,55 @@ class UpdateSensState extends State<UpdateSens> {
                     );
 
                   }),
-              buttonSection(),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  width: 250,
+                  height: 40,
+                  child: AspectRatio(
+                    child: FlatButton(
+                        color: Colors.amberAccent,
+                        child: Text("Update", style: TextStyle(color: Colors.white)),
+                        onPressed:(){
+                          if(DevicenameController.text == ""){
+                            Fluttertoast.showToast(
+                                msg: "Please define your new sensor name !",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 5,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 10.0);
+                          }
+                          else if(descriptionController.text == ""){
+                            Fluttertoast.showToast(
+                                msg: "Please define your new sensor description !",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 5,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 10.0);
+                          }
+                          else if(coordt.isEmpty == true){
+                            Fluttertoast.showToast(
+                                msg: "Please select a new place on the map !",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 5,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 10.0);
+                          }
+                          else {
+                            _doSomething();
+                          }
+                        }
+                    ),
+                    aspectRatio: 8,
+                  ),
+                ),
+              ),
             ],
           ),
       ));
@@ -228,7 +286,7 @@ class UpdateSensState extends State<UpdateSens> {
       child: AspectRatio(
         child: RoundedLoadingButton(
           color: Colors.amberAccent,
-          child: Text("Add", style: TextStyle(color: Colors.white)),
+          child: Text("Update Device", style: TextStyle(color: Colors.white)),
           controller: _btnController,
           onPressed:(){
             if(DevicenameController.text == ""){
