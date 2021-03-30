@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:search_map_place/search_map_place.dart';
 import 'package:sidebar_animation/Models/Location.dart';
@@ -48,174 +49,178 @@ class _LocationsState extends State<Locations> {
     List<Location> loc = [];
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      body: Column(
-        children: [
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 80, 0, 10),
-              child: Row(
-                children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Locations",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 30.0,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.normal,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 80, 0, 10),
+                child: Row(
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "Locations",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 30.0,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.normal,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Welcome Omar dhouib',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.normal,
+                        Text(
+                          'Welcome Omar dhouib',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.normal,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.blue[100],
-                      child: Icon(
-                        Icons.perm_identity,
-                        size: 30,
-                        color: Colors.blue,
-                      ),
-                      radius: 33,
+                      ],
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.blue[100],
+                        child: Icon(
+                          Icons.perm_identity,
+                          size: 30,
+                          color: Colors.blue,
+                        ),
+                        radius: 33,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          FutureBuilder<List<Location>>(
+            FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-              future: Alllocation,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  //
-                  print("loc"+snapshot.data.length.toString());
-                  // ignore: non_constant_identifier_names
-                  snapshot.data.forEach((Location) {
-                    locations.add(Location.siteName);
-                  //  print("heello" + locations.toString());
-                    Markers = snapshot.data
-                        .map((Location) => Marker(
-                            markerId: MarkerId(Location.id),
-                            position: LatLng(Location.coordinates[0],
-                                Location.coordinates[1]),
-                            icon: BitmapDescriptor.defaultMarker,
-                            onTap: () => {},
-                            infoWindow: InfoWindow(
-                              title: Location.siteName,
-                              onTap: () => {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => LocationDetails(
-                                            identifier: Location.id))),
-                              },
-                            )))
-                        .toList(growable: true);
-                  });
-                }
-                return Column(
-                  children: [
-                    ItemList(list: snapshot.data),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      child: Container(
-                        height: 90,
-                        child: Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          elevation: 4,
-                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding:
-                                const EdgeInsets.fromLTRB(15, 0, 40, 0),
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.blue,
-                                  child: Icon(
-                                    Icons.add_circle,
-                                    color: Colors.white,
+                future: Alllocation,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    //
+                    print("loc"+snapshot.data.length.toString());
+                    // ignore: non_constant_identifier_names
+                    snapshot.data.forEach((Location) {
+                      locations.add(Location.siteName);
+                    //  print("heello" + locations.toString());
+                      Markers = snapshot.data
+                          .map((Location) => Marker(
+                              markerId: MarkerId(Location.id),
+                              position: LatLng(Location.coordinates[0],
+                                  Location.coordinates[1]),
+                              icon: BitmapDescriptor.defaultMarker,
+                              onTap: () => {},
+                              infoWindow: InfoWindow(
+                                title: Location.siteName,
+                                onTap: () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => LocationDetails(
+                                              identifier: Location.id))),
+                                },
+                              )))
+                          .toList(growable: true);
+                    });
+                  }
+                  return Container(
+                    child: Column(
+                      children: [
+                        ItemList(list: snapshot.data),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          child: Container(
+                            height: 90,
+                            child: Card(
+                              semanticContainer: true,
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              elevation: 4,
+                              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding:
+                                    const EdgeInsets.fromLTRB(15, 0, 40, 0),
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.blue,
+                                      child: Icon(
+                                        Icons.add_circle,
+                                        color: Colors.white,
+                                      ),
+                                      radius: 25,
+                                    ),
                                   ),
-                                  radius: 25,
-                                ),
-                              ),
-                              Text(
-                                "ADD LOCATION ",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(90, 0, 0, 0),
-                                child: FlatButton(
-                                  child: Icon(
-                                    Icons.add_circle_outline,
-                                    color: Colors.blue,
-                                    size: 35,
+                                  Text(
+                                    "ADD LOCATION ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 20,
+                                    ),
                                   ),
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        child: AddLocation(
-                                          onValueChange: _onValueChange,
-                                          initialValue: _selectedId,
-                                        ));
-                                  },
-                                ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(90, 0, 0, 0),
+                                    child: FlatButton(
+                                      child: Icon(
+                                        Icons.add_circle_outline,
+                                        color: Colors.blue,
+                                        size: 35,
+                                      ),
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            child: AddLocation(
+                                              onValueChange: _onValueChange,
+                                              initialValue: _selectedId,
+                                            ));
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                      child: Container(
-                        height: 350,
-                        width: 600,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                          color: Colors.white,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: GoogleMap(
-                            initialCameraPosition: _initialPosition,
-                            markers: Set<Marker>.of(Markers),
-                            mapType: MapType.normal,
-                            onMapCreated: (controller) {
-                              setState(() {
-                                _controller = controller;
-                              });
-                            },
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                          child: Container(
+                            height: 350,
+                            width: 600,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                              color: Colors.white,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: GoogleMap(
+                                initialCameraPosition: _initialPosition,
+                                markers: Set<Marker>.of(Markers),
+                                mapType: MapType.normal,
+                                onMapCreated: (controller) {
+                                  setState(() {
+                                    _controller = controller;
+                                  });
+                                },
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
 
-                  ],
-                );
-              }),
-        ],
+                      ],
+                    ),
+                  );
+                }),
+          ],
+        ),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -310,11 +315,24 @@ class _ItemListState extends State<ItemList> {
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => LocationDetails(
-                                                        identifier: widget.list[i].id)));
+                                            if(widget.list[i].sensorIds.length != 0){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => LocationDetails(
+                                                          identifier: widget.list[i].id)));
+                                            }
+                                            else if(widget.list[i].sensorIds.length == 0){
+                                              Fluttertoast.showToast(
+                                                  msg: widget.list[i].siteName+" does not have any device !",
+                                                  toastLength: Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  timeInSecForIosWeb: 3,
+                                                  backgroundColor: Colors.red,
+                                                  textColor: Colors.white,
+                                                  fontSize: 10.0);
+                                            }
+
                                           },
                                           child: Text(
                                             widget.list[i].siteName,

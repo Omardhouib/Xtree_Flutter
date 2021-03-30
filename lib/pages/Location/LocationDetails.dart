@@ -9,18 +9,17 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Models/LocationHome.dart';
+import 'package:sidebar_animation/Models/Locationdetails.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
-import 'package:sidebar_animation/pages/Device/deviceDetails.dart';
-import 'package:sidebar_animation/pages/Location/UpdateLoc.dart';
-import 'package:sidebar_animation/pages/homepage.dart';
+import 'package:sidebar_animation/classes/ChartHistory.dart';
+import 'package:sidebar_animation/classes/schedulePage.dart';
+import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import 'package:sidebar_animation/constants.dart';
-
+import 'package:sidebar_animation/graphic.dart' as graphic;
 import 'package:flutter/gestures.dart';
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
-
-import 'LocDevDetails.dart';
 
 class LocationDetails extends StatefulWidget with NavigationStates {
   LocationDetails({Key key, this.title, this.identifier}) : super(key: key);
@@ -31,297 +30,515 @@ class LocationDetails extends StatefulWidget with NavigationStates {
   LocationDetailsState createState() => LocationDetailsState();
 }
 
-class LocationDetailsState extends State<LocationDetails> with NavigationStates {
+class LocationDetailsState extends State<LocationDetails> {
+  String id;
+  String sensId;
+  String IdSens;
+  bool status;
+  List<String> sens;
+  Sensor Solsens;
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
-  final RoundedLoadingButtonController _btndeleteController =
+  final RoundedLoadingButtonController _btnController =
   new RoundedLoadingButtonController();
-  String identifier;
-  List<dynamic> Sensors =[];
+  List<dynamic> sensors = [];
+  Future<Locationdetails> getLocationdetails;
+  Future<int> getSensNum;
+  Future<int> getLocNum;
+ // Future<Locationsoldetails> getLocationsoldetails;
+
   @override
   void initState() {
+    getLocationdetails = databaseHelper2.getLocationsdetailsByid(widget.identifier);
+    getSensNum = databaseHelper2.NumberofDeviceByUser();
+    getLocNum = databaseHelper2.NumberofLocationByUser();
+    //getLocationsoldetails = databaseHelper2.getLocationssoldetailsByid(widget.identifier);
+
     super.initState();
   }
-  void _onValueChange(String value) {
-    setState(() {
-      _selectedId = value;
-    });
-  }
-  String _selectedId;
+
 
   @override
   Widget build(BuildContext context) {
-    identifier = widget.identifier;
     var hour = DateTime.now().hour;
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: ListView(
-        children: <Widget>[
-          Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(7, 50, 0, 25),
-                    child: Row(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            FutureBuilder<Location>(
-//                future: databaseHelper.getData(),
-                                future: databaseHelper2.getLocationByid(identifier),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasError) {
-                                    print(snapshot.error);
-                                    print("mochkla lenaa electro *");
-                                  }
-                                  return snapshot.hasData
-                                      ?  Text(
-                                    snapshot.data.siteName,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 30.0,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontStyle: FontStyle.normal,
-                                    ),
-                                  )
-                                      : Text(
-                                    "",
-                                    style:TextStyle(
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                  );
-                                }
-                            ),
-                            Text(
-                              'Welcome Omar Dhouib',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.normal,
-                                fontStyle: FontStyle.normal,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.blueGrey,
-                            child: Icon(
-                              Icons.perm_identity,
-                              color: Colors.white,
-                            ),
-                            radius: 35,
-                          ),
-                        ),
-                      ],
-                    ),
+    return new Scaffold(
+        backgroundColor: Colors.grey[200],
+        body: ListView(
+          scrollDirection: Axis.vertical,
+          children: <Widget>[
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new IconButton(
+                    icon: new Icon(Icons.arrow_back, color: Colors.black,size: 30,),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
-                ),
-              ]),
-
-                    FutureBuilder(
-                    future: databaseHelper2.Getweather(identifier),
-                    builder: (context, snapshot2) {
-                      if (snapshot2.hasError) {
-                        print(snapshot2.error);
-                        Text(
-                          "",
-                          style:TextStyle(
-                            backgroundColor: Colors.transparent,
-                          ),
-                        );
-                      }
-                      return snapshot2.hasData
-                          ? Itemclass(list: snapshot2.data)
-                          : Text(
-                        "",
-                        style:TextStyle(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      );
-                    }),
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-            ),
-          ),
-
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: Colors.white
-            ),
-            child: Expanded(
-              child:  FutureBuilder<Location>(
-//                future: databaseHelper.getData(),
-                  future: databaseHelper2.getLocationByid(identifier),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      print(snapshot.error);
-                      print("mochkla lenaa *");
-                    }
-                    return snapshot.hasData
-                        ? ItemListchart(list: snapshot.data.sensorIds)
-                        : Container();
-                  }),
-            ),
-          ),
-
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-            ),
-          ),
-
-          FutureBuilder<Location>(
-//                future: databaseHelper.getData(),
-              future: databaseHelper2.getLocationByid(identifier),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("mochkla lenaa electro *");
-                }
-                  return ItemListElectro(list: snapshot.data.sensorIds);
-
-                }
-                else {
-                  return Container();
-                }
-              }
-          ),
-          Row(
-            children: [
-              Container(
-                height: 50,
-                width: 100,
-                child: AspectRatio(
-                  child: FlatButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    color: Colors.greenAccent,
-                    child: Text("Update location",
-                        style: TextStyle(color: Colors.white)),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          child: UpdateLoc(
-                            onValueChange: _onValueChange,
-                            initialValue: _selectedId,
-                            identifier: identifier,
-                          ));
-                    },
-                  ),
-                  aspectRatio: 8,
-                ),
-              ),
-              Container(
-                height: 50,
-                width: 100,
-                child: AspectRatio(
-                  child: RoundedLoadingButton(
-                    color: Colors.redAccent,
-                    child: Text("Delete location",
-                        style: TextStyle(color: Colors.white)),
-                    onPressed: () {},
-                    controller: _btndeleteController,
-                  ),
-                  aspectRatio: 8,
-                ),
-              ),
-            ],
-          ),
-
-          /*FutureBuilder<Location>(
-//                future: databaseHelper.getData(),
-              future: databaseHelper2.getLocationByid(identifier),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  snapshot.data.sensorIds.forEach((element) {
-                    Sensors.add(element);
-                  });
-                  }
-                return ListView.builder(
-                    itemCount: Sensors == null ? 0 : Sensors.length,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemBuilder: (context, i) {
-                      return Column(
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 25),
+                      child: Row(
                         children: <Widget>[
-                          Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 14),
-                                child: Text(
-                                  'Device name is ',
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(right: 44),
-                                child:  FutureBuilder<Sensor>(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              FutureBuilder<Location>(
 //                future: databaseHelper.getData(),
-                                    future: databaseHelper2.getDeviceById(Sensors[i]),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasError) {
-                                        print(snapshot.error);
-                                        print("mochkla lenaa *");
-                                      }
-                                      if (snapshot.hasData && snapshot.data.sensorType != "Relay") {
-                                          return Padding(
-                                              padding: EdgeInsets.only(left: 24),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) => LocDevDetails(
-                                                          data: snapshot.data,
-                                                          identifier: snapshot.data.id
-
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                                child: Text(
-                                                  //list[i].toString() ?? '',
-                                                  snapshot.data.id,
-                                                ),
-                                              ));
-                                      }
-                                      else if (snapshot.hasData && snapshot.data.sensorType == "Relay") {
-                                        return Padding(
-                                            padding: EdgeInsets.only(left: 24),
-                                              child: Text(
-                                                //list[i].toString() ?? '',
-                                                snapshot.data.sensorType,
-                                              ),
-                                            );
-                                      }
-                                      else {
-                                        return Center(
-                                        child: CircularProgressIndicator(),
+                                  future: databaseHelper2.getLocationByid(widget.identifier),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError) {
+                                      print(snapshot.error);
+                                      print("mochkla lenaa last *");
+                                    }
+                                    if (snapshot.hasData) {
+                                      Location location = snapshot.data;
+                                      id = snapshot.data.id;
+                                      return Text(
+                                        location.siteName,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 30.0,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontStyle: FontStyle.normal,
+                                        ),
                                       );
-                                      }
-                                    }),
+                                    } else {
+                                      return Container();
+                                    }
+                                  }),
+                              Text(
+                                'Welcome Omar dhouib',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                  fontStyle: FontStyle.normal,
+                                ),
                               ),
                             ],
                           ),
-                          SizedBox(
-                            height: 40,
-                          )
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.blue[100],
+                              child: Icon(
+                                Icons.perm_identity,
+                                size: 30,
+                                color: Colors.blue,
+                              ),
+                              radius: 33,
+                            ),
+                          ),
                         ],
-                      );
-                    });
-              }),*/
-        ],
-      ),
-    );
-  }
+                      ),
+                    ),
+                  ),
+                ]),
+            FutureBuilder<Location>(
+                future: databaseHelper2.getLocationByid(widget.identifier),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    Container();
+                  }
+                  if (snapshot.hasData) {
+                    return FutureBuilder(
+                        future: databaseHelper2.Getweather(snapshot.data.id),
+                        builder: (context, snapshot2) {
+                          if (snapshot2.hasError) {
+                            print(snapshot2.error);
+                            Container();
+                          }
+                          return snapshot2.hasData
+                              ? Itemclass(list: snapshot2.data)
+                              : Container();
+                        });
+                  } else {
+                    return Container();
+                  }
+                }),
 
+
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              ),
+            ),
+            FutureBuilder<int>(
+                future: getSensNum,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("there is problem !");
+                  }
+
+                  return snapshot.hasData
+                      ? Container(
+                    height: 80,
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      elevation: 4,
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding:
+                            const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.green,
+                              child: Icon(
+                                Icons.device_hub,
+                                color: Colors.white,
+                              ),
+                              radius: 25,
+                            ),
+                          ),
+                          Text(
+                            "Total number of DEVICES: " +
+                                snapshot.data.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                      : Container();
+                }),
+            FutureBuilder<int>(
+                future: getLocNum,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("there is problem !");
+                  }
+
+                  return snapshot.hasData
+                      ? Container(
+                    height: 80,
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      elevation: 4,
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding:
+                            const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.red,
+                              child: Icon(
+                                Icons.place,
+                                color: Colors.white,
+                              ),
+                              radius: 25,
+                            ),
+                          ),
+                          Text(
+                            "Total number of LOCATIONS: " +
+                                snapshot.data.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                      : Container();
+                }),
+            FutureBuilder<Locationdetails>(
+                future: getLocationdetails,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("there is problem sol!");
+                    return Container(
+                      child: Text("hello"),
+                    );
+                  }
+                  if(snapshot.hasData){
+                    snapshot.data.location.sensorIds.forEach((element) {
+                       IdSens = element;
+                    });
+                    return FutureBuilder<Sensor>(
+//
+                        future: databaseHelper2.getSolDeviceById(IdSens),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            print(snapshot.error);
+                            print("mochkla lenaa *");
+                          }
+                          if (snapshot.hasData) {
+                    snapshot.data.rules.forEach((element) {
+                      status = element.status;
+                    });
+                    if (status == true){
+                      // print("status:"+status.toString());
+                      return Container(
+                        height: 80,
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          elevation: 4,
+                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.amber,
+                                  child: Icon(
+                                    Icons.schedule,
+                                    color: Colors.white,
+                                  ),
+                                  radius: 25,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "SCHEDULES STATE:    ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Container(
+                                    //color: Colors.green,
+                                    height: 20.0, // height of the button
+                                    width: 20.0, // width of the button
+                                    decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        border: Border.all(
+                                            color: Colors.grey[350],
+                                            width: 3.0,
+                                            style: BorderStyle.solid),
+                                        shape: BoxShape.circle),
+                                  ),
+                                  Text(
+                                    "  ACTIVE",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,color: Colors.green
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                    else
+                      //  print("status:"+status.toString());
+                      return Container(
+                        height: 80,
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          elevation: 4,
+                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.amber,
+                                  child: Icon(
+                                    Icons.schedule,
+                                    color: Colors.white,
+                                  ),
+                                  radius: 25,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "SCHEDULES STATE:    ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Container(
+                                    //color: Colors.green,
+                                    height: 20.0, // height of the button
+                                    width: 20.0, // width of the button
+                                    decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        border: Border.all(
+                                            color: Colors.grey[350],
+                                            width: 3.0,
+                                            style: BorderStyle.solid),
+                                        shape: BoxShape.circle),
+                                  ),
+                                  Text(
+                                    "  INACTIVE",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,color: Colors.red
+                                    ),
+                                  ),
+
+
+
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+
+                  } else {
+                    return Container();
+                  }
+                        });
+                  } else {
+                    return Container();
+                  }
+
+
+                }),
+
+            FutureBuilder<Locationdetails>(
+                future: getLocationdetails,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    snapshot.data.location.sensorIds.forEach((element) {
+                      sensId = element;
+                      print("element: "+element);
+                    });
+                    return FutureBuilder<Sensor>(
+                        future: databaseHelper2.getSolDeviceById(sensId),
+                        builder: (context, snapshot2) {
+                          if (snapshot2.hasError) {
+                            print(snapshot2.error);
+                            print("mochkla lenaa button schedule*");
+                          }
+                          if (snapshot2.hasData) {
+                            print("sensdata: "+snapshot2.data.toString());
+                            return Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    color: Colors.white
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
+                                      child: Container(
+                                        height: 60,
+                                        width: 350,
+                                        child: FlatButton(
+                                          child: Text("SCHEDULE",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.blue[600],
+                                            ),),
+                                          onPressed: (){
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        schedulePage(
+                                                            sens: snapshot2.data,
+                                                            location: snapshot.data.location,
+                                                            Electro: snapshot.data.electro
+                                                        )));
+                                          },
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(30.0),
+                                              side: BorderSide(color: Colors.blue[300],width: 1.5)
+
+                                          ),
+                                          color: Colors.blue[100],
+                                          splashColor: Colors.blue[300],
+                                          textColor: Colors.black,
+                                        ),
+
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                      child: Text(
+                                        "You can controle when to irrigate your land based on our AI or you can Schedule it by yourself.",
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.grey[600],
+                                            fontWeight: FontWeight.w400
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        });
+                  } else {
+                    return Container();
+                  }
+                }),
+
+
+            FutureBuilder<Locationdetails>(
+//                future: databaseHelper.getData(),
+                future: getLocationdetails,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("mochkla lenaa chart *");
+                  }
+                  if (snapshot.hasData) {
+                    print(snapshot.data.toString());
+                    return ItemListchart(list: snapshot.data.location.sensorIds);
+                  } else {
+                    return Container();
+                  }
+                }),
+
+            FutureBuilder<Locationdetails>(
+//                future: databaseHelper.getData(),
+                future: getLocationdetails,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ItemListElectro(list: snapshot.data.electro);
+                  } else {
+                    return Container();
+                  }
+                }),
+          ],
+        ),
+      );
+
+  }
 
   Widget Itemclass({List list}) {
     var hour = DateTime.now().hour;
@@ -670,20 +887,6 @@ class LocationDetailsState extends State<LocationDetails> with NavigationStates 
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                 child: Container(
-                  /* decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                       image: DecorationImage(
-                           image: NetworkImage(
-                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
-                           fit: BoxFit.cover),
-                      gradient: LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: [
-                            Color(0xff152238),
-                            Color(0xff152238),
-                            Color(0xff152238),
-                          ])),*/
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       image: DecorationImage(
@@ -831,9 +1034,7 @@ class LocationDetailsState extends State<LocationDetails> with NavigationStates 
           }),
     );
   }
-
 }
-
 
 class ItemListElectro extends StatefulWidget {
   List list;
@@ -847,38 +1048,159 @@ class _ItemListElectroState extends State<ItemListElectro> {
   String id;
   String status;
   String active = "true";
+  bool  pressGeoON = false;
+  bool cmbscritta = false;
   final RoundedLoadingButtonController _btnController =
   new RoundedLoadingButtonController();
-  DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
+
   ScrollController _controller = new ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-          itemCount: widget.list == null ? 0 : widget.list.length,
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemBuilder: (context, i) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.white),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 10, 0, 0),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    child: Icon(
+                      Icons.developer_board,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                    radius: 25,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                  child: Text(
+                    "Relays:",
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            ListView.builder(
+                itemCount: widget.list == null ? 0 : widget.list.length,
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (context, i) {
+                  id = widget.list[i].id.toString();
+                  print("...."+cmbscritta.toString());
+                  if (widget.list[i].status != cmbscritta)
+                    return Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(10, 0, 140, 0),
+                          child: Text(
+                            //list[i].toString() ?? '',
+                            widget.list[i].name.toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 94),
+                          child: Text(
+                            "ON",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green[300]),
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.flash_off),
+                              iconSize: 30,
+                              color: Colors.red,
+                              onPressed: () {
+                                status = widget.list[i].status.toString();
+                                _doSomething();
+                              },
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              child: Text(
+                                "TURN OFF",
+                                style:
+                                TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ),
 
-           print("listt"+widget.list.toString());
-            return FutureBuilder<Sensor>(
-                future: databaseHelper2.getDevById(widget.list[i]),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    print("there is problem !");
-                  }
-                  if (snapshot.hasData){
-                    print("sens: "+snapshot.data.toString());
-                    /*if(snapshot.data.sensorType == "Relay"){
-                      return
-                    }
-                    else return Container();*/
+                          ],
+                        ),
+                      ],
+                    );
+                  else if (widget.list[i].status == cmbscritta){
+                    return Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(25, 0, 120, 0),
+                          child: Text(
+                            //list[i].toString() ?? '',
+                            widget.list[i].name.toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 94),
+                          child: Text(
+                            "OFF",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red[300]),
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.flash_on),
+                              color: Colors.green,
+                              iconSize: 30,
+                              onPressed: () {
+                                status = widget.list[i].status.toString();
+                                _doSomething();
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              child: Text(
+                                "TURN ON",
+                                style:
+                                TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
                   }
                   return Container();
-                });
-          });
-
+                }),
+          ],
+        ),
+      ),
+    );
   }
 /*
 isactive =false;
@@ -889,22 +1211,28 @@ isactive =false;
   void _doSomething() async {
     Timer(Duration(seconds: 1), () {
       print("button pressed ");
-      print("stauts"+status);
-      print("id"+id);
-      if(status == "true"){
+      print("stauts" + status);
+      print("id" + id);
+      if (status == "true") {
         status = "false";
         On(id);
-        _btnController.stop();
-      }
-      else if(status == "false"){
+        setState(() {
+          pressGeoON = !pressGeoON;
+          cmbscritta = !cmbscritta;
+        });
+        //  _btnController.stop();
+      } else if (status == "false") {
         status = "true";
         print("offfff");
         Off(id);
-        _btnController.stop();
+        setState(() {
+          pressGeoON = !pressGeoON;
+          cmbscritta = !cmbscritta;
+        });
+        // _btnController.stop();
       }
-      _btnController.stop();
-    }
-    );
+      //_btnController.stop();
+    });
   }
 
   On(String id) async {
@@ -913,7 +1241,8 @@ isactive =false;
     final value = prefs.get(key) ?? 0;
     Map data = {'status': 01, 'SensorId': "$id"};
     var jsonResponse = null;
-    var response = await http.post(DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
+    var response = await http.post(
+        DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
         headers: {"Content-Type": "application/json"},
 //        "http://192.168.56.81:3000/api/users/login",
         body: json.encode(data));
@@ -930,7 +1259,8 @@ isactive =false;
     final value = prefs.get(key) ?? 0;
     Map data = {'status': 00, 'SensorId': "$id"};
     var jsonResponse = null;
-    var response = await http.post(DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
+    var response = await http.post(
+        DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
         headers: {"Content-Type": "application/json"},
 //        "http://192.168.56.81:3000/api/users/login",
         body: json.encode(data));
@@ -942,5 +1272,933 @@ isactive =false;
   }
 }
 
+class ItemListchart extends StatefulWidget {
+  List list;
+  ItemListchart({this.list});
 
+  @override
+  _ItemListchartState createState() => _ItemListchartState();
+}
 
+class _ItemListchartState extends State<ItemListchart> {
+  DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
+  void _onValueChange(String value) {
+    setState(() {
+      _selectedId = value;
+    });
+  }
+
+  String _selectedId;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: widget.list.length,
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemBuilder: (context, i) {
+//            DateTime t = DateTime.parse(list[i]['date_published'].toString());
+
+          return FutureBuilder<Sensor>(
+              future: databaseHelper2.getDevById(widget.list[i].toString()),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  print("there is problem !");
+                }
+
+                if (snapshot.hasData) {
+                  //  print("helloo" + snapshot.data.toString());
+                  String type = snapshot.data.sensorType;
+                  if (type != "Relay") {
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.white),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 90,
+                              child: Card(
+                                semanticContainer: true,
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                elevation: 0,
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                        child: CircleAvatar(
+                                          radius: 25,
+                                          backgroundColor: Colors.lightBlue,
+                                          child: IconButton(
+                                            icon: Icon(Icons.history),
+                                            color: Colors.white,
+                                            iconSize: 30,
+                                            onPressed: () {
+                                              showDialog(
+                                                  context: context,
+                                                  child: ChartHistory(
+                                                    onValueChange:
+                                                    _onValueChange,
+                                                    initialValue: _selectedId,
+                                                    identifier:
+                                                    snapshot.data.id,
+                                                    type: snapshot
+                                                        .data.sensorType,
+                                                    name: snapshot.data.name,
+                                                  ));
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(0, 22, 0, 0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            snapshot.data.name.toString(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          Text(
+                                            snapshot.data.description.toString(),
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            FutureBuilder(
+                                future: databaseHelper2
+                                    .getdataDeviceByID(snapshot.data.id),
+                                builder: (context, snapshot2) {
+                                  if (snapshot2.hasError) {
+                                    print(snapshot2.error);
+                                    Text(
+                                      "",
+                                      style: TextStyle(
+                                        backgroundColor: Colors.transparent,
+                                      ),
+                                    );
+                                  }
+                                  if (snapshot2.hasData) {
+                                    return Column(
+                                      children: [
+                                        chart(snapshot2.data, type),
+                                        Container(
+                                          height: 90,
+                                          child: Card(
+                                            semanticContainer: true,
+                                            clipBehavior:
+                                            Clip.antiAliasWithSaveLayer,
+                                            color: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(20.0),
+                                            ),
+                                            elevation: 0,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  height: 60,
+                                                  child: CircleAvatar(
+                                                    backgroundColor:
+                                                    Colors.white,
+                                                    child: Icon(
+                                                      Icons
+                                                          .battery_charging_full,
+                                                      color: Colors.amberAccent,
+                                                      size: 30,
+                                                    ),
+                                                    radius: 28,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 0, 20, 0),
+                                                  child: Text(
+                                                    snapshot2.data[snapshot2
+                                                        .data
+                                                        .length -
+                                                        1]["batterie"]
+                                                        .round()
+                                                        .toString() +
+                                                        "%",
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  height: 60,
+                                                  child: CircleAvatar(
+                                                    backgroundColor:
+                                                    Colors.white,
+                                                    child: Icon(
+                                                      Icons
+                                                          .signal_cellular_4_bar,
+                                                      color: Colors.redAccent,
+                                                      size: 30,
+                                                    ),
+                                                    radius: 28,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "50%",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                }),
+                          ],
+                        ),
+                      ),
+                    );
+                    // print("helloo"+snapshot.data.id);
+                  }
+                }
+                return Container();
+              });
+        });
+  }
+}
+
+Widget chart(List data, String type) {
+  List<dynamic> adjustData = [];
+  if (data.isNotEmpty) {
+    if (type == "CarteDeSol" && data.length == 0) {
+      return Container(
+        child: Text(
+          "There is no data to display !",
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey
+          ),
+        ),
+      );
+    }
+    else if (type == "CarteDeSol" && data.length <= 10) {
+      print(' data is not empty');
+      print(data.length);
+
+      data.forEach((element) {
+        print(element.toString());
+        var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .hour
+            .toString();
+        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .minute
+            .toString();
+        var hum1 = element["humdity1"];
+        var hum2 = element["humdity2"];
+        var hum3 = element["humdity3"];
+        var tot = (hum1 + hum2 + hum3) / 3;
+        String time = hour + ":" + minute;
+        print(time);
+        adjustData.add({"type": "humdity1", "index": time, "value": hum1});
+        adjustData.add({"type": "humdity2", "index": time, "value": hum2});
+        adjustData.add({"type": "humdity3", "index": time, "value": hum3});
+        adjustData.add({"type": "humdity4", "index": time, "value": tot});
+        adjustData.add({
+          "type": "temperatureSol",
+          "index": time,
+          "value": element["temperatureSol"]
+        });
+      });
+      return Column(
+        children: [
+          Row(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.blue,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
+                    child: Text(
+                      "Humidity 1",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.green,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
+                    child: Text(
+                      "Humidity 2",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.amber,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
+                    child: Text(
+                      "Humidity 3",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 5, 0, 20),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.blue[900],
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 5, 10, 20),
+                    child: Text(
+                      "Average humidity",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 5, 0, 20),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.purple,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 5, 10, 20),
+                    child: Text(
+                      "Temperature",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Container(
+            width: 650,
+            height: 300,
+            child: graphic.Chart(
+              data: adjustData,
+              margin: EdgeInsets.all(10),
+              scales: {
+                'index': graphic.CatScale(
+                  accessor: (map) => map['index'].toString(),
+                  range: [0, 0.99],
+                ),
+                'type': graphic.CatScale(
+                  accessor: (map) => map['type'] as String,
+                ),
+                'value': graphic.LinearScale(
+                  accessor: (map) => map['value'] as num,
+                  nice: true,
+                  range: [0, 1],
+                ),
+              },
+              geoms: [
+                graphic.LineGeom(
+                  position: graphic.PositionAttr(field: 'index*value'),
+                  color: graphic.ColorAttr(field: 'type'),
+                  size: graphic.SizeAttr(field: 'value'),
+                  shape:
+                  graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+                )
+              ],
+              axes: {
+                'index': graphic.Defaults.horizontalAxis,
+                'value': graphic.Defaults.verticalAxis,
+              },
+            ),
+          ),
+        ],
+      );
+    }
+    else if (type == "CarteDeSol" && data.length > 10) {
+      print(' data is not empty');
+      data = data.sublist(data.length - 10, data.length);
+      print(data.length);
+
+      data.forEach((element) {
+        print(element.toString());
+        var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .hour
+            .toString();
+        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .minute
+            .toString();
+        var hum1 = element["humdity1"];
+        var hum2 = element["humdity2"];
+        var hum3 = element["humdity3"];
+        var tot = (hum1 + hum2 + hum3) / 3;
+        String time = hour + ":" + minute;
+        print(time);
+        adjustData.add({"type": "humdity1", "index": time, "value": hum1});
+        adjustData.add({"type": "humdity2", "index": time, "value": hum2});
+        adjustData.add({"type": "humdity3", "index": time, "value": hum3});
+        adjustData.add({"type": "humdity4", "index": time, "value": tot});
+        adjustData.add({
+          "type": "temperatureSol",
+          "index": time,
+          "value": element["temperatureSol"]
+        });
+      });
+      return Column(
+        children: [
+          Row(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.blue,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
+                    child: Text(
+                      "Humidity 1",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.green,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
+                    child: Text(
+                      "Humidity 2",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.amber,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
+                    child: Text(
+                      "Humidity 3",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 5, 0, 20),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.blue[900],
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 5, 10, 20),
+                    child: Text(
+                      "Average humidity",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 5, 0, 20),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.purple,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 5, 10, 20),
+                    child: Text(
+                      "Temperature",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Container(
+            width: 650,
+            height: 300,
+            child: graphic.Chart(
+              data: adjustData,
+              margin: EdgeInsets.all(10),
+              scales: {
+                'index': graphic.CatScale(
+                  accessor: (map) => map['index'].toString(),
+                  range: [0, 0.99],
+                ),
+                'type': graphic.CatScale(
+                  accessor: (map) => map['type'] as String,
+                ),
+                'value': graphic.LinearScale(
+                  accessor: (map) => map['value'] as num,
+                  nice: true,
+                  range: [0, 1],
+                ),
+              },
+              geoms: [
+                graphic.LineGeom(
+                  position: graphic.PositionAttr(field: 'index*value'),
+                  color: graphic.ColorAttr(field: 'type'),
+                  size: graphic.SizeAttr(field: 'value'),
+                  shape:
+                  graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+                )
+              ],
+              axes: {
+                'index': graphic.Defaults.horizontalAxis,
+                'value': graphic.Defaults.verticalAxis,
+              },
+            ),
+          ),
+        ],
+      );
+    }
+    else if (type == "temperature" && data.length == 0){
+      return Container(
+        child: Text(
+          "There is no data to display !",
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey
+          ),
+        ),
+      );
+    }
+    else if (type == "temperature" && data.length <= 10){
+      print(data.length);
+
+      data.forEach((element) {
+        var hour =
+        DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .minute
+            .toString();
+        String time = hour + ":" + minute;
+        print("hello " + element.toString());
+        adjustData.add(
+            {"type": "temp", "index": time, "value": element["temperature"]});
+        adjustData
+            .add({"type": "hum", "index": time, "value": element["humidite"]});
+      });
+      return Column(
+        children: [
+          Row(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 0, 0, 20),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.green,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
+                    child: Text(
+                      "Humidity",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.blue,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
+                    child: Text(
+                      "Temperature",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Container(
+            width: 650,
+            height: 300,
+            child: graphic.Chart(
+              data: adjustData,
+              margin: EdgeInsets.all(10),
+              scales: {
+                'index': graphic.CatScale(
+                  accessor: (map) => map['index'].toString(),
+                  range: [0, 0.99],
+                ),
+                'type': graphic.CatScale(
+                  accessor: (map) => map['type'] as String,
+                ),
+                'value': graphic.LinearScale(
+                  accessor: (map) => map['value'] as num,
+                  nice: true,
+                  range: [0, 1],
+                ),
+              },
+              geoms: [
+                graphic.LineGeom(
+                  position: graphic.PositionAttr(field: 'index*value'),
+                  color: graphic.ColorAttr(field: 'type'),
+                  size: graphic.SizeAttr(field: 'value'),
+                  shape:
+                  graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+                )
+              ],
+              axes: {
+                'index': graphic.Defaults.horizontalAxis,
+                'value': graphic.Defaults.verticalAxis,
+              },
+            ),
+          ),
+        ],
+      );
+    }
+    else if (type == "temperature" && data.length > 10){
+      data = data.sublist(data.length - 10, data.length);
+      print(data.length);
+
+      data.forEach((element) {
+        var hour =
+        DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .minute
+            .toString();
+        String time = hour + ":" + minute;
+        print("hello " + element.toString());
+        adjustData.add(
+            {"type": "temp", "index": time, "value": element["temperature"]});
+        adjustData
+            .add({"type": "hum", "index": time, "value": element["humidite"]});
+      });
+      return Column(
+        children: [
+          Row(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 0, 0, 20),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.green,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
+                    child: Text(
+                      "Humidity",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.blue,
+                      ),
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
+                    child: Text(
+                      "Temperature",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Container(
+            width: 650,
+            height: 300,
+            child: graphic.Chart(
+              data: adjustData,
+              margin: EdgeInsets.all(10),
+              scales: {
+                'index': graphic.CatScale(
+                  accessor: (map) => map['index'].toString(),
+                  range: [0, 0.99],
+                ),
+                'type': graphic.CatScale(
+                  accessor: (map) => map['type'] as String,
+                ),
+                'value': graphic.LinearScale(
+                  accessor: (map) => map['value'] as num,
+                  nice: true,
+                  range: [0, 1],
+                ),
+              },
+              geoms: [
+                graphic.LineGeom(
+                  position: graphic.PositionAttr(field: 'index*value'),
+                  color: graphic.ColorAttr(field: 'type'),
+                  size: graphic.SizeAttr(field: 'value'),
+                  shape:
+                  graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+                )
+              ],
+              axes: {
+                'index': graphic.Defaults.horizontalAxis,
+                'value': graphic.Defaults.verticalAxis,
+              },
+            ),
+          ),
+        ],
+      );
+    }
+  }
+  else return Container(
+    child: Text(
+      "There is no data to display !",
+      style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
+          color: Colors.grey
+      ),
+    ),
+  );
+
+}

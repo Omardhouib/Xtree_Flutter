@@ -232,7 +232,6 @@ class UpdateSensState extends State<UpdateSens> {
       print(" Sens id: " + identifier.toString());
 
       Addlocation(identifier, DevicenameController.text, descriptionController.text, coordt);
-      _btnController.stop();
     });
   }
 
@@ -278,60 +277,5 @@ class UpdateSensState extends State<UpdateSens> {
             fontSize: 10.0);
 
     }
-  }
-
-  buttonSection() {
-    return Container(
-      height: 50,
-      child: AspectRatio(
-        child: RoundedLoadingButton(
-          color: Colors.amberAccent,
-          child: Text("Update Device", style: TextStyle(color: Colors.white)),
-          controller: _btnController,
-          onPressed:(){
-            if(DevicenameController.text == ""){
-              Fluttertoast.showToast(
-                  msg: "Please define your new sensor name !",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 5,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 10.0);
-              _btnController.reset();
-            }
-            else if(descriptionController.text == ""){
-              Fluttertoast.showToast(
-                  msg: "Please define your new sensor description !",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 5,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 10.0);
-              _btnController.reset();
-            }
-            else if(coordt.isEmpty == true){
-            Fluttertoast.showToast(
-            msg: "Please select a new place on the map !",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 5,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 10.0);
-            _btnController.reset();
-            }
-            else {
-
-           setState(() {
-             _doSomething();
-           });
-            }
-          },
-        ),
-        aspectRatio: 8,
-      ),
-    );
   }
 }

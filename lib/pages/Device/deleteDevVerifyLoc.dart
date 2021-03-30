@@ -202,7 +202,7 @@ class _ItemListState extends State<ItemList> {
                                                   ));
                                             }
                                             else  Fluttertoast.showToast(
-                                                msg: "Location doesn't have any device !",
+                                                msg: widget.list[i].siteName+" does not have any device !",
                                                 toastLength: Toast.LENGTH_SHORT,
                                                 gravity: ToastGravity.BOTTOM,
                                                 timeInSecForIosWeb: 7,

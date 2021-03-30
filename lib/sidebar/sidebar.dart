@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
@@ -277,11 +278,15 @@ class _SideBarState extends State<SideBar>
                           icon: Icons.place,
                           title: list[i].siteName.toString(),
                           onTap: () => {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        LocationDetails(identifier: list[i].id))),
+                          Fluttertoast.showToast(
+                          msg: list[i].siteName+" does not have any device !",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 3,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 10.0)
+
                           },
                         ),
                         Container(

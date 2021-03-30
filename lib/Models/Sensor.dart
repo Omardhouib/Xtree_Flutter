@@ -11,17 +11,17 @@ String sensorToJson(Sensor data) => json.encode(data.toJson());
 
 class Sensor {
   Sensor({
-    @required this.sensorCoordinates,
-    @required this.createdDate,
-    @required this.status,
-    @required this.id,
-    @required this.rules,
-    @required this.sensorIdentifier,
-    @required this.sensorType,
-    @required this.v,
-    @required this.description,
-    @required this.name,
-    @required this.uv,
+    this.sensorCoordinates,
+    this.createdDate,
+    this.status,
+    this.id,
+    this.rules,
+    this.sensorIdentifier,
+    this.sensorType,
+    this.v,
+    this.description,
+    this.name,
+    this.uv,
   });
 
   List<double> sensorCoordinates;

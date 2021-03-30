@@ -112,7 +112,7 @@ class AddLocationState extends State<AddLocation> {
               ),
             ),
             Container(
-              height: 600,
+              height: 500,
               width: 400,
               child: GoogleMap(
                 initialCameraPosition: _initialPosition,

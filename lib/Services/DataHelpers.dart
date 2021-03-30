@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Models/LocationHome.dart';
+import 'package:sidebar_animation/Models/Locationdetails.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Models/Weather.dart';
 
@@ -242,6 +243,29 @@ class DatabaseHelper2 {
       throw Exception('Failed to load album');
     }
   }
+
+  Future<Locationdetails> getLocationsdetailsByid(String ID) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key) ?? 0;
+    String myUrl = "$serverUrl/sensors/getLocationsdetailsByid/$ID?token=" + value;
+    http.Response response = await http.get(
+      myUrl,
+      headers: {
+        'Accept': 'application/json',
+        //'Authorization': 'token $value'
+      },
+    );
+    if (response.statusCode == 200) {
+      //   await Future.delayed(Duration(milliseconds: 900));
+      return Locationdetails.fromJson(json.decode(response.body));
+    } else {
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+
   Future<Location> getLocationByid(String ID) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
@@ -413,6 +437,7 @@ class DatabaseHelper2 {
       throw Exception('Failed to load album');
     }
   }
+
   Future<Sensor> getDevById(String ID) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';

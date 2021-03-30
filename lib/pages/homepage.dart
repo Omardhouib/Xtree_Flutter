@@ -51,486 +51,488 @@ class _MyHomePageState extends State<MyHomePage> {
 
     super.initState();
   }
+
   Future<bool> _onWillPop() async {
     return (await showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit the App'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('No'),
+          context: context,
+          builder: (context) => new AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit the App'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('No'),
+              ),
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yes'),
+              ),
+            ],
           ),
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: new Text('Yes'),
-          ),
-        ],
-      ),
-    )) ?? false;
+        )) ??
+        false;
   }
 
   @override
   Widget build(BuildContext context) {
     var hour = DateTime.now().hour;
     return new WillPopScope(
-        onWillPop: _onWillPop,
-        child: new Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: <Widget>[
-          Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 50, 0, 25),
-                    child: Row(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            FutureBuilder<LocationHome>(
+      onWillPop: _onWillPop,
+      child: new Scaffold(
+        backgroundColor: Colors.grey[200],
+        body: ListView(
+          scrollDirection: Axis.vertical,
+          children: <Widget>[
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 50, 0, 25),
+                      child: Row(
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              FutureBuilder<LocationHome>(
 //                future: databaseHelper.getData(),
-                                future: getHomedetails,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasError) {
-                                    print(snapshot.error);
-                                    print("mochkla lenaa last *");
-                                  }
-                                  if (snapshot.hasData) {
-                                    Location location = snapshot.data.locations;
-                                    id = snapshot.data.locations.id;
-                                    return Text(
-                                      location.siteName,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 30.0,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontStyle: FontStyle.normal,
-                                      ),
-                                    );
-                                  } else {
-                                    return Container();
-                                  }
-                                }),
-                            Text(
-                              'Welcome Omar dhouib',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
+                                  future: getHomedetails,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError) {
+                                      print(snapshot.error);
+                                      print("mochkla lenaa last *");
+                                    }
+                                    if (snapshot.hasData) {
+                                      Location location =
+                                          snapshot.data.locations;
+                                      id = snapshot.data.locations.id;
+                                      return Text(
+                                        location.siteName,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 30.0,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontStyle: FontStyle.normal,
+                                        ),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  }),
+                              Text(
+                                'Welcome Omar dhouib',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                  fontStyle: FontStyle.normal,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.blue[100],
-                            child: Icon(
-                              Icons.perm_identity,
-                              size: 30,
-                              color: Colors.blue,
-                            ),
-                            radius: 33,
+                            ],
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.blue[100],
+                              child: Icon(
+                                Icons.perm_identity,
+                                size: 30,
+                                color: Colors.blue,
+                              ),
+                              radius: 33,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ]),
-          FutureBuilder<LocationHome>(
-              future: getHomedetails,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  Container();
-                }
-                if (snapshot.hasData) {
-                  return FutureBuilder(
-                      future: databaseHelper2.Getweather(snapshot.data.locations.id),
-                      builder: (context, snapshot2) {
-                        if (snapshot2.hasError) {
-                          print(snapshot2.error);
-                          Container();
-                        }
-                        return snapshot2.hasData
-                            ? Itemclass(list: snapshot2.data)
-                            : Container();
-                      });
-                } else {
-                  return Container();
-                }
-              }),
-
-
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                ]),
+            FutureBuilder<LocationHome>(
+                future: getHomedetails,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    Container();
+                  }
+                  if (snapshot.hasData) {
+                    return FutureBuilder(
+                        future: databaseHelper2.Getweather(
+                            snapshot.data.locations.id),
+                        builder: (context, snapshot2) {
+                          if (snapshot2.hasError) {
+                            print(snapshot2.error);
+                            Container();
+                          }
+                          return snapshot2.hasData
+                              ? Itemclass(list: snapshot2.data)
+                              : Container();
+                        });
+                  } else {
+                    return Container();
+                  }
+                }),
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              ),
             ),
-          ),
-          FutureBuilder<int>(
-              future: getSensNum,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
+            FutureBuilder<int>(
+                future: getSensNum,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("there is problem !");
+                  }
 
-                return snapshot.hasData
-                    ? Container(
-                        height: 80,
-                        child: Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          elevation: 4,
-                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.green,
-                                  child: Icon(
-                                    Icons.device_hub,
-                                    color: Colors.white,
-                                  ),
-                                  radius: 25,
-                                ),
-                              ),
-                              Text(
-                                "Total number of DEVICES: " +
-                                    snapshot.data.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : Container();
-              }),
-          FutureBuilder<int>(
-              future: getLocNum,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
-
-                return snapshot.hasData
-                    ? Container(
-                        height: 80,
-                        child: Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          elevation: 4,
-                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.red,
-                                  child: Icon(
-                                    Icons.place,
-                                    color: Colors.white,
-                                  ),
-                                  radius: 25,
-                                ),
-                              ),
-                              Text(
-                                "Total number of LOCATIONS: " +
-                                    snapshot.data.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : Container();
-              }),
-          FutureBuilder<LocationHome>(
-              future: getHomedetails,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("there is problem !");
-                }
-
-                if (snapshot.hasData) {
-                  snapshot.data.sol.rules.forEach((element) {
-                    status = element.status;
-                  });
-                  if (status == true){
-                   // print("status:"+status.toString());
-                    return Container(
-                      height: 80,
-                      child: Card(
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        elevation: 4,
-                        margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                              child: CircleAvatar(
-                                backgroundColor: Colors.amber,
-                                child: Icon(
-                                  Icons.schedule,
-                                  color: Colors.white,
-                                ),
-                                radius: 25,
-                              ),
+                  return snapshot.hasData
+                      ? Container(
+                          height: 80,
+                          child: Card(
+                            semanticContainer: true,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
-                            Row(
+                            elevation: 4,
+                            margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                            child: Row(
                               children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.green,
+                                    child: Icon(
+                                      Icons.device_hub,
+                                      color: Colors.white,
+                                    ),
+                                    radius: 25,
+                                  ),
+                                ),
                                 Text(
-                                  "SCHEDULES STATE:    ",
+                                  "Total number of DEVICES: " +
+                                      snapshot.data.toString(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 16,
                                   ),
                                 ),
-                                Container(
-                                  //color: Colors.green,
-                                  height: 20.0, // height of the button
-                                  width: 20.0, // width of the button
-                                  decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      border: Border.all(
-                                          color: Colors.grey[350],
-                                          width: 3.0,
-                                          style: BorderStyle.solid),
-                                      shape: BoxShape.circle),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Container();
+                }),
+            FutureBuilder<int>(
+                future: getLocNum,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("there is problem !");
+                  }
+
+                  return snapshot.hasData
+                      ? Container(
+                          height: 80,
+                          child: Card(
+                            semanticContainer: true,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            elevation: 4,
+                            margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.red,
+                                    child: Icon(
+                                      Icons.place,
+                                      color: Colors.white,
+                                    ),
+                                    radius: 25,
+                                  ),
                                 ),
                                 Text(
-                                  "  ACTIVE",
+                                  "Total number of LOCATIONS: " +
+                                      snapshot.data.toString(),
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,color: Colors.green
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
                                   ),
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                    );
+                          ),
+                        )
+                      : Container();
+                }),
+            FutureBuilder<LocationHome>(
+                future: getHomedetails,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("there is problem !");
                   }
-                  else
-                  //  print("status:"+status.toString());
-                    return Container(
-                    height: 80,
-                    child: Card(
-                      semanticContainer: true,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      elevation: 4,
-                      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.amber,
-                              child: Icon(
-                                Icons.schedule,
-                                color: Colors.white,
-                              ),
-                              radius: 25,
-                            ),
+
+                  if (snapshot.hasData) {
+                    snapshot.data.sol.rules.forEach((element) {
+                      status = element.status;
+                    });
+                    if (status == true) {
+                      // print("status:"+status.toString());
+                      return Container(
+                        height: 80,
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          Row(
+                          elevation: 4,
+                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                          child: Row(
                             children: [
-                              Text(
-                                "SCHEDULES STATE:    ",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.amber,
+                                  child: Icon(
+                                    Icons.schedule,
+                                    color: Colors.white,
+                                  ),
+                                  radius: 25,
                                 ),
                               ),
-                              Container(
-                                //color: Colors.green,
-                                height: 20.0, // height of the button
-                                width: 20.0, // width of the button
-                                decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    border: Border.all(
-                                        color: Colors.grey[350],
-                                        width: 3.0,
-                                        style: BorderStyle.solid),
-                                    shape: BoxShape.circle),
-                              ),
-                              Text(
-                                "  INACTIVE",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,color: Colors.red
-                                ),
-                              ),
-
-
-
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-
-                } else {
-                  return Container();
-                }
-              }),
-
-          FutureBuilder<LocationHome>(
-              future: getHomedetails,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  snapshot.data.locations.sensorIds.forEach((element) {
-                     sensId = element;
-                     print("element: "+element);
-                  });
-                  return FutureBuilder<Sensor>(
-                      future: databaseHelper2.getSolDeviceById(sensId),
-                      builder: (context, snapshot2) {
-                        if (snapshot2.hasError) {
-                          print(snapshot2.error);
-                          print("mochkla lenaa *");
-                        }
-                        if (snapshot2.hasData) {
-                          print("sensdata: "+snapshot2.data.toString());
-                          return Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  color: Colors.white
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                              Row(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
-                                    child: Container(
-                                      height: 60,
-                                      width: 350,
-                                      child: FlatButton(
-                                        child: Text("SCHEDULE",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.blue[600],
-                                          ),),
-                                        onPressed: (){
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      schedulePage(
-                                                          sens: snapshot2.data,
-                                                          location: snapshot.data.locations,
-                                                          Electro: snapshot.data.electro
-                                                      )));
-                                        },
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(30.0),
-                                            side: BorderSide(color: Colors.blue[300],width: 1.5)
-
-                                        ),
-                                        color: Colors.blue[100],
-                                        splashColor: Colors.blue[300],
-                                        textColor: Colors.black,
-                                      ),
-
+                                  Text(
+                                    "SCHEDULES STATE:    ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                                    child: Text(
-                                      "You can controle when to irrigate your land based on our AI or you can Schedule it by yourself.",
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w400
-                                      ),
-                                    ),
+                                  Container(
+                                    //color: Colors.green,
+                                    height: 20.0, // height of the button
+                                    width: 20.0, // width of the button
+                                    decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        border: Border.all(
+                                            color: Colors.grey[350],
+                                            width: 3.0,
+                                            style: BorderStyle.solid),
+                                        shape: BoxShape.circle),
+                                  ),
+                                  Text(
+                                    "  ACTIVE",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                        color: Colors.green),
                                   ),
                                 ],
                               ),
-                            ),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      });
-                } else {
-                  return Container();
-                }
-              }),
-
-
-          FutureBuilder<LocationHome>(
+                            ],
+                          ),
+                        ),
+                      );
+                    } else
+                      //  print("status:"+status.toString());
+                      return Container(
+                        height: 80,
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          elevation: 4,
+                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.amber,
+                                  child: Icon(
+                                    Icons.schedule,
+                                    color: Colors.white,
+                                  ),
+                                  radius: 25,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "SCHEDULES STATE:    ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Container(
+                                    //color: Colors.green,
+                                    height: 20.0, // height of the button
+                                    width: 20.0, // width of the button
+                                    decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        border: Border.all(
+                                            color: Colors.grey[350],
+                                            width: 3.0,
+                                            style: BorderStyle.solid),
+                                        shape: BoxShape.circle),
+                                  ),
+                                  Text(
+                                    "  INACTIVE",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                        color: Colors.red),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                  } else {
+                    return Container();
+                  }
+                }),
+            FutureBuilder<LocationHome>(
+                future: getHomedetails,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    snapshot.data.locations.sensorIds.forEach((element) {
+                      sensId = element;
+                      print("element: " + element);
+                    });
+                    return FutureBuilder<Sensor>(
+                        future: databaseHelper2.getSolDeviceById(sensId),
+                        builder: (context, snapshot2) {
+                          if (snapshot2.hasError) {
+                            print(snapshot2.error);
+                            print("mochkla lenaa *");
+                          }
+                          if (snapshot2.hasData) {
+                            print("sensdata: " + snapshot2.data.toString());
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    color: Colors.white),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 15, 0, 5),
+                                      child: Container(
+                                        height: 60,
+                                        width: 350,
+                                        child: FlatButton(
+                                          child: Text(
+                                            "SCHEDULE",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.blue[600],
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        schedulePage(
+                                                            sens:
+                                                                snapshot2.data,
+                                                            location: snapshot
+                                                                .data.locations,
+                                                            Electro: snapshot
+                                                                .data
+                                                                .electro)));
+                                          },
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30.0),
+                                              side: BorderSide(
+                                                  color: Colors.blue[300],
+                                                  width: 1.5)),
+                                          color: Colors.blue[100],
+                                          splashColor: Colors.blue[300],
+                                          textColor: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                      child: Text(
+                                        "You can controle when to irrigate your land based on our AI or you can Schedule it by yourself.",
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.grey[600],
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        });
+                  } else {
+                    return Container();
+                  }
+                }),
+            FutureBuilder<LocationHome>(
 //                future: databaseHelper.getData(),
-              future: getHomedetails,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  print("mochkla lenaa *");
-                }
-                if (snapshot.hasData) {
-                  return ItemListchart(list: snapshot.data.locations.sensorIds);
-                } else {
-                  return Container();
-                }
-              }),
-
-          FutureBuilder<LocationHome>(
+                future: getHomedetails,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    print("mochkla lenaa *");
+                  }
+                  if (snapshot.hasData) {
+                    return ItemListchart(
+                        list: snapshot.data.locations.sensorIds);
+                  } else {
+                    return Container();
+                  }
+                }),
+            FutureBuilder<LocationHome>(
 //                future: databaseHelper.getData(),
-              future: getHomedetails,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ItemListElectro(list: snapshot.data.electro);
-                } else {
-                  return Container();
-                }
-              }),
-        ],
-      ),
+                future: getHomedetails,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ItemListElectro(list: snapshot.data.electro);
+                  } else {
+                    return Container();
+                  }
+                }),
+          ],
         ),
+      ),
     );
   }
 
@@ -586,14 +588,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
                         child: Text(
                           list[i]["temp"]["morn"].round().toString() + "°C",
-                          style: TextStyle(color: Colors.white, fontSize: 35,fontWeight: FontWeight.w400),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 35,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
                         child: Text(
                           dateFormat,
-                          style: TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.w300),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300),
                         ),
                       ),
                       if (list[i]["pop"] > 0.1)
@@ -632,23 +640,31 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
                             child: Text(
                               list[i]["temp"]["min"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Text(
                               "/",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                             child: Text(
                               list[i]["temp"]["max"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
@@ -659,15 +675,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                             child: Text(
                               list[i]["humidity"].toString() + "%",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -679,15 +697,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["pop"].toString() + "mm",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -699,15 +719,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["uvi"].toString(),
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -747,14 +769,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
                         child: Text(
                           list[i]["temp"]["eve"].round().toString() + "°C",
-                          style: TextStyle(color: Colors.white, fontSize: 35,fontWeight: FontWeight.w400),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 35,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
                         child: Text(
                           dateFormat,
-                          style: TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.w300),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300),
                         ),
                       ),
                       if (list[i]["pop"] > 0.1)
@@ -793,23 +821,31 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
                             child: Text(
                               list[i]["temp"]["min"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Text(
                               "/",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                             child: Text(
                               list[i]["temp"]["max"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
@@ -820,15 +856,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Humidity: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                             child: Text(
                               list[i]["humidity"].toString() + "%",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -840,15 +878,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Precipitation: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["pop"].toString() + "mm",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -860,15 +900,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Uv: ",
                               style:
-                              TextStyle(color: Colors.white, fontSize: 15),
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["uvi"].toString(),
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -894,14 +936,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
                         child: Text(
                           list[i]["temp"]["night"].round().toString() + "°C",
-                          style: TextStyle(color: Colors.white, fontSize: 35,fontWeight: FontWeight.w400),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 35,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
                         child: Text(
                           dateFormat,
-                          style: TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.w300),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300),
                         ),
                       ),
                       if (list[i]["pop"] > 0.1)
@@ -940,23 +988,31 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
                             child: Text(
                               list[i]["temp"]["min"].round().toString() + "°C",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Text(
                               "/",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                             child: Text(
                               list[i]["temp"]["max"].round().toString() + "°C",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),                            ),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           )
                         ],
                       ),
@@ -974,8 +1030,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                             child: Text(
                               list[i]["humidity"].toString() + "%",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -994,8 +1052,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["pop"].toString() + "mm",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -1014,8 +1074,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Text(
                               list[i]["uvi"].toString(),
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w300),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300),
                             ),
                           )
                         ],
@@ -1042,7 +1104,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
   String id;
   String status;
   String active = "true";
-  bool  pressGeoON = false;
+  bool pressGeoON = false;
   bool cmbscritta = false;
   final RoundedLoadingButtonController _btnController =
       new RoundedLoadingButtonController();
@@ -1055,20 +1117,35 @@ class _ItemListElectroState extends State<ItemListElectro> {
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.white),
+            borderRadius: BorderRadius.circular(10.0), color: Colors.white),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-              child: Text(
-                "Relays:",
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w600,
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 10, 0, 0),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    child: Icon(
+                      Icons.developer_board,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                    radius: 25,
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                  child: Text(
+                    "Relays:",
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
             ListView.builder(
                 itemCount: widget.list == null ? 0 : widget.list.length,
@@ -1076,56 +1153,55 @@ class _ItemListElectroState extends State<ItemListElectro> {
                 shrinkWrap: true,
                 itemBuilder: (context, i) {
                   id = widget.list[i].id.toString();
-                  print("...."+cmbscritta.toString());
+                  print("...." + cmbscritta.toString());
                   if (widget.list[i].status != cmbscritta)
-                  return Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(10, 0, 140, 0),
-                                child: Text(
-                                  //list[i].toString() ?? '',
-                                  widget.list[i].name.toString(),
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                    return Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(10, 0, 140, 0),
+                          child: Text(
+                            //list[i].toString() ?? '',
+                            widget.list[i].name.toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 94),
+                          child: Text(
+                            "ON",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green[300]),
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.flash_off),
+                              iconSize: 30,
+                              color: Colors.red,
+                              onPressed: () {
+                                status = widget.list[i].status.toString();
+                                _doSomething();
+                              },
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              child: Text(
+                                "TURN OFF",
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(right: 94),
-                                child: Text(
-                                  "ON",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green[300]),
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.flash_off),
-                                    iconSize: 30,
-                                    color: Colors.red,
-                                    onPressed: () {
-                                      status = widget.list[i].status.toString();
-                                      _doSomething();
-                                    },
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                                    child: Text(
-                                      "TURN OFF",
-                                      style:
-                                      TextStyle(fontSize: 12, color: Colors.grey),
-                                    ),
-                                  ),
-
-                                ],
-                              ),
-                            ],
-                          );
-                  else if (widget.list[i].status == cmbscritta){
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  else if (widget.list[i].status == cmbscritta) {
                     return Row(
                       children: [
                         Padding(
@@ -1165,7 +1241,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
                               child: Text(
                                 "TURN ON",
                                 style:
-                                TextStyle(fontSize: 12, color: Colors.grey),
+                                    TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                             ),
                           ],
@@ -1198,7 +1274,7 @@ isactive =false;
           pressGeoON = !pressGeoON;
           cmbscritta = !cmbscritta;
         });
-      //  _btnController.stop();
+        //  _btnController.stop();
       } else if (status == "false") {
         status = "true";
         print("offfff");
@@ -1207,7 +1283,7 @@ isactive =false;
           pressGeoON = !pressGeoON;
           cmbscritta = !cmbscritta;
         });
-       // _btnController.stop();
+        // _btnController.stop();
       }
       //_btnController.stop();
     });
@@ -1311,9 +1387,11 @@ class _ItemListchartState extends State<ItemListchart> {
                                 child: Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 0, 0, 0),
                                       child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 0, 10, 0),
                                         child: CircleAvatar(
                                           radius: 25,
                                           backgroundColor: Colors.lightBlue,
@@ -1326,10 +1404,10 @@ class _ItemListchartState extends State<ItemListchart> {
                                                   context: context,
                                                   child: ChartHistory(
                                                     onValueChange:
-                                                    _onValueChange,
+                                                        _onValueChange,
                                                     initialValue: _selectedId,
                                                     identifier:
-                                                    snapshot.data.id,
+                                                        snapshot.data.id,
                                                     type: snapshot
                                                         .data.sensorType,
                                                     name: snapshot.data.name,
@@ -1340,9 +1418,11 @@ class _ItemListchartState extends State<ItemListchart> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.fromLTRB(0, 22, 0, 0),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 22, 0, 0),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             snapshot.data.name.toString(),
@@ -1352,7 +1432,8 @@ class _ItemListchartState extends State<ItemListchart> {
                                             ),
                                           ),
                                           Text(
-                                            snapshot.data.description.toString(),
+                                            snapshot.data.description
+                                                .toString(),
                                             style: TextStyle(
                                               color: Colors.grey,
                                               fontWeight: FontWeight.w500,
@@ -1479,17 +1560,13 @@ Widget chart(List data, String type) {
   if (data.isNotEmpty) {
     if (type == "CarteDeSol" && data.length == 0) {
       return Container(
-          child: Text(
-            "There is no data to display !",
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
-                color: Colors.grey
-            ),
-          ),
+        child: Text(
+          "There is no data to display !",
+          style: TextStyle(
+              fontSize: 18, fontWeight: FontWeight.w400, color: Colors.grey),
+        ),
       );
-    }
-    else if (type == "CarteDeSol" && data.length <= 10) {
+    } else if (type == "CarteDeSol" && data.length <= 10) {
       print(' data is not empty');
       print(data.length);
 
@@ -1533,7 +1610,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.blue,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1543,8 +1619,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1561,7 +1636,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.green,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1571,8 +1645,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1589,7 +1662,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.amber,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1599,8 +1671,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1621,7 +1692,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.blue[900],
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1631,8 +1701,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1649,7 +1718,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.purple,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1659,8 +1727,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1692,8 +1759,8 @@ Widget chart(List data, String type) {
                   position: graphic.PositionAttr(field: 'index*value'),
                   color: graphic.ColorAttr(field: 'type'),
                   size: graphic.SizeAttr(field: 'value'),
-                  shape:
-                  graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+                  shape: graphic.ShapeAttr(
+                      values: [graphic.BasicLineShape(smooth: true)]),
                 )
               ],
               axes: {
@@ -1704,8 +1771,7 @@ Widget chart(List data, String type) {
           ),
         ],
       );
-    }
-    else if (type == "CarteDeSol" && data.length > 10) {
+    } else if (type == "CarteDeSol" && data.length > 10) {
       print(' data is not empty');
       data = data.sublist(data.length - 10, data.length);
       print(data.length);
@@ -1750,7 +1816,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.blue,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1760,8 +1825,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1778,7 +1842,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.green,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1788,8 +1851,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1806,7 +1868,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.amber,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1816,8 +1877,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1838,7 +1898,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.blue[900],
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1848,8 +1907,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1866,7 +1924,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.purple,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1876,8 +1933,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1909,8 +1965,8 @@ Widget chart(List data, String type) {
                   position: graphic.PositionAttr(field: 'index*value'),
                   color: graphic.ColorAttr(field: 'type'),
                   size: graphic.SizeAttr(field: 'value'),
-                  shape:
-                  graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+                  shape: graphic.ShapeAttr(
+                      values: [graphic.BasicLineShape(smooth: true)]),
                 )
               ],
               axes: {
@@ -1921,25 +1977,21 @@ Widget chart(List data, String type) {
           ),
         ],
       );
-    }
-    else if (type == "temperature" && data.length == 0){
+    } else if (type == "temperature" && data.length == 0) {
       return Container(
         child: Text(
           "There is no data to display !",
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              color: Colors.grey
-          ),
+              fontSize: 18, fontWeight: FontWeight.w400, color: Colors.grey),
         ),
       );
-    }
-    else if (type == "temperature" && data.length <= 10){
+    } else if (type == "temperature" && data.length <= 10) {
       print(data.length);
 
       data.forEach((element) {
-        var hour =
-        DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
+        var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .hour
+            .toString();
         var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
             .minute
             .toString();
@@ -1966,7 +2018,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.green,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -1976,8 +2027,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1994,7 +2044,6 @@ Widget chart(List data, String type) {
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                         color: Colors.blue,
                       ),
-
                     ),
                   ),
                   Padding(
@@ -2004,8 +2053,7 @@ Widget chart(List data, String type) {
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.grey
-                      ),
+                          color: Colors.grey),
                     ),
                   ),
                 ],
@@ -2037,8 +2085,121 @@ Widget chart(List data, String type) {
                   position: graphic.PositionAttr(field: 'index*value'),
                   color: graphic.ColorAttr(field: 'type'),
                   size: graphic.SizeAttr(field: 'value'),
-                  shape:
-                  graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+                  shape: graphic.ShapeAttr(
+                      values: [graphic.BasicLineShape(smooth: true)]),
+                )
+              ],
+              axes: {
+                'index': graphic.Defaults.horizontalAxis,
+                'value': graphic.Defaults.verticalAxis,
+              },
+            ),
+          ),
+        ],
+      );
+    } else if (type == "temperature" && data.length > 10) {
+      data = data.sublist(data.length - 10, data.length);
+      print(data.length);
+
+      data.forEach((element) {
+        var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .hour
+            .toString();
+        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
+            .minute
+            .toString();
+        String time = hour + ":" + minute;
+        print("hello " + element.toString());
+        adjustData.add(
+            {"type": "temp", "index": time, "value": element["temperature"]});
+        adjustData
+            .add({"type": "hum", "index": time, "value": element["humidite"]});
+      });
+      return Column(
+        children: [
+          Row(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 0, 0, 20),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
+                    child: Text(
+                      "Humidity",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
+                    child: Text(
+                      "Temperature",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Container(
+            width: 650,
+            height: 300,
+            child: graphic.Chart(
+              data: adjustData,
+              margin: EdgeInsets.all(10),
+              scales: {
+                'index': graphic.CatScale(
+                  accessor: (map) => map['index'].toString(),
+                  range: [0, 0.99],
+                ),
+                'type': graphic.CatScale(
+                  accessor: (map) => map['type'] as String,
+                ),
+                'value': graphic.LinearScale(
+                  accessor: (map) => map['value'] as num,
+                  nice: true,
+                  range: [0, 1],
+                ),
+              },
+              geoms: [
+                graphic.LineGeom(
+                  position: graphic.PositionAttr(field: 'index*value'),
+                  color: graphic.ColorAttr(field: 'type'),
+                  size: graphic.SizeAttr(field: 'value'),
+                  shape: graphic.ShapeAttr(
+                      values: [graphic.BasicLineShape(smooth: true)]),
                 )
               ],
               axes: {
@@ -2050,133 +2211,12 @@ Widget chart(List data, String type) {
         ],
       );
     }
-    else if (type == "temperature" && data.length > 10){
-        data = data.sublist(data.length - 10, data.length);
-        print(data.length);
-
-        data.forEach((element) {
-          var hour =
-          DateTime.fromMillisecondsSinceEpoch(element['time']).hour.toString();
-          var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
-              .minute
-              .toString();
-          String time = hour + ":" + minute;
-          print("hello " + element.toString());
-          adjustData.add(
-              {"type": "temp", "index": time, "value": element["temperature"]});
-          adjustData
-              .add({"type": "hum", "index": time, "value": element["humidite"]});
-        });
-        return Column(
-          children: [
-            Row(
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 0, 0, 20),
-                      child: Container(
-                        width: 40,
-                        height: 5,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                          color: Colors.green,
-                        ),
-
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
-                      child: Text(
-                        "Humidity",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: Colors.grey
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
-                      child: Container(
-                        width: 40,
-                        height: 5,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                          color: Colors.blue,
-                        ),
-
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
-                      child: Text(
-                        "Temperature",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: Colors.grey
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Container(
-              width: 650,
-              height: 300,
-              child: graphic.Chart(
-                data: adjustData,
-                margin: EdgeInsets.all(10),
-                scales: {
-                  'index': graphic.CatScale(
-                    accessor: (map) => map['index'].toString(),
-                    range: [0, 0.99],
-                  ),
-                  'type': graphic.CatScale(
-                    accessor: (map) => map['type'] as String,
-                  ),
-                  'value': graphic.LinearScale(
-                    accessor: (map) => map['value'] as num,
-                    nice: true,
-                    range: [0, 1],
-                  ),
-                },
-                geoms: [
-                  graphic.LineGeom(
-                    position: graphic.PositionAttr(field: 'index*value'),
-                    color: graphic.ColorAttr(field: 'type'),
-                    size: graphic.SizeAttr(field: 'value'),
-                    shape:
-                    graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
-                  )
-                ],
-                axes: {
-                  'index': graphic.Defaults.horizontalAxis,
-                  'value': graphic.Defaults.verticalAxis,
-                },
-              ),
-            ),
-          ],
-        );
-  }
-  }
-  else return Container(
-    child: Text(
-      "There is no data to display !",
-      style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w400,
-          color: Colors.grey
+  } else
+    return Container(
+      child: Text(
+        "There is no data to display !",
+        style: TextStyle(
+            fontSize: 18, fontWeight: FontWeight.w400, color: Colors.grey),
       ),
-    ),
-  );
-
+    );
 }

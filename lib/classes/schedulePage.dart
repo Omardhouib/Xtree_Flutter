@@ -420,9 +420,13 @@ class schedulePageState extends State<schedulePage> {
             Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  new IconButton(
+                    icon: new Icon(Icons.arrow_back, color: Colors.black,size: 30,),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
                   Container(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 15, 0, 25),
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 25),
                       child: Row(
                         children: <Widget>[
                           Column(
