@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool status;
   List<String> sens;
   Sensor Solsens;
+  Sensor Electro;
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   final RoundedLoadingButtonController _btnController =
       new RoundedLoadingButtonController();
@@ -1107,7 +1108,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
   bool pressGeoON = false;
   bool cmbscritta = false;
   final RoundedLoadingButtonController _btnController =
-      new RoundedLoadingButtonController();
+  new RoundedLoadingButtonController();
 
   ScrollController _controller = new ScrollController();
 
@@ -1187,6 +1188,9 @@ class _ItemListElectroState extends State<ItemListElectro> {
                               onPressed: () {
                                 status = widget.list[i].status.toString();
                                 _doSomething();
+                                setState(() {
+                                  cmbscritta = !cmbscritta;
+                                });
                               },
                             ),
                             Padding(
@@ -1194,7 +1198,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
                               child: Text(
                                 "TURN OFF",
                                 style:
-                                    TextStyle(fontSize: 12, color: Colors.grey),
+                                TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                             ),
                           ],
@@ -1234,6 +1238,9 @@ class _ItemListElectroState extends State<ItemListElectro> {
                               onPressed: () {
                                 status = widget.list[i].status.toString();
                                 _doSomething();
+                                setState(() {
+                                  cmbscritta = !cmbscritta;
+                                });
                               },
                             ),
                             Padding(
@@ -1241,7 +1248,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
                               child: Text(
                                 "TURN ON",
                                 style:
-                                    TextStyle(fontSize: 12, color: Colors.grey),
+                                TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                             ),
                           ],
@@ -1270,19 +1277,16 @@ isactive =false;
       if (status == "true") {
         status = "false";
         On(id);
-        setState(() {
-          pressGeoON = !pressGeoON;
-          cmbscritta = !cmbscritta;
-        });
+
         //  _btnController.stop();
       } else if (status == "false") {
         status = "true";
         print("offfff");
         Off(id);
-        setState(() {
+     /*   setState(() {
           pressGeoON = !pressGeoON;
           cmbscritta = !cmbscritta;
-        });
+        });*/
         // _btnController.stop();
       }
       //_btnController.stop();
@@ -1419,7 +1423,7 @@ class _ItemListchartState extends State<ItemListchart> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.fromLTRB(
-                                          0, 22, 0, 0),
+                                          0, 15, 0, 0),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1432,12 +1436,21 @@ class _ItemListchartState extends State<ItemListchart> {
                                             ),
                                           ),
                                           Text(
-                                            snapshot.data.description
+                                            "Identifier: "+snapshot.data.sensorIdentifier
                                                 .toString(),
                                             style: TextStyle(
                                               color: Colors.grey,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Type: "+snapshot.data.sensorType
+                                                .toString(),
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 11,
                                             ),
                                           ),
                                         ],

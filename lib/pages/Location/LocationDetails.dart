@@ -1362,9 +1362,11 @@ class _ItemListchartState extends State<ItemListchart> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.fromLTRB(0, 22, 0, 0),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 15, 0, 0),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             snapshot.data.name.toString(),
@@ -1374,11 +1376,21 @@ class _ItemListchartState extends State<ItemListchart> {
                                             ),
                                           ),
                                           Text(
-                                            snapshot.data.description.toString(),
+                                            "Identifier: "+snapshot.data.sensorIdentifier
+                                                .toString(),
                                             style: TextStyle(
                                               color: Colors.grey,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Type: "+snapshot.data.sensorType
+                                                .toString(),
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 11,
                                             ),
                                           ),
                                         ],

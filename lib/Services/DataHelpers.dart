@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sidebar_animation/Models/DevicesHome.dart';
 import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Models/LocationHome.dart';
 import 'package:sidebar_animation/Models/Locationdetails.dart';
@@ -176,11 +177,11 @@ class DatabaseHelper2 {
     return json.decode(response.body);
   }
 
-  /*Future<List<Sensor>> AllElectoByUser() async {
+  Future<DevicesHome> getDevicesdetails() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final value = prefs.get(key) ?? 0;
-    String myUrl = "$serverUrl/sensors/getElectroSensors?token=" + value;
+    String myUrl = "$serverUrl/sensors/DevicesHome?token=" + value;
     http.Response response = await http.get(
       myUrl,
       headers: {
@@ -188,17 +189,14 @@ class DatabaseHelper2 {
         //'Authorization': 'token $value'
       },
     );
-    await Future.delayed(Duration(milliseconds: 2100));
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      List<dynamic> body = jsonDecode(response.body);
-      List<Sensor> sens = body.map((dynamic item) => Sensor.fromJson(item)).toList();
-      //  await Future.delayed(Duration(milliseconds: 1200));
-      return sens;
+      //   await Future.delayed(Duration(milliseconds: 900));
+      return DevicesHome.fromJson(json.decode(response.body));
     } else {
-      throw "Can't get orders";
+      // then throw an exception.
+      throw Exception('Failed to load album');
     }
-  }*/
+  }
 
   Future<Location> Lastlocation() async {
     final prefs = await SharedPreferences.getInstance();

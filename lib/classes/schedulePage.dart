@@ -374,17 +374,323 @@ class schedulePageState extends State<schedulePage> {
       ); // this could be any Widget
     }
     else if (_selectedLocation == "AI mode"){
-      if("hello" == "hi"){
-        return Container();
-      }
-      else Fluttertoast.showToast(
-          msg: "AI mode activated with success!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 10,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 10.0);
+      widget.Electro.forEach((element) {
+        Elec.add({"item_id": element.id, "item_text": element.name});
+      });
+      var now = new DateTime.now();
+      var formatter = new DateFormat('yyyy-MM-dd');
+      String date = formatter.format(now);
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0), color: Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device name: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.name,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device description: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.description,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device status: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.status.toString(),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'Start date:  ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        date.toString(),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'T max:  ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Container(
+                        width: 80,
+                        height: 50,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "T max cannot be empty !";
+                            } else
+                              return null;
+                          },
+                          controller: TmaxController,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(10.0),
+                              borderSide: BorderSide(
+                                  color: Colors.blue[300], width: 1.0),
+                            ),
+                            hintText: "80",
+                            hintStyle: TextStyle(color: Colors.grey[400]),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        child: Text(
+                          'T min:  ',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      Container(
+                        width: 80,
+                        height: 50,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "T min cannot be empty !";
+                            } else
+                              return null;
+                          },
+                          controller: TminController,
+                          decoration: InputDecoration(
+                              border: new OutlineInputBorder(
+                                borderRadius: new BorderRadius.circular(10.0),
+                                borderSide: BorderSide(
+                                    color: Colors.blue[300], width: 1.5),
+                              ),
+                              hintText: "20",
+                              hintStyle: TextStyle(color: Colors.grey[400])),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Alert type: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        'Email',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Relays:     ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 13, 0, 0),
+                        child: Form(
+                          key: _formKey,
+                          child: MultiSelectFormField(
+                            context: context,
+                            buttonText: 'Relays',
+                            itemList: widget.Electro,
+                            questionText: 'Select Your Relays',
+                            validator: (flavours) => flavours.length == 0
+                                ? 'Please select at least one Relay!'
+                                : null,
+                            onSaved: (flavours) {
+                              print(widget.Electro);
+                              // Logic to save selected flavours in the database
+                            },
+                          ),
+                          onChanged: () {
+                            if (_formKey.currentState.validate()) {
+                              // Invokes the OnSaved Method
+                              _formKey.currentState.save();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(37, 40, 0, 5),
+                  child: Container(
+                    height: 45,
+                    width: 350,
+                    child: FlatButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.save,
+                            color: Colors.blue,
+                          ),
+                          Text(
+                            '  Save',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                      onPressed: (){
+                        Fluttertoast.showToast(
+                            msg: "AI configurations are saved with success !",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 10,
+                            backgroundColor: Colors.green,
+                            textColor: Colors.white,
+                            fontSize: 10.0);
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7.0),
+                          side: BorderSide(color: Colors.grey,width: 1.5)
+
+                      ),
+                      color: Colors.white,
+                      splashColor: Colors.grey,
+                      textColor: Colors.black,
+                    ),
+
+                  ),
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(58, 0, 5, 0),
+                      child: Container(
+                        height: 45,
+                        width: 150,
+                        child: FlatButton(
+                          child: Text("Start process",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),),
+                          onPressed: (){
+                            Fluttertoast.showToast(
+                                msg: "Process started",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 10,
+                                backgroundColor: Colors.green,
+                                textColor: Colors.white,
+                                fontSize: 10.0);
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7.0),
+                              side: BorderSide(color: Colors.black,width: 0.5)
+
+                          ),
+                          color: Colors.green,
+                          splashColor: Colors.green,
+                          textColor: Colors.black,
+                        ),
+
+                      ),
+                    ),
+                    Container(
+                      height: 45,
+                      width: 150,
+                      child: FlatButton(
+                        child: Text("Stop process",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),),
+                        onPressed: (){
+                          Fluttertoast.showToast(
+                              msg: "Process stopped",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 10,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 10.0);
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7.0),
+                            side: BorderSide(color: Colors.black,width: 0.5)
+
+                        ),
+                        color: Colors.red,
+                        splashColor: Colors.red,
+                        textColor: Colors.black,
+                      ),
+
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
     }
   }
 
@@ -604,6 +910,14 @@ class schedulePageState extends State<schedulePage> {
           fontSize: 10.0);
     }
     AddRules(widget.sens.id, NotifSelection, selectedDate, TmaxController.text, TminController.text, value);
+    Fluttertoast.showToast(
+        msg: "Manuel configurations are saved with success !",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 10,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 10.0);
     NotifSelection.clear();
     print(" relays" + value.toString());
     print(" relays" + NotifSelection.toString());
@@ -1383,9 +1697,11 @@ class _ItemListchartState extends State<ItemListchart> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 22, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(
+                                  0, 15, 0, 0),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     snapshot.data.name.toString(),
@@ -1395,11 +1711,21 @@ class _ItemListchartState extends State<ItemListchart> {
                                     ),
                                   ),
                                   Text(
-                                    snapshot.data.description.toString(),
+                                    "Identifier: "+snapshot.data.sensorIdentifier
+                                        .toString(),
                                     style: TextStyle(
                                       color: Colors.grey,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Type: "+snapshot.data.sensorType
+                                        .toString(),
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 11,
                                     ),
                                   ),
                                 ],

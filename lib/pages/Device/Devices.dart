@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sidebar_animation/Models/DevicesHome.dart';
+import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/pages/Device/UpdateSens.dart';
 import 'package:sidebar_animation/pages/Device/VerfiyDevice.dart';
@@ -26,6 +31,16 @@ class _DevicesState extends State<Devices> {
     });
   }
   String _selectedId;
+  Sensor Electro;
+  Future<DevicesHome> DevicesHomedetails;
+
+  @override
+  void initState() {
+    DevicesHomedetails = databaseHelper2.getDevicesdetails();
+
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -189,16 +204,29 @@ class _DevicesState extends State<Devices> {
               ),
             ),
           ),
-          FutureBuilder(
+          FutureBuilder<DevicesHome>(
 //                future: databaseHelper.getData(),
-              future: databaseHelper2.AllDeviceByUser1(),
+              future: DevicesHomedetails,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
                   print("mochkla lenaa *");
                 }
                 if (snapshot.hasData) {
-                  return ItemList(list: snapshot.data);
+                  return ItemList(list: snapshot.data.sensors);
+                } else {
+                  return Container();
+                }
+              }),
+          FutureBuilder<DevicesHome>(
+//                future: databaseHelper.getData(),
+              future: DevicesHomedetails,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+               /* snapshot.data.electro.forEach((element) {
+                  Electro.add(element);
+                });*/
+                  return ItemListElectro(list: snapshot.data.electro);
                 } else {
                   return Container();
                 }
@@ -237,29 +265,29 @@ class _ItemListState extends State<ItemList> {
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemBuilder: (context, i) {
-          return Container(
-            height: 460,
-            child: Card(
-              semanticContainer: true,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              elevation: 0,
-              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 00),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
-                      child: Row(
+            return Container(
+              height: 460,
+              child: Card(
+                semanticContainer: true,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                elevation: 0,
+                margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 00),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
+                        child: Row(
 
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                         CircleAvatar(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
                               backgroundColor: Colors.blue,
                               child: Icon(
                                 Icons.developer_board,
@@ -267,104 +295,106 @@ class _ItemListState extends State<ItemList> {
                               ),
                               radius: 25,
                             ),
-                          GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => deviceDetails(
-                                          list:widget.list,
-                                          index: i,
-                                          identifier: widget.list[i]["_id"]
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => deviceDetails(
+                                        list:widget.list,
+                                        index: i,
+                                        identifier: widget.list[i].id
 
-                                      ),
                                     ),
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                  child: Container(
-                                    width: 280,
-                                    child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            //list[i].toString() ?? '',
-                                            widget.list[i]["name"].toString(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                          Text(
-                                            //list[i].toString() ?? '',
-                                            "Description: "+widget.list[i]["Description"].toString(),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 11,
-                                                color: Colors.grey
-                                            ),
-                                          ),
-                                          Text(
-                                            //list[i].toString() ?? '',
-                                            "Type: "+widget.list[i]["SensorType"].toString(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 11,
-                                              color: Colors.grey
-                                            ),
-                                          ),
-                                        ],
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                child: Container(
+                                  width: 280,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        //list[i].toString() ?? '',
+                                        widget.list[i].name.toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20,
+                                        ),
                                       ),
+                                      Text(
+                                        //list[i].toString() ?? '',
+                                        "Identifier: "+widget.list[i].sensorIdentifier.toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 11,
+                                            color: Colors.grey
+                                        ),
+                                      ),
+                                      Text(
+                                        //list[i].toString() ?? '',
+                                        "Type: "+widget.list[i].sensorType.toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 11,
+                                            color: Colors.grey
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.edit,
-                                color: Colors.green,
-                                size: 27,
-                              ),
-                              onPressed: (){
-                                showDialog(
-                                    context: context,
-                                    child: UpdateSens(
-                                      onValueChange: _onValueChange,
-                                      initialValue: _selectedId,
-                                      identifier: widget.list[i]["_id"],
-                                      name: widget.list[i]["name"]
-                                    ));
-                              },
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: Colors.green,
+                                  size: 27,
+                                ),
+                                onPressed: (){
+                                  showDialog(
+                                      context: context,
+                                      child: UpdateSens(
+                                          onValueChange: _onValueChange,
+                                          initialValue: _selectedId,
+                                          identifier: widget.list[i].id,
+                                          name: widget.list[i].name
+                                      ));
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                      child: FutureBuilder(
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                        child: FutureBuilder(
 //                future: databaseHelper.getData(),
-                          future: databaseHelper2.getdataDeviceByID(widget.list[i]["_id"]),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              print(snapshot.error);
-                              print("mochkla lenaa *");
-                            }
-                            if (snapshot.hasData) {
-                              type = widget.list[i]["SensorType"];
-                              return chart(snapshot.data, type);
-                            } else {
-                              return Container();
-                            }
-                          }),
-                    ),
-                  ],
+                            future: databaseHelper2.getdataDeviceByID(widget.list[i].id),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                print(snapshot.error);
+                                print("mochkla lenaa *");
+                              }
+                              if (snapshot.hasData) {
+                                type = widget.list[i].sensorType;
+                                return chart(snapshot.data, type);
+                              } else {
+                                return Container();
+                              }
+                            }),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+
         });
   }
+
 }
