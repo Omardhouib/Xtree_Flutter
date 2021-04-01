@@ -12,6 +12,7 @@ import 'package:sidebar_animation/Models/LocationHome.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/classes/ChartHistory.dart';
+import 'package:sidebar_animation/classes/ElectroClass.dart';
 import 'package:sidebar_animation/classes/schedulePage.dart';
 import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
@@ -1155,107 +1156,8 @@ class _ItemListElectroState extends State<ItemListElectro> {
                 itemBuilder: (context, i) {
                   id = widget.list[i].id.toString();
                   print("...." + cmbscritta.toString());
-                  if (widget.list[i].status != cmbscritta)
-                    return Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(10, 0, 140, 0),
-                          child: Text(
-                            //list[i].toString() ?? '',
-                            widget.list[i].name.toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 94),
-                          child: Text(
-                            "ON",
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green[300]),
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.flash_off),
-                              iconSize: 30,
-                              color: Colors.red,
-                              onPressed: () {
-                                status = widget.list[i].status.toString();
-                                _doSomething();
-                                setState(() {
-                                  cmbscritta = !cmbscritta;
-                                });
-                              },
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: Text(
-                                "TURN OFF",
-                                style:
-                                TextStyle(fontSize: 12, color: Colors.grey),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  else if (widget.list[i].status == cmbscritta) {
-                    return Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(25, 0, 120, 0),
-                          child: Text(
-                            //list[i].toString() ?? '',
-                            widget.list[i].name.toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 94),
-                          child: Text(
-                            "OFF",
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red[300]),
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.flash_on),
-                              color: Colors.green,
-                              iconSize: 30,
-                              onPressed: () {
-                                status = widget.list[i].status.toString();
-                                _doSomething();
-                                setState(() {
-                                  cmbscritta = !cmbscritta;
-                                });
-                              },
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: Text(
-                                "TURN ON",
-                                style:
-                                TextStyle(fontSize: 12, color: Colors.grey),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  }
+                  if (widget.list[i].status.toString().isNotEmpty)
+                    return ElectroClass(Electro: widget.list[i]);
                   return Container();
                 }),
           ],
@@ -1268,66 +1170,6 @@ isactive =false;
 
   isactive=!isactive;
 */
-
-  void _doSomething() async {
-    Timer(Duration(seconds: 1), () {
-      print("button pressed ");
-      print("stauts" + status);
-      print("id" + id);
-      if (status == "true") {
-        status = "false";
-        On(id);
-
-        //  _btnController.stop();
-      } else if (status == "false") {
-        status = "true";
-        print("offfff");
-        Off(id);
-     /*   setState(() {
-          pressGeoON = !pressGeoON;
-          cmbscritta = !cmbscritta;
-        });*/
-        // _btnController.stop();
-      }
-      //_btnController.stop();
-    });
-  }
-
-  On(String id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'token';
-    final value = prefs.get(key) ?? 0;
-    Map data = {'status': 01, 'SensorId': "$id"};
-    var jsonResponse = null;
-    var response = await http.post(
-        DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
-        headers: {"Content-Type": "application/json"},
-//        "http://192.168.56.81:3000/api/users/login",
-        body: json.encode(data));
-    print('statusCode  :' + response.statusCode.toString());
-    if (response.statusCode == 200) {
-      jsonResponse = json.decode(response.body);
-    }
-    print(response.body);
-  }
-
-  Off(String id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'token';
-    final value = prefs.get(key) ?? 0;
-    Map data = {'status': 00, 'SensorId': "$id"};
-    var jsonResponse = null;
-    var response = await http.post(
-        DatabaseHelper2.serverUrl + "/dashboard/onoff?token=" + value,
-        headers: {"Content-Type": "application/json"},
-//        "http://192.168.56.81:3000/api/users/login",
-        body: json.encode(data));
-    print('statusCode  :' + response.statusCode.toString());
-    if (response.statusCode == 200) {
-      jsonResponse = json.decode(response.body);
-    }
-    print(response.body);
-  }
 }
 
 class ItemListchart extends StatefulWidget {
