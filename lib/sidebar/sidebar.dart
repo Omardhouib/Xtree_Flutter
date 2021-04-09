@@ -205,6 +205,11 @@ class _SideBarState extends State<SideBar>
                               fontSize: 20,
                               fontWeight: FontWeight.normal),
                         ),
+                        onTap: (){
+                          onIconPressed();
+                          BlocProvider.of<NavigationBloc>(context)
+                              .add(NavigationEvents.MyProfileClickedEvent);
+                        },
                       ),
                       ListTile(
                         leading: Icon(Icons.exit_to_app),

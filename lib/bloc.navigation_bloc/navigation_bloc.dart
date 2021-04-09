@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:sidebar_animation/pages/AccountSettings.dart';
 import 'package:sidebar_animation/pages/Device/HomeDevice.dart';
 import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
@@ -16,6 +17,7 @@ enum NavigationEvents {
   HomePageClickedEvent,
   MyAccountClickedEvent,
   MyOrdersClickedEvent,
+  MyProfileClickedEvent
 }
 
 abstract class NavigationStates {}
@@ -35,6 +37,9 @@ class NavigationBloc extends Bloc<NavigationEvents, NavigationStates> {
         break;
       case NavigationEvents.MyOrdersClickedEvent:
         yield Locations();
+        break;
+      case NavigationEvents.MyProfileClickedEvent:
+        yield AccountSettings();
         break;
 
     }

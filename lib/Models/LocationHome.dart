@@ -26,10 +26,10 @@ class LocationHome {
   Sensor sol;
 
   factory LocationHome.fromJson(Map<String, dynamic> json) => LocationHome(
-    locations: Location.fromJson(json["Locations"]),
-    sensors: List<Sensor>.from(json["Sensors"].map((x) => Sensor.fromJson(x))),
-    electro: List<Sensor>.from(json["Electro"].map((x) => Sensor.fromJson(x))),
-    sol: Sensor.fromJson(json["Sol"]),
+    locations: json["Locations"] == null ? null : Location.fromJson(json["Locations"]),
+    sensors: json["Sensors"] == null ? null : List<Sensor>.from(json["Sensors"].map((x) => Sensor.fromJson(x))),
+    electro: json["Electro"] == null ? null : List<Sensor>.from(json["Electro"].map((x) => Sensor.fromJson(x))),
+    sol: json["Sol"] == null ? null : Sensor.fromJson(json["Sol"]),
   );
 
   Map<String, dynamic> toJson() => {

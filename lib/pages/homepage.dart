@@ -14,6 +14,11 @@ import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/classes/ChartHistory.dart';
 import 'package:sidebar_animation/classes/ElectroClass.dart';
 import 'package:sidebar_animation/classes/schedulePage.dart';
+import 'package:sidebar_animation/pages/Device/AddDevice.dart';
+import 'package:sidebar_animation/pages/Device/Devices.dart';
+import 'package:sidebar_animation/pages/Device/VerfiyDevice.dart';
+import 'package:sidebar_animation/pages/Location/AddLocation.dart';
+import 'package:sidebar_animation/pages/Location/AllLocations.dart';
 import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import '../bloc.navigation_bloc/navigation_bloc.dart';
@@ -44,6 +49,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<LocationHome> getHomedetails;
   Future<int> getSensNum;
   Future<int> getLocNum;
+  void _onValueChange(String value) {
+    setState(() {
+      _selectedId = value;
+    });
+  }
+
+  String _selectedId;
 
   @override
   void initState() {
@@ -85,455 +97,608 @@ class _MyHomePageState extends State<MyHomePage> {
       onWillPop: _onWillPop,
       child: new Scaffold(
         backgroundColor: Colors.grey[200],
-        body: ListView(
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 50, 0, 25),
-                      child: Row(
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              FutureBuilder<LocationHome>(
+        body: FutureBuilder<List>(
 //                future: databaseHelper.getData(),
-                                  future: getHomedetails,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasError) {
-                                      print(snapshot.error);
-                                      print("mochkla lenaa last *");
-                                    }
-                                    if (snapshot.hasData) {
-                                      Location location =
-                                          snapshot.data.locations;
-                                      id = snapshot.data.locations.id;
-                                      return Text(
-                                        location.siteName,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 30.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontStyle: FontStyle.normal,
-                                        ),
-                                      );
-                                    } else {
-                                      return Container();
-                                    }
-                                  }),
-                              Text(
-                                'Welcome Omar dhouib',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w500,
-                                  fontStyle: FontStyle.normal,
-                                ),
-                              ),
-                            ],
+            future: databaseHelper2.AllLocationByUser(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                print(snapshot.error);
+                print("mochkla lenaa last *");
+              }
+              if (snapshot.hasData) {
+                if (snapshot.data.isEmpty) {
+                  print("herrrreeeee");
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    contentPadding: EdgeInsets.only(top: 10.0),
+                    content: Container(
+                      height: 220,
+                      width: 400,
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: Colors.amber,
+                            size: 50,
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.blue[100],
-                              child: Icon(
-                                Icons.perm_identity,
-                                size: 30,
-                                color: Colors.blue,
+                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            child: Text(
+                              "WELCOME TO XTREE",
+                              style: TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: Text(
+                              "FIRST STEP",
+                              style: TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: Text(
+                              "You have to add a new location !",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                            child: FlatButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Locations(
+                                              /*onValueChange: _onValueChange,
+                                              initialValue: _selectedId,*/
+                                            )));
+                              }, // passing true
+                              child: Text(
+                                'ADD NEW LOCATION',
+                                style:
+                                    TextStyle(color: Colors.blue, fontSize: 20),
                               ),
-                              radius: 33,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ]),
-            FutureBuilder<LocationHome>(
-                future: getHomedetails,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    Container();
-                  }
-                  if (snapshot.hasData) {
-                    return FutureBuilder(
-                        future: databaseHelper2.Getweather(
-                            snapshot.data.locations.id),
-                        builder: (context, snapshot2) {
-                          if (snapshot2.hasError) {
-                            print(snapshot2.error);
-                            Container();
-                          }
-                          return snapshot2.hasData
-                              ? Itemclass(list: snapshot2.data)
-                              : Container();
-                        });
-                  } else {
-                    return Container();
-                  }
-                }),
-            Container(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              ),
-            ),
-            FutureBuilder<int>(
-                future: getSensNum,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    print("there is problem !");
-                  }
-
-                  return snapshot.hasData
-                      ? Container(
-                          height: 80,
-                          child: Card(
-                            semanticContainer: true,
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            elevation: 4,
-                            margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.green,
-                                    child: Icon(
-                                      Icons.device_hub,
-                                      color: Colors.white,
-                                    ),
-                                    radius: 25,
-                                  ),
-                                ),
-                                Text(
-                                  "Total number of DEVICES: " +
-                                      snapshot.data.toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Container();
-                }),
-            FutureBuilder<int>(
-                future: getLocNum,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    print("there is problem !");
-                  }
-
-                  return snapshot.hasData
-                      ? Container(
-                          height: 80,
-                          child: Card(
-                            semanticContainer: true,
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            elevation: 4,
-                            margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.red,
-                                    child: Icon(
-                                      Icons.place,
-                                      color: Colors.white,
-                                    ),
-                                    radius: 25,
-                                  ),
-                                ),
-                                Text(
-                                  "Total number of LOCATIONS: " +
-                                      snapshot.data.toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Container();
-                }),
-            FutureBuilder<LocationHome>(
-                future: getHomedetails,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    print("there is problem !");
-                  }
-
-                  if (snapshot.hasData) {
-                    snapshot.data.sol.rules.forEach((element) {
-                      status = element.status;
-                    });
-                    if (status == true) {
-                      // print("status:"+status.toString());
-                      return Container(
-                        height: 80,
-                        child: Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          elevation: 4,
-                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.amber,
-                                  child: Icon(
-                                    Icons.schedule,
-                                    color: Colors.white,
-                                  ),
-                                  radius: 25,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "SCHEDULES STATE:    ",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Container(
-                                    //color: Colors.green,
-                                    height: 20.0, // height of the button
-                                    width: 20.0, // width of the button
-                                    decoration: BoxDecoration(
-                                        color: Colors.green,
-                                        border: Border.all(
-                                            color: Colors.grey[350],
-                                            width: 3.0,
-                                            style: BorderStyle.solid),
-                                        shape: BoxShape.circle),
-                                  ),
-                                  Text(
-                                    "  ACTIVE",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                        color: Colors.green),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    } else
-                      //  print("status:"+status.toString());
-                      return Container(
-                        height: 80,
-                        child: Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          elevation: 4,
-                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 0, 20, 0),
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.amber,
-                                  child: Icon(
-                                    Icons.schedule,
-                                    color: Colors.white,
-                                  ),
-                                  radius: 25,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "SCHEDULES STATE:    ",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Container(
-                                    //color: Colors.green,
-                                    height: 20.0, // height of the button
-                                    width: 20.0, // width of the button
-                                    decoration: BoxDecoration(
-                                        color: Colors.red,
-                                        border: Border.all(
-                                            color: Colors.grey[350],
-                                            width: 3.0,
-                                            style: BorderStyle.solid),
-                                        shape: BoxShape.circle),
-                                  ),
-                                  Text(
-                                    "  INACTIVE",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                        color: Colors.red),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                  } else {
-                    return Container();
-                  }
-                }),
-            FutureBuilder<LocationHome>(
-                future: getHomedetails,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    snapshot.data.locations.sensorIds.forEach((element) {
-                      sensId = element;
-                      print("element: " + element);
-                    });
-                    return FutureBuilder<Sensor>(
-                        future: databaseHelper2.getSolDeviceById(sensId),
-                        builder: (context, snapshot2) {
-                          if (snapshot2.hasError) {
-                            print(snapshot2.error);
-                            print("mochkla lenaa *");
-                          }
-                          if (snapshot2.hasData) {
-                            print("sensdata: " + snapshot2.data.toString());
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color: Colors.white),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          0, 15, 0, 5),
-                                      child: Container(
-                                        height: 60,
-                                        width: 350,
-                                        child: FlatButton(
-                                          child: Text(
-                                            "SCHEDULE",
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.blue[600],
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        schedulePage(
-                                                            sens:
-                                                                snapshot2.data,
-                                                            location: snapshot
-                                                                .data.locations,
-                                                            Electro: snapshot
-                                                                .data
-                                                                .electro)));
-                                          },
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30.0),
-                                              side: BorderSide(
-                                                  color: Colors.blue[300],
-                                                  width: 1.5)),
-                                          color: Colors.blue[100],
-                                          splashColor: Colors.blue[300],
-                                          textColor: Colors.black,
+                  );
+                }
+                return ListView(
+                  scrollDirection: Axis.vertical,
+                  children: <Widget>[
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 50, 0, 25),
+                              child: Row(
+                                children: <Widget>[
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      FutureBuilder<LocationHome>(
+//                future: databaseHelper.getData(),
+                                          future: getHomedetails,
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasError) {
+                                              print(snapshot.error);
+                                              print("mochkla lenaa last *");
+                                            }
+                                            if (snapshot.hasData) {
+                                              Location location =
+                                                  snapshot.data.locations;
+                                              id = snapshot.data.locations.id;
+                                              return Text(
+                                                location.siteName,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: 30.0,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontStyle: FontStyle.normal,
+                                                ),
+                                              );
+                                            } else {
+                                              return Container();
+                                            }
+                                          }),
+                                      Text(
+                                        'Welcome Omar dhouib',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w500,
+                                          fontStyle: FontStyle.normal,
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                                      child: Text(
-                                        "You can controle when to irrigate your land based on our AI or you can Schedule it by yourself.",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.grey[600],
-                                            fontWeight: FontWeight.w400),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(190, 0, 0, 0),
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.blue[100],
+                                      child: Icon(
+                                        Icons.perm_identity,
+                                        size: 30,
+                                        color: Colors.blue,
                                       ),
+                                      radius: 33,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            );
+                            ),
+                          ),
+                        ]),
+                    FutureBuilder<LocationHome>(
+                        future: getHomedetails,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            print(snapshot.error);
+                            Container();
+                          }
+                          if (snapshot.hasData) {
+                            return FutureBuilder(
+                                future: databaseHelper2.Getweather(
+                                    snapshot.data.locations.id),
+                                builder: (context, snapshot2) {
+                                  if (snapshot2.hasError) {
+                                    print(snapshot2.error);
+                                    Container();
+                                  }
+                                  return snapshot2.hasData
+                                      ? Itemclass(list: snapshot2.data)
+                                      : Container();
+                                });
                           } else {
                             return Container();
                           }
-                        });
-                  } else {
-                    return Container();
-                  }
-                }),
-            FutureBuilder<LocationHome>(
+                        }),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      ),
+                    ),
+                    FutureBuilder<int>(
+                        future: getSensNum,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            print(snapshot.error);
+                            print("there is problem !");
+                          }
+
+                          return snapshot.hasData
+                              ? Container(
+                                  height: 80,
+                                  child: Card(
+                                    semanticContainer: true,
+                                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    elevation: 4,
+                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              15, 0, 20, 0),
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.green,
+                                            child: Icon(
+                                              Icons.device_hub,
+                                              color: Colors.white,
+                                            ),
+                                            radius: 25,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Total number of DEVICES: " +
+                                              snapshot.data.toString(),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Container();
+                        }),
+                    FutureBuilder<int>(
+                        future: getLocNum,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            print(snapshot.error);
+                            print("there is problem !");
+                          }
+
+                          return snapshot.hasData
+                              ? Container(
+                                  height: 80,
+                                  child: Card(
+                                    semanticContainer: true,
+                                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    elevation: 4,
+                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              15, 0, 20, 0),
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.red,
+                                            child: Icon(
+                                              Icons.place,
+                                              color: Colors.white,
+                                            ),
+                                            radius: 25,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Total number of LOCATIONS: " +
+                                              snapshot.data.toString(),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Container();
+                        }),
+                    FutureBuilder<LocationHome>(
+                        future: getHomedetails,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            print(snapshot.error);
+                            print("there is problem !");
+                          }
+
+                          if (snapshot.hasData) {
+                            if (snapshot.data.sensors.isEmpty) {
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                                    child: Icon(
+                                      Icons.info_outline,
+                                      color: Colors.amber,
+                                      size: 50,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    child: Text(
+                                      "SECOND STEP",
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    child: Text(
+                                      "You have to add a new device to this location !",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.grey),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                    child: FlatButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Devices(
+                                                      /*onValueChange:
+                                                          _onValueChange,
+                                                      initialValue: _selectedId,*/
+                                                    )));
+                                      }, // passing true
+                                      child: Text(
+                                        'Add New Device',
+                                        style: TextStyle(
+                                            color: Colors.blue, fontSize: 20),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                            if (snapshot.data.sol != null) {
+                              snapshot.data.sol.rules.forEach((element) {
+                                status = element.status;
+                              });
+                            }
+
+                            if (status == true) {
+                              // print("status:"+status.toString());
+                              return Container(
+                                height: 80,
+                                child: Card(
+                                  semanticContainer: true,
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  elevation: 4,
+                                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            15, 0, 20, 0),
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.amber,
+                                          child: Icon(
+                                            Icons.schedule,
+                                            color: Colors.white,
+                                          ),
+                                          radius: 25,
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "SCHEDULES STATE:    ",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          Container(
+                                            //color: Colors.green,
+                                            height:
+                                                20.0, // height of the button
+                                            width: 20.0, // width of the button
+                                            decoration: BoxDecoration(
+                                                color: Colors.green,
+                                                border: Border.all(
+                                                    color: Colors.grey[350],
+                                                    width: 3.0,
+                                                    style: BorderStyle.solid),
+                                                shape: BoxShape.circle),
+                                          ),
+                                          Text(
+                                            "  ACTIVE",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                color: Colors.green),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            } else
+                              //  print("status:"+status.toString());
+                              return Container(
+                                height: 80,
+                                child: Card(
+                                  semanticContainer: true,
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  elevation: 4,
+                                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            15, 0, 20, 0),
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.amber,
+                                          child: Icon(
+                                            Icons.schedule,
+                                            color: Colors.white,
+                                          ),
+                                          radius: 25,
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "SCHEDULES STATE:    ",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          Container(
+                                            //color: Colors.green,
+                                            height:
+                                                20.0, // height of the button
+                                            width: 20.0, // width of the button
+                                            decoration: BoxDecoration(
+                                                color: Colors.red,
+                                                border: Border.all(
+                                                    color: Colors.grey[350],
+                                                    width: 3.0,
+                                                    style: BorderStyle.solid),
+                                                shape: BoxShape.circle),
+                                          ),
+                                          Text(
+                                            "  INACTIVE",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                color: Colors.red),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                    FutureBuilder<LocationHome>(
+                        future: getHomedetails,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            snapshot.data.locations.sensorIds
+                                .forEach((element) {
+                              sensId = element;
+                              print("element: " + element);
+                            });
+                            return FutureBuilder<Sensor>(
+                                future:
+                                    databaseHelper2.getSolDeviceById(sensId),
+                                builder: (context, snapshot2) {
+                                  if (snapshot2.hasError) {
+                                    print(snapshot2.error);
+                                    print("mochkla lenaa *");
+                                  }
+                                  if (snapshot2.hasData) {
+                                    print("sensdata: " +
+                                        snapshot2.data.toString());
+                                    return Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 10, 10, 10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                            color: Colors.white),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 15, 0, 5),
+                                              child: Container(
+                                                height: 60,
+                                                width: 350,
+                                                child: FlatButton(
+                                                  child: Text(
+                                                    "SCHEDULE",
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.blue[600],
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) => schedulePage(
+                                                                sens: snapshot2
+                                                                    .data,
+                                                                location: snapshot
+                                                                    .data
+                                                                    .locations,
+                                                                Electro: snapshot
+                                                                    .data
+                                                                    .electro)));
+                                                  },
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30.0),
+                                                      side: BorderSide(
+                                                          color:
+                                                              Colors.blue[300],
+                                                          width: 1.5)),
+                                                  color: Colors.blue[100],
+                                                  splashColor: Colors.blue[300],
+                                                  textColor: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8),
+                                              child: Text(
+                                                "You can controle when to irrigate your land based on our AI or you can Schedule it by yourself.",
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: Colors.grey[600],
+                                                    fontWeight:
+                                                        FontWeight.w400),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                });
+                          } else {
+                            return Container();
+                          }
+                        }),
+                    FutureBuilder<LocationHome>(
 //                future: databaseHelper.getData(),
-                future: getHomedetails,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    print("mochkla lenaa *");
-                  }
-                  if (snapshot.hasData) {
-                    return ItemListchart(
-                        list: snapshot.data.locations.sensorIds);
-                  } else {
-                    return Container();
-                  }
-                }),
-            FutureBuilder<LocationHome>(
+                        future: getHomedetails,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            print(snapshot.error);
+                            print("mochkla lenaa *");
+                          }
+                          if (snapshot.hasData) {
+                            return ItemListchart(
+                                list: snapshot.data.locations.sensorIds);
+                          } else {
+                            return Container();
+                          }
+                        }),
+                    FutureBuilder<LocationHome>(
 //                future: databaseHelper.getData(),
-                future: getHomedetails,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ItemListElectro(list: snapshot.data.electro);
-                  } else {
-                    return Container();
-                  }
-                }),
-          ],
-        ),
+                        future: getHomedetails,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return ItemListElectro(list: snapshot.data.electro);
+                          } else {
+                            return Container();
+                          }
+                        }),
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            }),
       ),
     );
   }
@@ -1109,7 +1274,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
   bool pressGeoON = false;
   bool cmbscritta = false;
   final RoundedLoadingButtonController _btnController =
-  new RoundedLoadingButtonController();
+      new RoundedLoadingButtonController();
 
   ScrollController _controller = new ScrollController();
 
@@ -1126,7 +1291,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 10, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(15, 10, 0, 10),
                   child: CircleAvatar(
                     backgroundColor: Colors.grey,
                     child: Icon(
@@ -1138,7 +1303,7 @@ class _ItemListElectroState extends State<ItemListElectro> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   child: Text(
                     "Relays:",
                     style: TextStyle(
@@ -1278,8 +1443,9 @@ class _ItemListchartState extends State<ItemListchart> {
                                             ),
                                           ),
                                           Text(
-                                            "Identifier: "+snapshot.data.sensorIdentifier
-                                                .toString(),
+                                            "Identifier: " +
+                                                snapshot.data.sensorIdentifier
+                                                    .toString(),
                                             style: TextStyle(
                                               color: Colors.grey,
                                               fontWeight: FontWeight.w400,
@@ -1287,8 +1453,9 @@ class _ItemListchartState extends State<ItemListchart> {
                                             ),
                                           ),
                                           Text(
-                                            "Type: "+snapshot.data.sensorType
-                                                .toString(),
+                                            "Type: " +
+                                                snapshot.data.sensorType
+                                                    .toString(),
                                             style: TextStyle(
                                               color: Colors.grey,
                                               fontWeight: FontWeight.w400,

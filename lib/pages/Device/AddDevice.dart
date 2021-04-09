@@ -43,14 +43,6 @@ class AddDeviceState extends State<AddDevice> {
       new TextEditingController();
   LatLng coordiante;
   String identifier;
-  /* addMarker(cordinate) {
-    int id = Random().nextInt(1);
-    setState(() {
-      markers
-          .add(Marker(position: cordinate, markerId: MarkerId(id.toString())));
-      coordiante = cordinate;
-    });
-  }*/
 
   @override
   Widget build(BuildContext context) {

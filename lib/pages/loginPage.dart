@@ -24,7 +24,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _key = GlobalKey<FormState>();
-
+  final focusNode = FocusNode();
   bool _isLoading = false;
   bool t3ada = false;
   bool faregh = false;
@@ -41,96 +41,47 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              children: <Widget>[
-// **********************************   the half
+      body: SingleChildScrollView(
+          child: GestureDetector(
+            onTap: () {
+              focusNode.unfocus();
+            },
+            child: Container(
+                height: 995,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/login.jpg'),
+                        fit: BoxFit.fill,)),
+                child: Column(
+                  children: <Widget>[
                 Container(
-                  height: 400,
-                  /* decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/login/background.png'),
-                          fit: BoxFit.fill)),
-
-                   */
-                  child: Stack(
-                    children: <Widget>[
-                      Positioned(
-                        left: 30,
-                        width: 80,
-                        height: 200,
-                        child: Container(
-                            /* decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/login/light-1.png'))
-                              ),
-
-                              */
-                            ),
-                      ),
-                      Positioned(
-                        left: 140,
-                        width: 80,
-                        height: 150,
-                        child: Container(
-                            /*decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/login/light-2.png'))
-                                          ),
-                               */
-                            ),
-                      ),
-                      Positioned(
-                        right: 40,
-                        top: 40,
-                        width: 80,
-                        height: 150,
-                        child: Container(
-                            /* decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/login/clock.png'))
-                                          ),
-                             */
-                            ),
-                      ),
-                      Positioned(
-                        child: Container(
-                          margin: EdgeInsets.only(top: 50),
-                          child: Center(
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
+                    margin: EdgeInsets.fromLTRB(0, 150, 0, 0),
+              child: Center(
+                child: Text(
+                  "XTREE",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold),
                 ),
+              ),
+            ),
 
-                Padding(
-                  padding: EdgeInsets.all(30.0),
-                  child: Column(
-                    children: <Widget>[
-                      textSection(),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 300, 15, 0),
+                      child: Column(
+                        children: <Widget>[
+                          textSection(),
 
-                      SizedBox(
-                        height: 30,
-                      ),
+                          SizedBox(
+                            height: 30,
+                          ),
 
-                      buttonSection(),
+                          buttonSection(),
 
-                      SizedBox(
-                        height: 70,
-                      ),
+                          SizedBox(
+                            height: 40,
+                          ),
 
 //                          Text(
 //                            "Forgot Password?",
@@ -138,34 +89,38 @@ class _LoginPageState extends State<LoginPage> {
 //                                color: Color.fromRGBO(143, 148, 251, 1)),
 //                          )
 
-                      RichText(
-                        text: TextSpan(
-                          children: <TextSpan>[
-                            TextSpan(
-                                text: 'If you don"t have an account you can ',
-                                style: TextStyle(color: Colors.black)),
-                            TextSpan(
-                                text: ' Sign up',
-                                style: TextStyle(
-                                    color: Color.fromRGBO(143, 148, 251, 1)),
-                                recognizer: TapGestureRecognizer()
+                          RichText(
+                            text: TextSpan(
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: "If you don't have an account you can ",
+                                    style: TextStyle(color: Colors.white)),
+                                TextSpan(
+                                    text: ' Sign Up',
+                                    style: TextStyle(
+                                        color: Colors.cyan[800],
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700),
+                                    recognizer: TapGestureRecognizer()
 //                                      ..onTap = () => print('click')),
-                                  ..onTap = () => showDialog(
-                                      context: context,
-                                      child: MyDialog(
-                                        onValueChange: _onValueChange,
-                                        initialValue: _selectedId,
-                                      ))),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+                                      ..onTap = () => showDialog(
+                                          context: context,
+                                          child: MyDialog(
+                                            onValueChange: _onValueChange,
+                                            initialValue: _selectedId,
+                                          ))),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
           ),
-        ));
+          ),
+    );
   }
 
   final TextEditingController emailController = new TextEditingController();
@@ -209,6 +164,10 @@ class _LoginPageState extends State<LoginPage> {
           _isLoading = false;
         });
         sharedPreferences.setString("token", jsonResponse["token"]);
+        sharedPreferences.setString("FirstName", jsonResponse["FirstName"]);
+        sharedPreferences.setString("email", jsonResponse["email"]);
+        sharedPreferences.setString("LastName", jsonResponse["LastName"]);
+
         print(jsonResponse.toString());
         await Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
@@ -270,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
       height: 50,
       child: AspectRatio(
         child: RoundedLoadingButton(
-          color: Colors.amberAccent,
+          color: Colors.cyan[800],
           child: Text("Login", style: TextStyle(color: Colors.white)),
           controller: _btnController,
           onPressed: _doSomething,
@@ -284,7 +243,7 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
         padding: EdgeInsets.all(5),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
@@ -300,7 +259,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                     border:
-                        Border(bottom: BorderSide(color: Colors.grey[100]))),
+                        Border(bottom: BorderSide(color: Colors.white))),
                 child: TextFormField(
                   validator: (value) {
                     if (value.isEmpty) {
@@ -311,11 +270,12 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                   },
                   controller: emailController,
+                  style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                      icon: Icon(Icons.email, color: Colors.grey[400]),
+                      icon: Icon(Icons.email, color: Colors.cyan[800]),
                       border: InputBorder.none,
-                      hintText: "Email or Phone number",
-                      hintStyle: TextStyle(color: Colors.grey[400])),
+                      hintText: "Email",
+                      hintStyle: TextStyle(color: Colors.white)),
                 ),
               ),
               Container(
@@ -324,21 +284,22 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (value) =>
                       value.isEmpty ? 'Password cannot be blank' : null,
                   controller: passwordController,
+                  style: TextStyle(color: Colors.white),
 //                    obscureText: true,
                   obscureText:
                       !_passwordVisible, //This will obscure text dynamically
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    icon: Icon(Icons.lock, color: Colors.grey[400]),
+                    icon: Icon(Icons.lock, color: Colors.cyan[800]),
                     hintText: "Password",
-                    hintStyle: TextStyle(color: Colors.grey[400]),
+                    hintStyle: TextStyle(color: Colors.white),
                     suffixIcon: IconButton(
                       icon: Icon(
                         // Based on passwordVisible state choose the icon
                         _passwordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Theme.of(context).primaryColorDark,
+                        color: Colors.cyan[800],
                       ),
                       onPressed: () {
                         // Update the state i.e. toogle the state of passwordVisible variable
@@ -482,7 +443,7 @@ class MyDialogState extends State<MyDialog> {
                             },
                             controller: numTelController,
                             decoration: InputDecoration(
-                              icon: Icon(Icons.phone, color: Colors.grey[400]),
+                              icon: Icon(Icons.person, color: Colors.grey[400]),
                               border: InputBorder.none,
                               hintText: "Last name",
                               hintStyle: TextStyle(color: Colors.grey[400]),
@@ -526,7 +487,7 @@ class MyDialogState extends State<MyDialog> {
                                   _passwordVisible
                                       ? Icons.visibility
                                       : Icons.visibility_off,
-                                  color: Theme.of(context).primaryColorDark,
+                                  color: Colors.cyan[800],
                                 ),
                                 onPressed: () {
                                   // Update the state i.e. toogle the state of passwordVisible variable
@@ -583,7 +544,7 @@ class MyDialogState extends State<MyDialog> {
                 child: Container(
                   padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                   decoration: BoxDecoration(
-                    color: myColor,
+                    color: Colors.cyan[800],
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(32.0),
                         bottomRight: Radius.circular(32.0)),
