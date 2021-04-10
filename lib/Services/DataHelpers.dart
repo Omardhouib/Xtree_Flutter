@@ -10,6 +10,7 @@ import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Models/LocationHome.dart';
 import 'package:sidebar_animation/Models/Locationdetails.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
+import 'package:sidebar_animation/Models/User.dart';
 import 'package:sidebar_animation/Models/Weather.dart';
 
 class DatabaseHelper2 {
@@ -236,6 +237,27 @@ class DatabaseHelper2 {
     if (response.statusCode == 200) {
    //   await Future.delayed(Duration(milliseconds: 900));
       return LocationHome.fromJson(json.decode(response.body));
+    } else {
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  Future<User> getUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key) ?? 0;
+    String myUrl = "$serverUrl/dashboard/getUser?token=" + value;
+    http.Response response = await http.get(
+      myUrl,
+      headers: {
+        'Accept': 'application/json',
+        //'Authorization': 'token $value'
+      },
+    );
+    if (response.statusCode == 200) {
+      //   await Future.delayed(Duration(milliseconds: 900));
+      return User.fromJson(json.decode(response.body));
     } else {
       // then throw an exception.
       throw Exception('Failed to load album');

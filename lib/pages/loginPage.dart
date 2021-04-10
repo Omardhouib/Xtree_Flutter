@@ -164,9 +164,6 @@ class _LoginPageState extends State<LoginPage> {
           _isLoading = false;
         });
         sharedPreferences.setString("token", jsonResponse["token"]);
-        sharedPreferences.setString("FirstName", jsonResponse["FirstName"]);
-        sharedPreferences.setString("email", jsonResponse["email"]);
-        sharedPreferences.setString("LastName", jsonResponse["LastName"]);
 
         print(jsonResponse.toString());
         await Navigator.of(context).pushAndRemoveUntil(
@@ -188,41 +185,6 @@ class _LoginPageState extends State<LoginPage> {
 
     print(response.body);
   }
-
-//
-//  DatabaseHelper databaseHelper = new DatabaseHelper();
-//
-//  signIn(String email, pass) async {
-//    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-//    Map data = {'username': email, 'password': pass};
-//    var jsonResponse = null;
-//    var response =
-//
-//
-//        await http.post(databaseHelper.serverUrl+"/login", body: data);
-//
-//
-//    if (response.statusCode == 200) {
-//      jsonResponse = json.decode(response.body);
-//      if (jsonResponse != null) {
-//
-//        setState(() {
-//          t3ada = true;
-//          _isLoading = false;
-//        });
-//        sharedPreferences.setString("token", jsonResponse['token']);
-//        Navigator.of(context).pushAndRemoveUntil(
-//            MaterialPageRoute(
-//                builder: (BuildContext context) => AppHomeScreen()),
-//            (Route<dynamic> route) => false);
-//      }
-//    }
-//    else {
-//      print(response.body);
-//    }
-//  }
-//
-//
 
   buttonSection() {
     return Container(

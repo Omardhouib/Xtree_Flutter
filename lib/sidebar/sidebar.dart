@@ -76,7 +76,7 @@ class _SideBarState extends State<SideBar>
           right: isSideBarOpenedAsync.data ? 0 : screenWidth - 35,
           child: Row(
             children: <Widget>[
-              Expanded(
+              Flexible(
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   decoration: BoxDecoration(
@@ -88,151 +88,151 @@ class _SideBarState extends State<SideBar>
                         Color(0xff222d33),
                         Color(0xff222d33)
                       ])),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 70,
-                      ),
-                      ListTile(
-                        title: Text(
-                          "Omar dhouib",
-                          style: TextStyle(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+                    child: Column(
+                      children: <Widget>[
+                        ListTile(
+                          title: Text(
+                            "Omar dhouib",
+                            style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 25,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          subtitle: Text(
+                            "XTREE",
+                            style: TextStyle(
                               color: Colors.grey[400],
-                              fontSize: 25,
-                              fontWeight: FontWeight.w800),
-                        ),
-                        subtitle: Text(
-                          "XTREE",
-                          style: TextStyle(
-                            color: Colors.grey[400],
-                            fontSize: 18,
+                              fontSize: 18,
+                            ),
+                          ),
+                          leading: CircleAvatar(
+                            child: Icon(
+                              Icons.perm_identity,
+                              color: Colors.grey[400],
+                            ),
+                            radius: 40,
                           ),
                         ),
-                        leading: CircleAvatar(
-                          child: Icon(
-                            Icons.perm_identity,
-                            color: Colors.grey[400],
+                        Divider(
+                          height: 34,
+                          thickness: 0.9,
+                          color: Colors.grey[400].withOpacity(0.3),
+                          indent: 32,
+                          endIndent: 32,
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.home),
+                          title: Text(
+                            "Dashboard",
+                            style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal),
                           ),
-                          radius: 40,
+                          onTap: () {
+                            onIconPressed();
+                            BlocProvider.of<NavigationBloc>(context)
+                                .add(NavigationEvents.HomePageClickedEvent);
+                          },
                         ),
-                      ),
-                      Divider(
-                        height: 64,
-                        thickness: 0.9,
-                        color: Colors.grey[400].withOpacity(0.3),
-                        indent: 32,
-                        endIndent: 32,
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.home),
-                        title: Text(
-                          "Dashboard",
-                          style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal),
+                        ListTile(
+                          leading: Icon(Icons.place),
+                          title: Text(
+                            "My sites",
+                            style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          onTap: () {
+                            onIconPressed();
+                            BlocProvider.of<NavigationBloc>(context)
+                                .add(NavigationEvents.MyOrdersClickedEvent);
+                          },
                         ),
-                        onTap: () {
-                          onIconPressed();
-                          BlocProvider.of<NavigationBloc>(context)
-                              .add(NavigationEvents.HomePageClickedEvent);
-                        },
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.place),
-                        title: Text(
-                          "My sites",
-                          style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal),
+                        ListTile(
+                          leading: Icon(Icons.device_hub),
+                          title: Text(
+                            "My devices",
+                            style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          onTap: () {
+                            onIconPressed();
+                            BlocProvider.of<NavigationBloc>(context)
+                                .add(NavigationEvents.MyAccountClickedEvent);
+                          },
                         ),
-                        onTap: () {
-                          onIconPressed();
-                          BlocProvider.of<NavigationBloc>(context)
-                              .add(NavigationEvents.MyOrdersClickedEvent);
-                        },
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.device_hub),
-                        title: Text(
-                          "My devices",
-                          style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal),
+                        Divider(
+                          height: 34,
+                          thickness: 0.9,
+                          color: Colors.grey[400].withOpacity(0.3),
+                          indent: 32,
+                          endIndent: 32,
                         ),
-                        onTap: () {
-                          onIconPressed();
-                          BlocProvider.of<NavigationBloc>(context)
-                              .add(NavigationEvents.MyAccountClickedEvent);
-                        },
-                      ),
-                      Divider(
-                        height: 64,
-                        thickness: 0.9,
-                        color: Colors.grey[400].withOpacity(0.3),
-                        indent: 32,
-                        endIndent: 32,
-                      ),
-                      FutureBuilder<List<Location>>(
+                        FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-                          future: databaseHelper2.AllLocationByUser(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              print(snapshot.error);
-                              print("mochkla lenaa *");
-                            }
-                            if (snapshot.hasData) {
-                              return itemList(list: snapshot.data);
-                            } else {
-                              return Container();
-                            }
-                          }),
-                      Divider(
-                        height: 64,
-                        thickness: 0.9,
-                        color: Colors.grey[400].withOpacity(0.3),
-                        indent: 32,
-                        endIndent: 32,
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.settings),
-                        title: Text(
-                          "Account settings",
-                          style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal),
+                            future: databaseHelper2.AllLocationByUser(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                print(snapshot.error);
+                                print("mochkla lenaa *");
+                              }
+                              if (snapshot.hasData) {
+                                return itemList(list: snapshot.data);
+                              } else {
+                                return Container();
+                              }
+                            }),
+                        Divider(
+                          height: 34,
+                          thickness: 0.9,
+                          color: Colors.grey[400].withOpacity(0.3),
+                          indent: 32,
+                          endIndent: 32,
                         ),
-                        onTap: (){
-                          onIconPressed();
-                          BlocProvider.of<NavigationBloc>(context)
-                              .add(NavigationEvents.MyProfileClickedEvent);
-                        },
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.exit_to_app),
-                        title: Text(
-                          "Logout",
-                          style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal),
+                        ListTile(
+                          leading: Icon(Icons.settings),
+                          title: Text(
+                            "Account settings",
+                            style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          onTap: (){
+                            onIconPressed();
+                            BlocProvider.of<NavigationBloc>(context)
+                                .add(NavigationEvents.MyProfileClickedEvent);
+                          },
                         ),
-                        onTap: () async {
-                          onIconPressed();
-                          SharedPreferences preferences =
-                              await SharedPreferences.getInstance();
-                          await preferences.clear();
-                          await Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      LoginPage()),
-                              (Route<dynamic> route) => false);
-                        },
-                      ),
-                    ],
+                        ListTile(
+                          leading: Icon(Icons.exit_to_app),
+                          title: Text(
+                            "Logout",
+                            style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          onTap: () async {
+                            onIconPressed();
+                            SharedPreferences preferences =
+                                await SharedPreferences.getInstance();
+                            await preferences.clear();
+                            await Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        LoginPage()),
+                                (Route<dynamic> route) => false);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -265,7 +265,7 @@ class _SideBarState extends State<SideBar>
 
   Widget itemList({List list}) {
     return Container(
-      height: 350,
+      height: 250,
       child: ListView.builder(
           itemCount: list == null ? 0 : list.length,
           shrinkWrap: true,

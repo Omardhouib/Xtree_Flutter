@@ -11,6 +11,7 @@ String userToJson(User data) => json.encode(data.toJson());
 
 class User {
   User({
+    @required this.notifications,
     @required this.createdDate,
     @required this.locationIds,
     @required this.jobIds,
@@ -23,8 +24,9 @@ class User {
     @required this.v,
   });
 
+  Notifications notifications;
   DateTime createdDate;
-  List<dynamic> locationIds;
+  List<String> locationIds;
   List<dynamic> jobIds;
   String id;
   String firstName;
@@ -35,8 +37,9 @@ class User {
   int v;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
+    notifications: Notifications.fromJson(json["Notifications"]),
     createdDate: DateTime.parse(json["Created_date"]),
-    locationIds: List<dynamic>.from(json["Location_ids"].map((x) => x)),
+    locationIds: List<String>.from(json["Location_ids"].map((x) => x)),
     jobIds: List<dynamic>.from(json["Job_ids"].map((x) => x)),
     id: json["_id"],
     firstName: json["FirstName"],
@@ -48,6 +51,7 @@ class User {
   );
 
   Map<String, dynamic> toJson() => {
+    "Notifications": notifications.toJson(),
     "Created_date": createdDate.toIso8601String(),
     "Location_ids": List<dynamic>.from(locationIds.map((x) => x)),
     "Job_ids": List<dynamic>.from(jobIds.map((x) => x)),
@@ -58,5 +62,29 @@ class User {
     "password": password,
     "enabled": enabled,
     "__v": v,
+  };
+}
+
+class Notifications {
+  Notifications({
+    @required this.email,
+    @required this.push,
+    @required this.sms,
+  });
+
+  bool email;
+  bool push;
+  bool sms;
+
+  factory Notifications.fromJson(Map<String, dynamic> json) => Notifications(
+    email: json["Email"],
+    push: json["Push"],
+    sms: json["SMS"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "Email": email,
+    "Push": push,
+    "SMS": sms,
   };
 }

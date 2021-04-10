@@ -61,7 +61,7 @@ class _LocationsState extends State<Locations> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "Locations",
+                          "Sites",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 30.0,
