@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:search_map_place/search_map_place.dart';
 import 'package:sidebar_animation/Models/Location.dart';
+import 'package:sidebar_animation/Models/User.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/pages/Location/AddLocation.dart';
 import 'package:sidebar_animation/pages/Location/DeleteLocation.dart';
@@ -37,7 +38,7 @@ class _LocationsState extends State<Locations> {
   @override
   void initState() {
     setState(() {
-      Alllocation = databaseHelper2.AllLocationByUser();
+      Alllocation = databaseHelper2.AllUserLocation();
       super.initState();
     });
 
@@ -54,36 +55,53 @@ class _LocationsState extends State<Locations> {
           children: [
             Container(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 80, 0, 10),
+                padding: const EdgeInsets.fromLTRB(15, 80, 0, 10),
                 child: Row(
                   children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          "Sites",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 30.0,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.normal,
+                    Container(
+                      width: 350,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "Sites",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 30.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.normal,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Welcome Omar dhouib',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FontStyle.normal,
-                          ),
-                        ),
-                      ],
+                          FutureBuilder<User>(
+//                future: databaseHelper.getData(),
+                              future: databaseHelper2.getUser(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasError) {
+                                  print(snapshot.error);
+                                  print("mochkla lenaa *");
+                                }
+                                if (snapshot.hasData) {
+                                  return Text(
+                                      'Welcome '+snapshot.data.firstName+' '+snapshot.data.lastName,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 15.0,
+                                        color: Colors.grey,
+                                        fontWeight:
+                                        FontWeight.w500,
+                                        fontStyle:
+                                        FontStyle.normal,
+                                      ));
+                                } else {
+                                  return Container();
+                                }
+                              }),
+                        ],
+                      ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: CircleAvatar(
                         backgroundColor: Colors.blue[100],
                         child: Icon(
@@ -100,7 +118,7 @@ class _LocationsState extends State<Locations> {
             ),
             FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-                future: Alllocation,
+                future: databaseHelper2.AllUserLocation(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     //
@@ -136,7 +154,7 @@ class _LocationsState extends State<Locations> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                           child: Container(
-                            height: 90,
+                            height: 80,
                             child: Card(
                               semanticContainer: true,
                               clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -152,7 +170,7 @@ class _LocationsState extends State<Locations> {
                                     padding:
                                     const EdgeInsets.fromLTRB(15, 0, 40, 0),
                                     child: CircleAvatar(
-                                      backgroundColor: Colors.blue,
+                                      backgroundColor: Colors.green,
                                       child: Icon(
                                         Icons.add_circle,
                                         color: Colors.white,
@@ -161,18 +179,18 @@ class _LocationsState extends State<Locations> {
                                     ),
                                   ),
                                   Text(
-                                    "ADD LOCATION ",
+                                    "ADD SITE ",
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 20,
+                                      fontSize: 22,
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(90, 0, 0, 0),
+                                    padding: const EdgeInsets.fromLTRB(140, 0, 0, 0),
                                     child: FlatButton(
                                       child: Icon(
                                         Icons.add_circle_outline,
-                                        color: Colors.blue,
+                                        color: Colors.green,
                                         size: 35,
                                       ),
                                       onPressed: () {
@@ -191,9 +209,9 @@ class _LocationsState extends State<Locations> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                           child: Container(
-                            height: 350,
+                            height: 380,
                             width: 600,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.all(Radius.circular(12.0)),
@@ -254,7 +272,7 @@ class _ItemListState extends State<ItemList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Container(
-        height: 370,
+        height: 350,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
             border: Border.all(color: Colors.transparent,width: 2)
@@ -264,7 +282,7 @@ class _ItemListState extends State<ItemList> {
             shrinkWrap: true,
             itemBuilder: (context, i) {
               return Container(
-                height: 90,
+                height: 80,
                 child: Card(
                   semanticContainer: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -280,7 +298,7 @@ class _ItemListState extends State<ItemList> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -307,7 +325,7 @@ class _ItemListState extends State<ItemList> {
                                   );
                                 },*/
                                 child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                  padding: const EdgeInsets.fromLTRB(10, 7, 10, 0),
                                   child: Container(
                                     width: 230,
                                     child: Column(

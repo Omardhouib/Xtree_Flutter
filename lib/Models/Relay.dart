@@ -17,8 +17,8 @@ class Relay {
   String itemText;
 
   factory Relay.fromJson(Map<String, dynamic> json) => Relay(
-    itemId: json["item_id"],
-    itemText: json["item_text"],
+    itemId: json["item_id"] == null ? null : json["item_id"],
+    itemText: json["item_text"] == null ? null : json["item_text"],
   );
 
   Map<String, dynamic> toJson() => {

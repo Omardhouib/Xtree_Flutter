@@ -37,17 +37,17 @@ class Sensor {
   double uv;
 
   factory Sensor.fromJson(Map<String, dynamic> json) => Sensor(
-    sensorCoordinates: List<double>.from(json["SensorCoordinates"].map((x) => x.toDouble())),
-    createdDate: DateTime.parse(json["Created_date"]),
-    status: json["status"],
-    id: json["_id"],
-    rules: List<Rule>.from(json["Rules"].map((x) => Rule.fromJson(x))),
-    sensorIdentifier: json["SensorIdentifier"],
-    sensorType: json["SensorType"],
-    v: json["__v"],
-    description: json["Description"],
-    name: json["name"],
-    uv: json["uv"],
+    sensorCoordinates: json["SensorCoordinates"] == null ? null : List<double>.from(json["SensorCoordinates"].map((x) => x.toDouble())),
+    createdDate: json["Created_date"] == null ? null : DateTime.parse(json["Created_date"]),
+    status: json["status"] == null ? null : json["status"],
+    id: json["_id"] == null ? null : json["_id"],
+    rules: json["Rules"] == null ? null : List<Rule>.from(json["Rules"].map((x) => Rule.fromJson(x))),
+    sensorIdentifier: json["SensorIdentifier"] == null ? null : json["SensorIdentifier"],
+    sensorType: json["SensorType"] == null ? null : json["SensorType"],
+    v: json["__v"] == null ? null : json["__v"],
+    description: json["Description"] == null ? null : json["Description"],
+    name: json["name"] == null ? null : json["name"],
+    uv: json["uv"] == null ? null : json["uv"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -90,13 +90,13 @@ class Rule {
   int tmin;
 
   factory Rule.fromJson(Map<String, dynamic> json) => Rule(
-    notifications: Notifications.fromJson(json["Notifications"]),
-    status: json["Status"],
-    realyIds: List<RealyId>.from(json["Realy_ids"].map((x) => RealyId.fromJson(x))),
-    id: json["_id"],
-    startTime: json["StartTime"],
-    tmax: json["Tmax"],
-    tmin: json["Tmin"],
+    notifications: json["Notifications"] == null ? null : Notifications.fromJson(json["Notifications"]),
+    status: json["Status"] == null ? null : json["Status"],
+    realyIds: json["Realy_ids"] == null ? null : List<RealyId>.from(json["Realy_ids"].map((x) => RealyId.fromJson(x))),
+    id: json["_id"] == null ? null : json["_id"],
+    startTime: json["StartTime"] == null ? null : json["StartTime"],
+    tmax: json["Tmax"] == null ? null : json["Tmax"],
+    tmin: json["Tmin"] == null ? null : json["Tmin"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -122,9 +122,10 @@ class Notifications {
   bool push;
 
   factory Notifications.fromJson(Map<String, dynamic> json) => Notifications(
-    sms: json["SMS"],
-    email: json["Email"],
-    push: json["Push"],
+    sms: json["SMS"] == null ? null : json["SMS"],
+    email: json["Email"] == null ? null : json["Email"],
+    push: json["Push"] == null ? null : json["Push"],
+
   );
 
   Map<String, dynamic> toJson() => {
@@ -144,8 +145,8 @@ class RealyId {
   String itemText;
 
   factory RealyId.fromJson(Map<String, dynamic> json) => RealyId(
-    itemId: json["item_id"],
-    itemText: json["item_text"],
+    itemId: json["item_id"] == null ? null : json["item_id"],
+    itemText: json["item_text"] == null ? null : json["item_text"],
   );
 
   Map<String, dynamic> toJson() => {

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/DevicesHome.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
+import 'package:sidebar_animation/Models/User.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
+import 'package:sidebar_animation/classes/ChartLineClass.dart';
+import 'package:sidebar_animation/classes/ElectrovanneClass.dart';
 import 'package:sidebar_animation/pages/Device/UpdateSens.dart';
 import 'package:sidebar_animation/pages/Device/VerfiyDevice.dart';
 import 'package:sidebar_animation/pages/Device/deleteDevVerifyLoc.dart';
-import 'package:sidebar_animation/pages/Device/deviceDetails.dart';
 import 'package:sidebar_animation/pages/homepage.dart';
 import '../../bloc.navigation_bloc/navigation_bloc.dart';
 import 'dart:async';
@@ -51,36 +53,53 @@ class _DevicesState extends State<Devices> {
         children: [
           Container(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 50, 0, 15),
+              padding: const EdgeInsets.fromLTRB(15, 50, 0, 15),
               child: Row(
                 children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
+                  Container(
+                    width: 350,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
                 Text(
                 "Devices",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 30.0,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.normal,
+                    fontSize: 30.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.normal,
                 ),
               ),
-                      Text(
-                        'Welcome Omar dhouib',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.normal,
-                        ),
-                      ),
-                    ],
+                        FutureBuilder<User>(
+//                future: databaseHelper.getData(),
+                            future: databaseHelper2.getUser(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                print(snapshot.error);
+                                print("mochkla lenaa *");
+                              }
+                              if (snapshot.hasData) {
+                                return Text(
+                                    'Welcome '+snapshot.data.firstName+' '+snapshot.data.lastName,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      color: Colors.grey,
+                                      fontWeight:
+                                      FontWeight.w500,
+                                      fontStyle:
+                                      FontStyle.normal,
+                                    ));
+                              } else {
+                                return Container();
+                              }
+                            }),
+                      ],
+                    ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: CircleAvatar(
                       backgroundColor: Colors.blue[100],
                       child: Icon(
@@ -97,7 +116,7 @@ class _DevicesState extends State<Devices> {
           ),
 
           Container(
-            height: 90,
+            height: 80,
             child: Card(
               semanticContainer: true,
               clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -113,7 +132,7 @@ class _DevicesState extends State<Devices> {
                     padding:
                     const EdgeInsets.fromLTRB(15, 0, 40, 0),
                     child: CircleAvatar(
-                      backgroundColor: Colors.amberAccent,
+                      backgroundColor: Colors.green,
                       child: Icon(
                         Icons.add_circle,
                         color: Colors.white,
@@ -133,7 +152,7 @@ class _DevicesState extends State<Devices> {
                     child: FlatButton(
                       child: Icon(
                         Icons.add_circle_outline,
-                        color: Colors.amberAccent,
+                        color: Colors.green,
                         size: 35,
                       ),
                       onPressed: (){
@@ -151,7 +170,7 @@ class _DevicesState extends State<Devices> {
             ),
           ),
           Container(
-            height: 90,
+            height: 80,
             child: Card(
               semanticContainer: true,
               clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -226,7 +245,7 @@ class _DevicesState extends State<Devices> {
                /* snapshot.data.electro.forEach((element) {
                   Electro.add(element);
                 });*/
-                  return ItemListElectro(list: snapshot.data.electro);
+                  return ElectrovanneClass(list: snapshot.data.electro);
                 } else {
                   return Container();
                 }
@@ -295,55 +314,40 @@ class _ItemListState extends State<ItemList> {
                               ),
                               radius: 25,
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => deviceDetails(
-                                        list:widget.list,
-                                        index: i,
-                                        identifier: widget.list[i].id
-
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                              child: Container(
+                                width: 280,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      //list[i].toString() ?? '',
+                                      widget.list[i].name.toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                child: Container(
-                                  width: 280,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        //list[i].toString() ?? '',
-                                        widget.list[i].name.toString(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 20,
-                                        ),
+                                    Text(
+                                      //list[i].toString() ?? '',
+                                      "Identifier: "+widget.list[i].sensorIdentifier.toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 11,
+                                          color: Colors.grey
                                       ),
-                                      Text(
-                                        //list[i].toString() ?? '',
-                                        "Identifier: "+widget.list[i].sensorIdentifier.toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 11,
-                                            color: Colors.grey
-                                        ),
+                                    ),
+                                    Text(
+                                      //list[i].toString() ?? '',
+                                      "Type: "+widget.list[i].sensorType.toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 11,
+                                          color: Colors.grey
                                       ),
-                                      Text(
-                                        //list[i].toString() ?? '',
-                                        "Type: "+widget.list[i].sensorType.toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 11,
-                                            color: Colors.grey
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -382,7 +386,7 @@ class _ItemListState extends State<ItemList> {
                               }
                               if (snapshot.hasData) {
                                 type = widget.list[i].sensorType;
-                                return chart(snapshot.data, type);
+                                return ChartLineClass(data: snapshot.data, type: type);
                               } else {
                                 return Container();
                               }

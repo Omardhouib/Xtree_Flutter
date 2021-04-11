@@ -11,7 +11,6 @@ import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
-import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 
@@ -78,12 +77,25 @@ class ConfirmeDeleteDevState extends State<ConfirmeDeleteDev> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: Text(
-                "Delete the device: "+widget.name,style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey
-              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Delete the device: ",style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey
+                  ),
+                  ),
+                  Text(
+                    widget.name,style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey[800]
+                  ),
+                  ),
+                ],
               ),
             ),
             Padding(

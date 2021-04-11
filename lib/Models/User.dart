@@ -37,17 +37,17 @@ class User {
   int v;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-    notifications: Notifications.fromJson(json["Notifications"]),
-    createdDate: DateTime.parse(json["Created_date"]),
-    locationIds: List<String>.from(json["Location_ids"].map((x) => x)),
-    jobIds: List<dynamic>.from(json["Job_ids"].map((x) => x)),
-    id: json["_id"],
-    firstName: json["FirstName"],
-    lastName: json["LastName"],
-    email: json["email"],
-    password: json["password"],
-    enabled: json["enabled"],
-    v: json["__v"],
+    notifications: json["Notifications"] == null ? null : Notifications.fromJson(json["Notifications"]),
+    createdDate: json["Created_date"] == null ? null : DateTime.parse(json["Created_date"]),
+    locationIds: json["Location_ids"] == null ? null : List<String>.from(json["Location_ids"].map((x) => x)),
+    jobIds: json["Job_ids"] == null ? null : List<dynamic>.from(json["Job_ids"].map((x) => x)),
+    id: json["_id"] == null ? null : json["_id"],
+    firstName: json["FirstName"] == null ? null : json["FirstName"],
+    lastName: json["LastName"] == null ? null : json["LastName"],
+    email: json["email"] == null ? null : json["email"],
+    password: json["password"] == null ? null : json["password"],
+    enabled: json["enabled"] == null ? null : json["enabled"],
+    v: json["__v"] == null ? null : json["__v"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -77,9 +77,9 @@ class Notifications {
   bool sms;
 
   factory Notifications.fromJson(Map<String, dynamic> json) => Notifications(
-    email: json["Email"],
-    push: json["Push"],
-    sms: json["SMS"],
+    email: json["Email"] == null ? null : json["Email"],
+    push: json["Push"] == null ? null : json["Push"],
+    sms: json["SMS"] == null ? null : json["SMS"],
   );
 
   Map<String, dynamic> toJson() => {

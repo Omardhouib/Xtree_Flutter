@@ -10,16 +10,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Models/LocationHome.dart';
 import 'package:sidebar_animation/Models/Sensor.dart';
+import 'package:sidebar_animation/Models/User.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/classes/ChartHistory.dart';
-import 'package:sidebar_animation/classes/ElectroClass.dart';
+import 'package:sidebar_animation/classes/ChartLineClass.dart';
+import 'package:sidebar_animation/classes/ElectroONOFFClass.dart';
+import 'package:sidebar_animation/classes/ElectrovanneClass.dart';
+import 'package:sidebar_animation/classes/WeatherClass.dart';
 import 'package:sidebar_animation/classes/schedulePage.dart';
 import 'package:sidebar_animation/pages/Device/AddDevice.dart';
 import 'package:sidebar_animation/pages/Device/Devices.dart';
 import 'package:sidebar_animation/pages/Device/VerfiyDevice.dart';
 import 'package:sidebar_animation/pages/Location/AddLocation.dart';
 import 'package:sidebar_animation/pages/Location/AllLocations.dart';
-import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 import '../bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/constants.dart';
@@ -107,7 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
               }
               if (snapshot.hasData) {
                 if (snapshot.data.isEmpty) {
-                  print("herrrreeeee");
                   return AlertDialog(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -152,13 +154,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                             child: FlatButton(
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Locations(
-                                              /*onValueChange: _onValueChange,
-                                              initialValue: _selectedId,*/
-                                            )));
+                                showDialog(
+                                    context: context,
+                                    child: AddLocation(
+                                      onValueChange: _onValueChange,
+                                      initialValue: _selectedId,
+                                    ));
                               }, // passing true
                               child: Text(
                                 'ADD NEW LOCATION',
@@ -183,51 +184,68 @@ class _MyHomePageState extends State<MyHomePage> {
                               padding: const EdgeInsets.fromLTRB(10, 50, 0, 25),
                               child: Row(
                                 children: <Widget>[
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      FutureBuilder<LocationHome>(
+                                  Container(
+                                    width: 365,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        FutureBuilder<LocationHome>(
 //                future: databaseHelper.getData(),
-                                          future: getHomedetails,
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasError) {
-                                              print(snapshot.error);
-                                              print("mochkla lenaa last *");
-                                            }
-                                            if (snapshot.hasData) {
-                                              Location location =
-                                                  snapshot.data.locations;
-                                              id = snapshot.data.locations.id;
-                                              return Text(
-                                                location.siteName,
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontSize: 30.0,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontStyle: FontStyle.normal,
-                                                ),
-                                              );
-                                            } else {
-                                              return Container();
-                                            }
-                                          }),
-                                      Text(
-                                        'Welcome Omar dhouib',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 15.0,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500,
-                                          fontStyle: FontStyle.normal,
-                                        ),
-                                      ),
-                                    ],
+                                            future: getHomedetails,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                print(snapshot.error);
+                                                print("mochkla lenaa Home location *");
+                                              }
+                                              if (snapshot.hasData) {
+                                                Location location =
+                                                    snapshot.data.locations;
+                                                id = snapshot.data.locations.id;
+                                                return Text(
+                                                  location.siteName,
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 30.0,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontStyle: FontStyle.normal,
+                                                  ),
+                                                );
+                                              } else {
+                                                return Container();
+                                              }
+                                            }),
+                                        FutureBuilder<User>(
+//                future: databaseHelper.getData(),
+                                            future: databaseHelper2.getUser(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                print(snapshot.error);
+                                                print("mochkla lenaa user name *");
+                                              }
+                                              if (snapshot.hasData) {
+                                                return Text(
+                                                    'Welcome '+snapshot.data.firstName+' '+snapshot.data.lastName,
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 15.0,
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                      FontWeight.w500,
+                                                      fontStyle:
+                                                      FontStyle.normal,
+                                                    ));
+                                              } else {
+                                                return Container();
+                                              }
+                                            }),
+                                      ],
+                                    ),
                                   ),
                                   Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(190, 0, 0, 0),
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
                                     child: CircleAvatar(
                                       backgroundColor: Colors.blue[100],
                                       child: Icon(
@@ -260,7 +278,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Container();
                                   }
                                   return snapshot2.hasData
-                                      ? Itemclass(list: snapshot2.data)
+                                      ? WeatherClass(list: snapshot2.data)
                                       : Container();
                                 });
                           } else {
@@ -277,7 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
                             print(snapshot.error);
-                            print("there is problem !");
+                            print("there is problem number of dev!");
                           }
 
                           return snapshot.hasData
@@ -307,7 +325,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ),
                                         Text(
-                                          "Total number of DEVICES: " +
+                                          "TOTAL NUMBER OF DEVICES: " +
                                               snapshot.data.toString(),
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
@@ -325,7 +343,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
                             print(snapshot.error);
-                            print("there is problem !");
+                            print("there is problem num of loc !");
                           }
 
                           return snapshot.hasData
@@ -355,7 +373,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ),
                                         Text(
-                                          "Total number of LOCATIONS: " +
+                                          "TOTAL NUMBER OF SITES: " +
                                               snapshot.data.toString(),
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
@@ -373,7 +391,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
                             print(snapshot.error);
-                            print("there is problem !");
+                            print("there is problem schedule !");
                           }
 
                           if (snapshot.hasData) {
@@ -381,7 +399,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               return Column(
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 15, 0, 10),
                                     child: Icon(
                                       Icons.info_outline,
                                       color: Colors.amber,
@@ -414,15 +433,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                         const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                     child: FlatButton(
                                       onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Devices(
-                                                      /*onValueChange:
-                                                          _onValueChange,
-                                                      initialValue: _selectedId,*/
-                                                    )));
+                                        showDialog(
+                                            context: context,
+                                            child: VerfiyDevice(
+                                              onValueChange: _onValueChange,
+                                              initialValue: _selectedId,
+                                            ));
                                       }, // passing true
                                       child: Text(
                                         'Add New Device',
@@ -441,7 +457,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             }
 
                             if (status == true) {
-                              // print("status:"+status.toString());
                               return Container(
                                 height: 80,
                                 child: Card(
@@ -503,7 +518,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               );
                             } else
-                              //  print("status:"+status.toString());
                               return Container(
                                 height: 80,
                                 child: Card(
@@ -575,7 +589,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             snapshot.data.locations.sensorIds
                                 .forEach((element) {
                               sensId = element;
-                              print("element: " + element);
                             });
                             return FutureBuilder<Sensor>(
                                 future:
@@ -586,8 +599,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                     print("mochkla lenaa *");
                                   }
                                   if (snapshot2.hasData) {
-                                    print("sensdata: " +
-                                        snapshot2.data.toString());
                                     return Padding(
                                       padding: const EdgeInsets.fromLTRB(
                                           10, 10, 10, 10),
@@ -688,7 +699,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         future: getHomedetails,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return ItemListElectro(list: snapshot.data.electro);
+                            return ElectrovanneClass(
+                                list: snapshot.data.electro);
                           } else {
                             return Container();
                           }
@@ -702,639 +714,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
-  Widget Itemclass({List list}) {
-    var hour = DateTime.now().hour;
-    DateTime date = DateTime.now();
-    String dateFormat = DateFormat('EEEE').format(date);
-    //  final hour formattedDate = DateFormat.j().format(now);
-    //dynamic currentTime = DateFormat.j().format(DateTime.now());
-    return SizedBox(
-      height: 290.0,
-      child: ListView.builder(
-          itemCount: 6,
-          scrollDirection: Axis.horizontal,
-          itemExtent: 200.0,
-          // ignore: missing_return
-          itemBuilder: (context, i) {
-            int date = (list[i]["dt"]);
-            int zero = 100;
-            DateTime finalday = DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(("$date" + "$zero")))
-                .toUtc();
-            String dateFormat = DateFormat('EEEE').format(finalday);
-            var item = list[i];
-            if ((hour < 17) && (hour >= 6)) {
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                child: Container(
-                  /* decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                       image: DecorationImage(
-                           image: NetworkImage(
-                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
-                           fit: BoxFit.cover),
-                      gradient: LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: [
-                            Color(0xff152238),
-                            Color(0xff152238),
-                            Color(0xff152238),
-                          ])),*/
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
-                          image: NetworkImage(
-                              "https://images.unsplash.com/photo-1559628376-f3fe5f782a2e?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1000&q=80"),
-                          fit: BoxFit.cover)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
-                        child: Text(
-                          list[i]["temp"]["morn"].round().toString() + "°C",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 35,
-                              fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
-                        child: Text(
-                          dateFormat,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w300),
-                        ),
-                      ),
-                      if (list[i]["pop"] > 0.1)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: new Image.network(
-                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/rain.png'),
-                          ),
-                        ),
-                      if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: new Image.network(
-                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/overcast.png'),
-                          ),
-                        ),
-                      if (list[i]["pop"] < 0.1 && list[i]["clouds"] < 1)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: new Image.network(
-                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
-                          ),
-                        ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
-                            child: Text(
-                              list[i]["temp"]["min"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: Text(
-                              "/",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
-                            child: Text(
-                              list[i]["temp"]["max"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
-                            child: Text(
-                              "Humidity: ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                            child: Text(
-                              list[i]["humidity"].toString() + "%",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
-                            child: Text(
-                              "Precipitation: ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            child: Text(
-                              list[i]["pop"].toString() + "mm",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
-                            child: Text(
-                              "Uv: ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            child: Text(
-                              list[i]["uvi"].toString(),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            } else if ((hour < 20) && (hour >= 17)) {
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                child: Container(
-                  /* decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                       image: DecorationImage(
-                           image: NetworkImage(
-                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
-                           fit: BoxFit.cover),
-                      gradient: LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: [
-                            Color(0xff152238),
-                            Color(0xff152238),
-                            Color(0xff152238),
-                          ])),*/
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
-                          image: NetworkImage(
-                              "https://image.freepik.com/free-photo/oyster-farm-sea-beautiful-sky-sunset-background_1150-10229.jpg"),
-                          fit: BoxFit.cover)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
-                        child: Text(
-                          list[i]["temp"]["eve"].round().toString() + "°C",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 35,
-                              fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
-                        child: Text(
-                          dateFormat,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w300),
-                        ),
-                      ),
-                      if (list[i]["pop"] > 0.1)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: new Image.network(
-                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/rain.png'),
-                          ),
-                        ),
-                      if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: new Image.network(
-                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/overcast.png'),
-                          ),
-                        ),
-                      if (list[i]["pop"] < 0.1 && list[i]["clouds"] < 1)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: new Image.network(
-                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
-                          ),
-                        ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
-                            child: Text(
-                              list[i]["temp"]["min"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: Text(
-                              "/",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
-                            child: Text(
-                              list[i]["temp"]["max"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
-                            child: Text(
-                              "Humidity: ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                            child: Text(
-                              list[i]["humidity"].toString() + "%",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
-                            child: Text(
-                              "Precipitation: ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            child: Text(
-                              list[i]["pop"].toString() + "mm",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
-                            child: Text(
-                              "Uv: ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            child: Text(
-                              list[i]["uvi"].toString(),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
-                          image: NetworkImage(
-                              "https://image.freepik.com/free-vector/milky-way-night-star-sky-stars-dark-background_172933-70.jpg"),
-                          fit: BoxFit.cover)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(95, 10, 0, 0),
-                        child: Text(
-                          list[i]["temp"]["night"].round().toString() + "°C",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 35,
-                              fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
-                        child: Text(
-                          dateFormat,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w300),
-                        ),
-                      ),
-                      if (list[i]["pop"] > 0.1)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: new Image.network(
-                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/rain.png'),
-                          ),
-                        ),
-                      if (list[i]["clouds"] > 0 && list[i]["pop"] < 0.1)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: new Image.network(
-                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/overcast.png'),
-                          ),
-                        ),
-                      if (list[i]["pop"] < 0.1 && list[i]["clouds"] < 1)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: new Image.network(
-                                'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
-                          ),
-                        ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
-                            child: Text(
-                              list[i]["temp"]["min"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: Text(
-                              "/",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
-                            child: Text(
-                              list[i]["temp"]["max"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
-                            child: Text(
-                              "Humidity: ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                            child: Text(
-                              list[i]["humidity"].toString() + "%",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
-                            child: Text(
-                              "Precipitation: ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            child: Text(
-                              list[i]["pop"].toString() + "mm",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
-                            child: Text(
-                              "Uv: ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            child: Text(
-                              list[i]["uvi"].toString(),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-          }),
-    );
-  }
-}
-
-class ItemListElectro extends StatefulWidget {
-  List list;
-  ItemListElectro({this.list});
-
-  @override
-  _ItemListElectroState createState() => _ItemListElectroState();
-}
-
-class _ItemListElectroState extends State<ItemListElectro> {
-  String id;
-  String status;
-  String active = "true";
-  bool pressGeoON = false;
-  bool cmbscritta = false;
-  final RoundedLoadingButtonController _btnController =
-      new RoundedLoadingButtonController();
-
-  ScrollController _controller = new ScrollController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0), color: Colors.white),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 10, 0, 10),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    child: Icon(
-                      Icons.developer_board,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    radius: 25,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: Text(
-                    "Relays:",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            ListView.builder(
-                itemCount: widget.list == null ? 0 : widget.list.length,
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (context, i) {
-                  id = widget.list[i].id.toString();
-                  print("...." + cmbscritta.toString());
-                  if (widget.list[i].status.toString().isNotEmpty)
-                    return ElectroClass(Electro: widget.list[i]);
-                  return Container();
-                }),
-          ],
-        ),
-      ),
-    );
-  }
-/*
-isactive =false;
-
-  isactive=!isactive;
-*/
 }
 
 class ItemListchart extends StatefulWidget {
@@ -1373,7 +752,6 @@ class _ItemListchartState extends State<ItemListchart> {
                 }
 
                 if (snapshot.hasData) {
-                  //  print("helloo" + snapshot.data.toString());
                   String type = snapshot.data.sensorType;
                   if (type != "Relay") {
                     return Padding(
@@ -1485,7 +863,8 @@ class _ItemListchartState extends State<ItemListchart> {
                                   if (snapshot2.hasData) {
                                     return Column(
                                       children: [
-                                        chart(snapshot2.data, type),
+                                        ChartLineClass(
+                                            data: snapshot2.data, type: type),
                                         Container(
                                           height: 90,
                                           child: Card(
@@ -1568,677 +947,10 @@ class _ItemListchartState extends State<ItemListchart> {
                         ),
                       ),
                     );
-                    // print("helloo"+snapshot.data.id);
                   }
                 }
                 return Container();
               });
         });
   }
-}
-
-Widget chart(List data, String type) {
-  List<dynamic> adjustData = [];
-  if (data.isNotEmpty) {
-    if (type == "CarteDeSol" && data.length == 0) {
-      return Container(
-        child: Text(
-          "There is no data to display !",
-          style: TextStyle(
-              fontSize: 18, fontWeight: FontWeight.w400, color: Colors.grey),
-        ),
-      );
-    } else if (type == "CarteDeSol" && data.length <= 10) {
-      print(' data is not empty');
-      print(data.length);
-
-      data.forEach((element) {
-        print(element.toString());
-        var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
-            .hour
-            .toString();
-        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
-            .minute
-            .toString();
-        var hum1 = element["humdity1"];
-        var hum2 = element["humdity2"];
-        var hum3 = element["humdity3"];
-        var tot = (hum1 + hum2 + hum3) / 3;
-        String time = hour + ":" + minute;
-        print(time);
-        adjustData.add({"type": "humdity1", "index": time, "value": hum1});
-        adjustData.add({"type": "humdity2", "index": time, "value": hum2});
-        adjustData.add({"type": "humdity3", "index": time, "value": hum3});
-        adjustData.add({"type": "humdity4", "index": time, "value": tot});
-        adjustData.add({
-          "type": "temperatureSol",
-          "index": time,
-          "value": element["temperatureSol"]
-        });
-      });
-      return Column(
-        children: [
-          Row(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
-                    child: Text(
-                      "Humidity 1",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.green,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
-                    child: Text(
-                      "Humidity 2",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.amber,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
-                    child: Text(
-                      "Humidity 3",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(40, 5, 0, 20),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.blue[900],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 5, 10, 20),
-                    child: Text(
-                      "Average humidity",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 5, 0, 20),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.purple,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 5, 10, 20),
-                    child: Text(
-                      "Temperature",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Container(
-            width: 650,
-            height: 300,
-            child: graphic.Chart(
-              data: adjustData,
-              margin: EdgeInsets.all(10),
-              scales: {
-                'index': graphic.CatScale(
-                  accessor: (map) => map['index'].toString(),
-                  range: [0, 0.99],
-                ),
-                'type': graphic.CatScale(
-                  accessor: (map) => map['type'] as String,
-                ),
-                'value': graphic.LinearScale(
-                  accessor: (map) => map['value'] as num,
-                  nice: true,
-                  range: [0, 1],
-                ),
-              },
-              geoms: [
-                graphic.LineGeom(
-                  position: graphic.PositionAttr(field: 'index*value'),
-                  color: graphic.ColorAttr(field: 'type'),
-                  size: graphic.SizeAttr(field: 'value'),
-                  shape: graphic.ShapeAttr(
-                      values: [graphic.BasicLineShape(smooth: true)]),
-                )
-              ],
-              axes: {
-                'index': graphic.Defaults.horizontalAxis,
-                'value': graphic.Defaults.verticalAxis,
-              },
-            ),
-          ),
-        ],
-      );
-    } else if (type == "CarteDeSol" && data.length > 10) {
-      print(' data is not empty');
-      data = data.sublist(data.length - 10, data.length);
-      print(data.length);
-
-      data.forEach((element) {
-        print(element.toString());
-        var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
-            .hour
-            .toString();
-        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
-            .minute
-            .toString();
-        var hum1 = element["humdity1"];
-        var hum2 = element["humdity2"];
-        var hum3 = element["humdity3"];
-        var tot = (hum1 + hum2 + hum3) / 3;
-        String time = hour + ":" + minute;
-        print(time);
-        adjustData.add({"type": "humdity1", "index": time, "value": hum1});
-        adjustData.add({"type": "humdity2", "index": time, "value": hum2});
-        adjustData.add({"type": "humdity3", "index": time, "value": hum3});
-        adjustData.add({"type": "humdity4", "index": time, "value": tot});
-        adjustData.add({
-          "type": "temperatureSol",
-          "index": time,
-          "value": element["temperatureSol"]
-        });
-      });
-      return Column(
-        children: [
-          Row(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
-                    child: Text(
-                      "Humidity 1",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.green,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
-                    child: Text(
-                      "Humidity 2",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.amber,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
-                    child: Text(
-                      "Humidity 3",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(40, 5, 0, 20),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.blue[900],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 5, 10, 20),
-                    child: Text(
-                      "Average humidity",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 5, 0, 20),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.purple,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 5, 10, 20),
-                    child: Text(
-                      "Temperature",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Container(
-            width: 650,
-            height: 300,
-            child: graphic.Chart(
-              data: adjustData,
-              margin: EdgeInsets.all(10),
-              scales: {
-                'index': graphic.CatScale(
-                  accessor: (map) => map['index'].toString(),
-                  range: [0, 0.99],
-                ),
-                'type': graphic.CatScale(
-                  accessor: (map) => map['type'] as String,
-                ),
-                'value': graphic.LinearScale(
-                  accessor: (map) => map['value'] as num,
-                  nice: true,
-                  range: [0, 1],
-                ),
-              },
-              geoms: [
-                graphic.LineGeom(
-                  position: graphic.PositionAttr(field: 'index*value'),
-                  color: graphic.ColorAttr(field: 'type'),
-                  size: graphic.SizeAttr(field: 'value'),
-                  shape: graphic.ShapeAttr(
-                      values: [graphic.BasicLineShape(smooth: true)]),
-                )
-              ],
-              axes: {
-                'index': graphic.Defaults.horizontalAxis,
-                'value': graphic.Defaults.verticalAxis,
-              },
-            ),
-          ),
-        ],
-      );
-    } else if (type == "temperature" && data.length == 0) {
-      return Container(
-        child: Text(
-          "There is no data to display !",
-          style: TextStyle(
-              fontSize: 18, fontWeight: FontWeight.w400, color: Colors.grey),
-        ),
-      );
-    } else if (type == "temperature" && data.length <= 10) {
-      print(data.length);
-
-      data.forEach((element) {
-        var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
-            .hour
-            .toString();
-        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
-            .minute
-            .toString();
-        String time = hour + ":" + minute;
-        print("hello " + element.toString());
-        adjustData.add(
-            {"type": "temp", "index": time, "value": element["temperature"]});
-        adjustData
-            .add({"type": "hum", "index": time, "value": element["humidite"]});
-      });
-      return Column(
-        children: [
-          Row(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(40, 0, 0, 20),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.green,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
-                    child: Text(
-                      "Humidity",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
-                    child: Text(
-                      "Temperature",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Container(
-            width: 650,
-            height: 300,
-            child: graphic.Chart(
-              data: adjustData,
-              margin: EdgeInsets.all(10),
-              scales: {
-                'index': graphic.CatScale(
-                  accessor: (map) => map['index'].toString(),
-                  range: [0, 0.99],
-                ),
-                'type': graphic.CatScale(
-                  accessor: (map) => map['type'] as String,
-                ),
-                'value': graphic.LinearScale(
-                  accessor: (map) => map['value'] as num,
-                  nice: true,
-                  range: [0, 1],
-                ),
-              },
-              geoms: [
-                graphic.LineGeom(
-                  position: graphic.PositionAttr(field: 'index*value'),
-                  color: graphic.ColorAttr(field: 'type'),
-                  size: graphic.SizeAttr(field: 'value'),
-                  shape: graphic.ShapeAttr(
-                      values: [graphic.BasicLineShape(smooth: true)]),
-                )
-              ],
-              axes: {
-                'index': graphic.Defaults.horizontalAxis,
-                'value': graphic.Defaults.verticalAxis,
-              },
-            ),
-          ),
-        ],
-      );
-    } else if (type == "temperature" && data.length > 10) {
-      data = data.sublist(data.length - 10, data.length);
-      print(data.length);
-
-      data.forEach((element) {
-        var hour = DateTime.fromMillisecondsSinceEpoch(element['time'])
-            .hour
-            .toString();
-        var minute = DateTime.fromMillisecondsSinceEpoch(element['time'])
-            .minute
-            .toString();
-        String time = hour + ":" + minute;
-        print("hello " + element.toString());
-        adjustData.add(
-            {"type": "temp", "index": time, "value": element["temperature"]});
-        adjustData
-            .add({"type": "hum", "index": time, "value": element["humidite"]});
-      });
-      return Column(
-        children: [
-          Row(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(40, 0, 0, 20),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.green,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
-                    child: Text(
-                      "Humidity",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 10, 20),
-                    child: Text(
-                      "Temperature",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Container(
-            width: 650,
-            height: 300,
-            child: graphic.Chart(
-              data: adjustData,
-              margin: EdgeInsets.all(10),
-              scales: {
-                'index': graphic.CatScale(
-                  accessor: (map) => map['index'].toString(),
-                  range: [0, 0.99],
-                ),
-                'type': graphic.CatScale(
-                  accessor: (map) => map['type'] as String,
-                ),
-                'value': graphic.LinearScale(
-                  accessor: (map) => map['value'] as num,
-                  nice: true,
-                  range: [0, 1],
-                ),
-              },
-              geoms: [
-                graphic.LineGeom(
-                  position: graphic.PositionAttr(field: 'index*value'),
-                  color: graphic.ColorAttr(field: 'type'),
-                  size: graphic.SizeAttr(field: 'value'),
-                  shape: graphic.ShapeAttr(
-                      values: [graphic.BasicLineShape(smooth: true)]),
-                )
-              ],
-              axes: {
-                'index': graphic.Defaults.horizontalAxis,
-                'value': graphic.Defaults.verticalAxis,
-              },
-            ),
-          ),
-        ],
-      );
-    }
-  } else
-    return Container(
-      child: Text(
-        "There is no data to display !",
-        style: TextStyle(
-            fontSize: 18, fontWeight: FontWeight.w400, color: Colors.grey),
-      ),
-    );
 }

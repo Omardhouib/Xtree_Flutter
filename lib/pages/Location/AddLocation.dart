@@ -62,7 +62,7 @@ class AddLocationState extends State<AddLocation> {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
-                      "Add Location",
+                      "ADD SITE",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                     ),
@@ -83,7 +83,7 @@ class AddLocationState extends State<AddLocation> {
                       decoration: InputDecoration(
                           icon: Icon(Icons.place, color: Colors.grey[400]),
                           border: InputBorder.none,
-                          hintText: "Location name",
+                          hintText: "Site name",
                           hintStyle: TextStyle(color: Colors.grey[400])),
                     ),
                   ),
@@ -104,7 +104,7 @@ class AddLocationState extends State<AddLocation> {
                           icon:
                               Icon(Icons.description, color: Colors.grey[400]),
                           border: InputBorder.none,
-                          hintText: "Location description",
+                          hintText: "Site description",
                           hintStyle: TextStyle(color: Colors.grey[400])),
                     ),
                   ),
@@ -137,7 +137,7 @@ class AddLocationState extends State<AddLocation> {
                 child: AspectRatio(
                   child: FlatButton(
                       color: Colors.amberAccent,
-                      child: Text("Add", style: TextStyle(color: Colors.white)),
+                      child: Text("Add Site", style: TextStyle(color: Colors.white)),
                       onPressed: () {
                         if (sitenameController.text == "") {
                           Fluttertoast.showToast(
@@ -214,7 +214,7 @@ class AddLocationState extends State<AddLocation> {
         headers: {"Content-Type": "application/json"}, body: json.encode(data));
     if (response.statusCode == 200) {
       await Fluttertoast.showToast(
-          msg: "New Location Added !",
+          msg: "New Site Added !",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 3,

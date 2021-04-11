@@ -316,7 +316,7 @@ class MyDialogState extends State<MyDialog> {
   final TextEditingController passwordController = new TextEditingController();
   final TextEditingController password2Controller = new TextEditingController();
 
-  final TextEditingController numTelController = new TextEditingController();
+  final TextEditingController LastNameController = new TextEditingController();
 
   DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
 
@@ -403,7 +403,7 @@ class MyDialogState extends State<MyDialog> {
                               } else
                                 return null;
                             },
-                            controller: numTelController,
+                            controller: LastNameController,
                             decoration: InputDecoration(
                               icon: Icon(Icons.person, color: Colors.grey[400]),
                               border: InputBorder.none,
@@ -460,43 +460,6 @@ class MyDialogState extends State<MyDialog> {
                               ),
                             ),
                           ),
-
-/*
-                              TextFormField(
-                                validator: (value){
-                                  if (value.isEmpty){
-                                    return " Confirm password can not be empty";
-                                  }else
-                                    return null;
-                                },
-                                controller: password2Controller,
-                                obscureText: !_password2Visible,//This will obscure text dynamically
-
-                                decoration: InputDecoration(
-                                    icon: Icon(Icons.power_input, color: Colors.grey[400]),
-                                    border: InputBorder.none,
-                                    hintText: "Confirm password",
-                                    hintStyle: TextStyle(color: Colors.grey[400]),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      // Based on passwordVisible state choose the icon
-                                      _password2Visible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: Theme.of(context).primaryColorDark,
-                                    ),
-                                    onPressed: () {
-                                      // Update the state i.e. toogle the state of passwordVisible variable
-                                      setState(() {
-                                        _password2Visible = !_password2Visible;
-                                      });
-                                    },
-                                  ),
-
-                                ),
-                              ),
-
- */
                         ]),
                       ),
                     ],
@@ -518,8 +481,58 @@ class MyDialogState extends State<MyDialog> {
                   ),
                 ),
                 onTap: () {
+                  if(FirstNameController.text == ""){
+                    Fluttertoast.showToast(
+                        msg: "Please define your first name !",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 5,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 10.0);
+                  }
+                  else if(LastNameController.text == ""){
+                    Fluttertoast.showToast(
+                        msg: "Please define your last name !",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 5,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 10.0);
+                  }
+                  else if(LastNameController.text == ""){
+                    Fluttertoast.showToast(
+                        msg: "Please define your email address !",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 5,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 10.0);
+                  }
+                  else if(LastNameController.text == ""){
+                    Fluttertoast.showToast(
+                        msg: "Please define your password !",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 5,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 10.0);
+                  }
+                  else if(LastNameController.text == ""){
+                    Fluttertoast.showToast(
+                        msg: "Please confirm your password !",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 5,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 10.0);
+                  }
                   _doSomething();
-//                  Navigator.of(context).pop();
+//
                 },
               ),
             ],
@@ -530,10 +543,8 @@ class MyDialogState extends State<MyDialog> {
   void _doSomething() async {
     Timer(Duration(seconds: 1), () {
       if (_key2.currentState.validate()) {
-        registerData(FirstNameController.text, numTelController.text,
+        registerData(FirstNameController.text, LastNameController.text,
             emailController.text, passwordController.text, 1);
-
-//            databaseHelper2.loginData(emailController.text, passwordController.text);
       }
     });
   }
@@ -548,26 +559,12 @@ class MyDialogState extends State<MyDialog> {
       "enabled": 1
     };
 
-//    String myUrl = databaseHelper2.serverUrl+"/users/register";
     final response =
         await http.post(DatabaseHelper2.serverUrl + "/users/register",
 
-//        headers: {
-//          'Accept':'application/json'
-//        },
-
-//        body: {
-//          "email": "$email",
-//          "username": "$name",
-//          "password" : "$password",
-//          "password2" : "$password2",
-//          "numTel" : "$numTel"
-//        }
             headers: {"Content-Type": "application/json"},
             body: json.encode(data));
     status = response.body.contains('error');
-
-//    print(' Status : ' + response.statusCode.toString());
 
     var statu = response.statusCode;
 
@@ -586,77 +583,20 @@ class MyDialogState extends State<MyDialog> {
           textColor: Colors.white,
           fontSize: 10.0);
     }
-//    else
-//
-//      if (json.decode(response.body)['message']=="E11000"){
-//      await Fluttertoast.showToast(
-//          msg: "Username Already Exists , try again . ",
-//          toastLength: Toast.LENGTH_SHORT,
-//          gravity: ToastGravity.BOTTOM,
-//          timeInSecForIosWeb: 3,
-//          backgroundColor: Colors.red,
-//          textColor: Colors.white,
-//          fontSize: 10.0
-//      );
-//    }
     else {
       await Fluttertoast.showToast(
-          msg: "Registration successfully completed :D",
+          msg: "Registration successfully completed !",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 5,
           backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 10.0);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginPage()));
     }
 
-//    if(status){
-//
-//      await Fluttertoast.showToast(
-//          msg: "there is somethings wrang :[ , try again . ",
-//          toastLength: Toast.LENGTH_SHORT,
-//          gravity: ToastGravity.BOTTOM,
-//          timeInSecForIosWeb: 3,
-//          backgroundColor: Colors.red,
-//          textColor: Colors.white,
-//          fontSize: 10.0
-//      );
-//
-//      print('datas : ${datas["error"]}');
-//
-//    }
-//    else{
-//      print(' else status' + json.decode(response.body).toString());
-//      print(datas['message']);
-//
-//      if (datas['message']=="Email Already Exists"){
-//        await Fluttertoast.showToast(
-//            msg: "Email or Username Already Exists , try again . ",
-//            toastLength: Toast.LENGTH_SHORT,
-//            gravity: ToastGravity.BOTTOM,
-//            timeInSecForIosWeb: 3,
-//            backgroundColor: Colors.red,
-//            textColor: Colors.white,
-//            fontSize: 10.0
-//        );
-//      }
-//
-//      else{
-//        await Fluttertoast.showToast(
-//            msg: "  Registration successfully completed :D  . ",
-//            toastLength: Toast.LENGTH_SHORT,
-//            gravity: ToastGravity.BOTTOM,
-//            timeInSecForIosWeb: 5,
-//            backgroundColor: Colors.green,
-//            textColor: Colors.white,
-//            fontSize: 10.0
-//        );
-//      }
-//
-//
-////      print('data : ${data["token"]}');
-////      _save(data["token"]);
-//
-//    }
   }
 }

@@ -62,7 +62,7 @@ class AddDeviceState extends State<AddDevice> {
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        "Add Device",style: TextStyle(
+                        "ADD DEVICE",style: TextStyle(
                         fontSize: 23,
                         fontWeight: FontWeight.w500
                       ),
@@ -111,12 +111,20 @@ class AddDeviceState extends State<AddDevice> {
                   ],
                 ),
               ),
-            /*  SizedBox(
-                height: 30,
-              ),*/
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                child: Text(
+                  "Please select the new device site",
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[600]
+                  ),
+                ),
+              ),
               FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-                  future: databaseHelper2.AllLocationByUser(),
+                  future: databaseHelper2.AllUserLocation(),
                   builder: (context,snapshot) {
                     if (snapshot.hasData) {
                       snapshot.data.forEach((Location) {
@@ -173,7 +181,7 @@ class AddDeviceState extends State<AddDevice> {
                 width: 300,
                 child: FlatButton(
                   color: Colors.amberAccent,
-                  child: Text("Add", style: TextStyle(color: Colors.white)),
+                  child: Text("Add Device", style: TextStyle(color: Colors.white)),
                   onPressed: _doSomething,
                 ),
               ),

@@ -49,6 +49,14 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
                   key: _key,
                   child: Column(
                     children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          "DEVICE VERIFICATION",
+                          style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
+                      ),
                       Container(
                         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         decoration: BoxDecoration(
@@ -79,7 +87,7 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
             width: 150,
             child: FlatButton(
               color: Colors.amberAccent,
-              child: Text("Add", style: TextStyle(color: Colors.white)),
+              child: Text("Verify", style: TextStyle(color: Colors.white)),
               onPressed: _doSomething,
             ),
           ),
@@ -125,7 +133,7 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
         });
         print("id: "+jsonResponse["SensorFoundId"]);
         await Fluttertoast.showToast(
-            msg: "New Sensor have been Found !",
+            msg: "New Device have been Found !",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 3,
@@ -141,7 +149,7 @@ class VerfiyDeviceState extends State<VerfiyDevice> {
             ));
       } else if ((jsonResponse['message'] == "Already in use !")) {
         await Fluttertoast.showToast(
-            msg: "Already in use",
+            msg: "the Device is already in use",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 3,

@@ -6,15 +6,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:http/http.dart' as http;
 
-class ElectroClass extends StatefulWidget {
+class ElectroONOFFClass extends StatefulWidget {
   dynamic Electro;
 
-  ElectroClass({this.Electro});
+  ElectroONOFFClass({this.Electro});
   @override
-  _ElectroClassState createState() => _ElectroClassState();
+  _ElectroONOFFClassState createState() => _ElectroONOFFClassState();
 }
 
-class _ElectroClassState extends State<ElectroClass> {
+class _ElectroONOFFClassState extends State<ElectroONOFFClass> {
   String id;
   String status;
   String active = "true";
@@ -26,24 +26,51 @@ class _ElectroClassState extends State<ElectroClass> {
     return Row(
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(10, 0, 140, 0),
-          child: Text(
-            //Electro.toString() ?? '',
-            widget.Electro.name.toString(),
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          child: Container(
+            height: 80,
+            width: 220,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  //Electro.toString() ?? '',
+                  widget.Electro.name.toString(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  //Electro.toString() ?? '',
+                  "Identifier: "+widget.Electro.sensorIdentifier.toString(),
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey
+                  ),
+                ),
+                Text(
+                  //Electro.toString() ?? '',
+                  "Description: "+widget.Electro.description.toString(),
+                  style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey
+                  ),
+                ),
+              ],
             ),
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(right: 94),
+          padding: EdgeInsets.only(right: 80),
           child: Text(
             widget.Electro.status != cmbscritta ? "ON" : "OFF",
             style: TextStyle(
-                fontSize: 15,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.green[300]),
+               color: widget.Electro.status != cmbscritta ? Colors.green : Colors.red ),
           ),
         ),
         Column(

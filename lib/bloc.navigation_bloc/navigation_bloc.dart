@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:sidebar_animation/pages/AccountSettings.dart';
-import 'package:sidebar_animation/pages/Device/HomeDevice.dart';
-import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
 import 'package:sidebar_animation/pages/loginPage.dart';
 import 'package:sidebar_animation/sidebar/sidebar.dart';

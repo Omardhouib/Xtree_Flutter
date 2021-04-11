@@ -11,7 +11,6 @@ import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
-import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 
@@ -50,6 +49,8 @@ class DeleteLocationState extends State<DeleteLocation> {
       content: Container(
         height: 180,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(
               Icons.warning,
@@ -74,15 +75,28 @@ class DeleteLocationState extends State<DeleteLocation> {
               ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: Text(
-                "Delete the location: "+widget.name,style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                color: Colors.grey
-              ),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: Text(
+                    "Delete the site: ",style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    color: Colors.grey
+                  ),
+                  ),
+                ),
+                Text(
+                  widget.name,style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[900]
+                ),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(30, 10, 0, 0),

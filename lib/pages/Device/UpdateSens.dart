@@ -11,10 +11,7 @@ import 'package:sidebar_animation/Models/Location.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
-import 'package:sidebar_animation/pages/Device/Devices.dart';
-import 'package:sidebar_animation/pages/Device/HomeDevice.dart';
-import 'package:sidebar_animation/pages/Device/deviceDetails.dart';
-import 'package:sidebar_animation/pages/homepage.dart';
+
 
 class UpdateSens extends StatefulWidget with NavigationStates {
   UpdateSens({Key key, this.title, this.onValueChange, this.initialValue, this.identifier, this.name}) : super(key: key);
@@ -70,8 +67,8 @@ class UpdateSensState extends State<UpdateSens> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  "Update Device: "+widget.name,style: TextStyle(
-                    fontSize: 18,
+                  "UPDATE DEVICE: "+widget.name,style: TextStyle(
+                    fontSize: 17,
                     fontWeight: FontWeight.w500
                 ),
                 ),
@@ -123,12 +120,21 @@ class UpdateSensState extends State<UpdateSens> {
                   ],
                 ),
               ),
-              /*  SizedBox(
-                height: 30,
-              ),*/
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                child: Text(
+                  "Please select the new device site",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600]
+                  ),
+                ),
+              ),
+
               FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-                  future: databaseHelper2.AllLocationByUser(),
+                  future: databaseHelper2.AllUserLocation(),
                   builder: (context,snapshot) {
                     if (snapshot.hasData) {
                       snapshot.data.forEach((Location) {
@@ -175,11 +181,11 @@ class UpdateSensState extends State<UpdateSens> {
                   child: AspectRatio(
                     child: FlatButton(
                         color: Colors.amberAccent,
-                        child: Text("Update", style: TextStyle(color: Colors.white)),
+                        child: Text("Update Device", style: TextStyle(color: Colors.white)),
                         onPressed:(){
                           if(DevicenameController.text == ""){
                             Fluttertoast.showToast(
-                                msg: "Please define your new sensor name !",
+                                msg: "Please define your new device name !",
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
                                 timeInSecForIosWeb: 5,
@@ -189,7 +195,7 @@ class UpdateSensState extends State<UpdateSens> {
                           }
                           else if(descriptionController.text == ""){
                             Fluttertoast.showToast(
-                                msg: "Please define your new sensor description !",
+                                msg: "Please define your new device description !",
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
                                 timeInSecForIosWeb: 5,
@@ -199,7 +205,7 @@ class UpdateSensState extends State<UpdateSens> {
                           }
                           else if(coordt.isEmpty == true){
                             Fluttertoast.showToast(
-                                msg: "Please select a new place on the map !",
+                                msg: "Please select a new site on the map !",
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
                                 timeInSecForIosWeb: 5,

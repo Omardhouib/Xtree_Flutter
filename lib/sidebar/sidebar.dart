@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebar_animation/Models/Location.dart';
+import 'package:sidebar_animation/Models/User.dart';
 import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
 import 'package:sidebar_animation/pages/loginPage.dart';
@@ -30,7 +31,7 @@ class _SideBarState extends State<SideBar>
 
   @override
   void initState() {
-    AllLocation = databaseHelper2.AllLocationByUser();
+    AllLocation = databaseHelper2.AllUserLocation();
     super.initState();
     _animationController =
         AnimationController(vsync: this, duration: _animationDuration);
@@ -93,13 +94,26 @@ class _SideBarState extends State<SideBar>
                     child: Column(
                       children: <Widget>[
                         ListTile(
-                          title: Text(
-                            "Omar dhouib",
-                            style: TextStyle(
-                                color: Colors.grey[400],
-                                fontSize: 25,
-                                fontWeight: FontWeight.w800),
-                          ),
+                          title:FutureBuilder<User>(
+//                future: databaseHelper.getData(),
+                              future: databaseHelper2.getUser(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasError) {
+                                  print(snapshot.error);
+                                  print("mochkla lenaa *");
+                                }
+                                if (snapshot.hasData) {
+                                  return Text(
+                                    "Omar dhouib",
+                                    style: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w800),
+                                  );
+                                } else {
+                                return Container();
+                                }
+                              }),
                           subtitle: Text(
                             "XTREE",
                             style: TextStyle(
@@ -176,7 +190,7 @@ class _SideBarState extends State<SideBar>
                         ),
                         FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-                            future: databaseHelper2.AllLocationByUser(),
+                            future: databaseHelper2.AllUserLocation(),
                             builder: (context, snapshot) {
                               if (snapshot.hasError) {
                                 print(snapshot.error);

@@ -12,7 +12,6 @@ import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/pages/Device/DeleteDev.dart';
-import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 
@@ -41,7 +40,7 @@ class deleteDevVerifyLocState extends State<deleteDevVerifyLoc> {
 
   @override
   void initState() {
-    AllLocation = databaseHelper2.AllLocationByUser();
+    AllLocation = databaseHelper2.AllUserLocation();
     super.initState();
   }
 
@@ -66,7 +65,7 @@ class deleteDevVerifyLocState extends State<deleteDevVerifyLoc> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: Text(
-                "Choose one Location !",style: TextStyle(
+                "Choose one Site !",style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w500
               ),

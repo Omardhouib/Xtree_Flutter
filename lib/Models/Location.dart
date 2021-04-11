@@ -31,14 +31,14 @@ class Location {
   int v;
 
   factory Location.fromJson(Map<String, dynamic> json) => Location(
-    automaticIrrigation: json["AutomaticIrrigation"],
-    coordinates: List<double>.from(json["Coordinates"].map((x) => x.toDouble())),
-    createdDate: DateTime.parse(json["Created_date"]),
-    sensorIds: List<String>.from(json["Sensor_ids"].map((x) => x)),
-    id: json["_id"],
-    siteName: json["SiteName"],
-    description: json["Description"],
-    v: json["__v"],
+    automaticIrrigation: json["AutomaticIrrigation"] == null ? null : json["AutomaticIrrigation"],
+    coordinates: json["Coordinates"] == null ? null : List<double>.from(json["Coordinates"].map((x) => x.toDouble())),
+    createdDate: json["Created_date"] == null ? null : DateTime.parse(json["Created_date"]),
+    sensorIds: json["Sensor_ids"] == null ? null : List<String>.from(json["Sensor_ids"].map((x) => x)),
+    id: json["_id"] == null ? null : json["_id"],
+    siteName: json["SiteName"] == null ? null : json["SiteName"],
+    description: json["Description"] == null ? null : json["Description"],
+    v: json["__v"] == null ? null : json["__v"],
   );
 
   Map<String, dynamic> toJson() => {

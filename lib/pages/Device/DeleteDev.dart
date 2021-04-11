@@ -13,7 +13,6 @@ import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/pages/Device/ConfirmeDeleteDev.dart';
-import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 

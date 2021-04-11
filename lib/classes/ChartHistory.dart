@@ -131,7 +131,6 @@ class ChartHistoryState extends State<ChartHistory> {
                          data.add(element);
                          print("elemnt"+element.toString());
                        }
-
                       });*/
                       return Column(
                         children: [

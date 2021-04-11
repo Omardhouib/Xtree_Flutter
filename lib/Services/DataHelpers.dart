@@ -139,7 +139,7 @@ class DatabaseHelper2 {
 
   }
 
-  Future<List<Location>> AllLocationByUser() async {
+  Future<List> AllLocationByUser() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final value = prefs.get(key) ?? 0;
@@ -151,11 +151,26 @@ class DatabaseHelper2 {
         //'Authorization': 'token $value'
       },
     );
+    return json.decode(response.body);
+  }
+
+  Future<List<Location>> AllUserLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'token';
+    final value = prefs.get(key) ?? 0;
+    String myUrl = "$serverUrl/location/getlocation?token=" + value;
+    http.Response response = await http.get(
+      myUrl,
+      headers: {
+        'Accept': 'application/json',
+        //'Authorization': 'token $value'
+      },
+    );
+  //  await Future.delayed(Duration(milliseconds: 500));
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
       List<dynamic> body = jsonDecode(response.body);
       List<Location> locations = body.map((dynamic item) => Location.fromJson(item)).toList();
-    //  await Future.delayed(Duration(milliseconds: 1200));
+
       return locations;
     } else {
       throw "Can't get orders";
@@ -212,7 +227,7 @@ class DatabaseHelper2 {
       },
     );
     if (response.statusCode == 200) {
-      await Future.delayed(Duration(milliseconds: 800));
+     // await Future.delayed(Duration(milliseconds: 800));
       // If the server did return a 200 OK response,
       return Location.fromJson(json.decode(response.body));
     } else {
@@ -298,7 +313,7 @@ class DatabaseHelper2 {
         });
 
     if (response.statusCode == 200) {
-      await Future.delayed(Duration(milliseconds: 800));
+     // await Future.delayed(Duration(milliseconds: 800));
 
       // If the server did return a 200 OK response,
       return Location.fromJson(json.decode(response.body));
@@ -334,9 +349,9 @@ class DatabaseHelper2 {
         headers: {
           'Accept': 'application/json',
         });
-    await Future.delayed(Duration(milliseconds: 1));
+   // await Future.delayed(Duration(milliseconds: 1));
     if (response.statusCode == 200) {
-      await Future.delayed(Duration(milliseconds: 800));
+   //   await Future.delayed(Duration(milliseconds: 800));
 
       // If the server did return a 200 OK response,
       return Weather.fromJson(json.decode(response.body));
@@ -352,7 +367,7 @@ class DatabaseHelper2 {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final value = prefs.get(key) ?? 0;
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(Duration(milliseconds: 500));
     String myUrl = "$serverUrl/sensors/getnumberSensors?token=" + value;
     http.Response response = await http.get(
       myUrl,
@@ -370,7 +385,7 @@ class DatabaseHelper2 {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final value = prefs.get(key) ?? 0;
-    await Future.delayed(Duration(milliseconds: 1500));
+    await Future.delayed(Duration(milliseconds: 1000));
     String myUrl = "$serverUrl/sensors/getnumberLocations?token=" + value;
     http.Response response = await http.get(
       myUrl,
@@ -406,7 +421,7 @@ class DatabaseHelper2 {
           'Accept': 'application/json',
         });
     if (response.statusCode == 200) {
-      await Future.delayed(Duration(milliseconds: 800));
+   //   await Future.delayed(Duration(milliseconds: 800));
 
       // If the server did return a 200 OK response,
       return Sensor.fromJson(json.decode(response.body));
@@ -427,7 +442,7 @@ class DatabaseHelper2 {
           'Accept': 'application/json',
         });
     if (response.statusCode == 200) {
-      await Future.delayed(Duration(milliseconds: 800));
+   //   await Future.delayed(Duration(milliseconds: 800));
 
       // If the server did return a 200 OK response,
       return Sensor.fromJson(json.decode(response.body));
@@ -448,7 +463,7 @@ class DatabaseHelper2 {
           'Accept': 'application/json',
         });
     if (response.statusCode == 200) {
-      await Future.delayed(Duration(milliseconds: 800));
+     // await Future.delayed(Duration(milliseconds: 800));
 
       // If the server did return a 200 OK response,
       return Sensor.fromJson(json.decode(response.body));
@@ -469,7 +484,7 @@ class DatabaseHelper2 {
           'Accept': 'application/json',
         });
     if (response.statusCode == 200) {
-      await Future.delayed(Duration(milliseconds: 800));
+   //   await Future.delayed(Duration(milliseconds: 800));
 
       // If the server did return a 200 OK response,
       return Sensor.fromJson(json.decode(response.body));

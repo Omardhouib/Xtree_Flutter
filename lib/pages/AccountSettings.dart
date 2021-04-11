@@ -30,12 +30,12 @@ class _AccountSettingsState extends State<AccountSettings> {
         scrollDirection: Axis.vertical,
         children: [
           Container(
-            height: 900,
+            height: 820,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/accountsettings.png'),
-                  fit: BoxFit.cover,
-                )),
+              image: AssetImage('assets/images/accountsettings.png'),
+              fit: BoxFit.cover,
+            )),
             child: Column(
               children: <Widget>[
                 Container(
@@ -62,7 +62,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                         return Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 230, 20, 0),
+                              padding:
+                                  const EdgeInsets.fromLTRB(20, 180, 20, 0),
                               child: Container(
                                 height: 80,
                                 child: Card(
@@ -108,7 +109,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                               child: Container(
                                 height: 80,
                                 child: Card(
@@ -154,7 +155,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                               child: Container(
                                 height: 80,
                                 child: Card(
@@ -200,7 +201,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                               child: Container(
                                 height: 80,
                                 child: Card(
@@ -235,7 +236,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                                       ),
                                       Text(
                                         snapshot.data.createdDate.year
-                                            .toString() +
+                                                .toString() +
                                             "-" +
                                             snapshot.data.createdDate.month
                                                 .toString() +
@@ -281,7 +282,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                       },
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
-                          side: BorderSide(color: Colors.blue[300], width: 1.5)),
+                          side:
+                              BorderSide(color: Colors.blue[300], width: 1.5)),
                       color: Colors.blue[100],
                       splashColor: Colors.blue[300],
                       textColor: Colors.black,

@@ -12,7 +12,6 @@ import 'package:sidebar_animation/Services/DataHelpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 import 'package:sidebar_animation/pages/Location/AllLocations.dart';
-import 'package:sidebar_animation/pages/Location/HomeLocation.dart';
 import 'package:sidebar_animation/pages/Location/LocationDetails.dart';
 import 'package:sidebar_animation/sidebar/sidebar_layout.dart';
 
@@ -72,7 +71,7 @@ class UpdateLocState extends State<UpdateLoc> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  "Update Location: "+widget.name,style: TextStyle(
+                  "UPDATE SITE: "+widget.name,style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500
                 ),
@@ -152,7 +151,7 @@ class UpdateLocState extends State<UpdateLoc> {
                   child: AspectRatio(
                     child: FlatButton(
                       color: Colors.amberAccent,
-                      child: Text("Update Location", style: TextStyle(color: Colors.white)),
+                      child: Text("Update Site", style: TextStyle(color: Colors.white)),
                       onPressed:(){
                         if(sitenameController.text == ""){
                           Fluttertoast.showToast(
@@ -238,7 +237,7 @@ class UpdateLocState extends State<UpdateLoc> {
 
     if (json.decode(response.body)['status'] == "ok") {
       await Fluttertoast.showToast(
-          msg: "Location Updated",
+          msg: "Site Updated",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 3,

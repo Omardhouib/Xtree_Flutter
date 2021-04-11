@@ -21,8 +21,8 @@ class DevicesHome {
   List<Sensor> electro;
 
   factory DevicesHome.fromJson(Map<String, dynamic> json) => DevicesHome(
-    sensors: List<Sensor>.from(json["Sensors"].map((x) => Sensor.fromJson(x))),
-    electro: List<Sensor>.from(json["Electro"].map((x) => Sensor.fromJson(x))),
+    sensors: json["Sensors"] == null ? null : List<Sensor>.from(json["Sensors"].map((x) => Sensor.fromJson(x))),
+    electro: json["Electro"] == null ? null : List<Sensor>.from(json["Electro"].map((x) => Sensor.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
