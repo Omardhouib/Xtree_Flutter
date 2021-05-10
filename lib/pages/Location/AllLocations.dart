@@ -46,11 +46,14 @@ class _LocationsState extends State<Locations> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     List<String> locations = [];
     List<Location> loc = [];
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
         child: Column(
           children: [
             Container(
@@ -59,7 +62,7 @@ class _LocationsState extends State<Locations> {
                 child: Row(
                   children: <Widget>[
                     Container(
-                      width: 350,
+                      width: queryData.size.width - 100,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -186,7 +189,7 @@ class _LocationsState extends State<Locations> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(140, 0, 0, 0),
+                                    padding: const EdgeInsets.fromLTRB(110, 0, 0, 0),
                                     child: FlatButton(
                                       child: Icon(
                                         Icons.add_circle_outline,
@@ -211,7 +214,7 @@ class _LocationsState extends State<Locations> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                           child: Container(
-                            height: 380,
+                            height: 340,
                             width: 600,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.all(Radius.circular(12.0)),
@@ -272,7 +275,7 @@ class _ItemListState extends State<ItemList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Container(
-        height: 350,
+        height: 300,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
             border: Border.all(color: Colors.transparent,width: 2)
@@ -325,9 +328,9 @@ class _ItemListState extends State<ItemList> {
                                   );
                                 },*/
                                 child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(10, 7, 10, 0),
+                                  padding: const EdgeInsets.fromLTRB(10, 7, 0, 0),
                                   child: Container(
-                                    width: 230,
+                                    width: 190,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [

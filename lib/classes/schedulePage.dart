@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -26,6 +25,8 @@ import 'package:sidebar_animation/graphic.dart' as graphic;
 import 'package:flutter/gestures.dart';
 import 'package:sidebar_animation/bloc.navigation_bloc/navigation_bloc.dart';
 
+import '../sidebar/sidebar_layout.dart';
+
 class schedulePage extends StatefulWidget with NavigationStates {
   Location location;
   Sensor sens;
@@ -46,12 +47,13 @@ class schedulePageState extends State<schedulePage> {
   List<String> _mode = ['Manuel mode', 'AI mode']; // Option 2
   String _selectedLocation;
   String _selectedGender = null;
-  bool toast= true;
+  bool toast = true;
+  bool pressed = true;
+  bool status;
   final TextEditingController TmaxController = new TextEditingController();
-  final TextEditingController TminController =
-  new TextEditingController();
+  final TextEditingController TminController = new TextEditingController();
   _renderWidget() {
-    if (_selectedLocation == "Manuel mode") {
+    if (_selectedLocation == "Manuel mode" && widget.sens.rules.isEmpty) {
       widget.Electro.forEach((element) {
         Elec.add({"item_id": element.id, "item_text": element.name});
       });
@@ -281,102 +283,487 @@ class schedulePageState extends State<schedulePage> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(37, 40, 0, 5),
-                  child: Container(
-                    height: 45,
-                    width: 350,
-                    child: FlatButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.save,
-                            color: Colors.blue,
-                          ),
-                          Text(
-                            '  Save',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
-                      onPressed: (){
-                        _doSomething();
-                      },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7.0),
-                          side: BorderSide(color: Colors.grey,width: 1.5)
-
-                      ),
-                      color: Colors.white,
-                      splashColor: Colors.grey,
-                      textColor: Colors.black,
-                    ),
-
-                  ),
-                ),
-                Row(
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(58, 0, 5, 0),
+                      padding: const EdgeInsets.fromLTRB(0, 40, 0, 5),
                       child: Container(
                         height: 45,
-                        width: 150,
+                        width: 350,
                         child: FlatButton(
-                          child: Text("Start process",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),),
-                          onPressed: (){
-                            TurnOn(widget.sens.id);
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.save,
+                                color: Colors.blue,
+                              ),
+                              Text(
+                                '  Save',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            _doSomething();
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(7.0),
-                              side: BorderSide(color: Colors.black,width: 0.5)
-
-                          ),
-                          color: Colors.green,
-                          splashColor: Colors.green,
+                              side: BorderSide(color: Colors.blue[300], width: 2)),
+                          color: Colors.blue[100],
+                          splashColor: Colors.blue[400],
                           textColor: Colors.black,
                         ),
-
                       ),
                     ),
-                    Container(
-                      height: 45,
-                      width: 150,
-                      child: FlatButton(
-                        child: Text("Stop process",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                          ),),
-                        onPressed: (){
-                          TurnOff(widget.sens.id);
-                        },
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(7.0),
-                            side: BorderSide(color: Colors.black,width: 0.5)
-
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
+                          child: Container(
+                            height: 45,
+                            width: 150,
+                            child: FlatButton(
+                              child: Text(
+                                "Start process",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onPressed: () {
+                                Fluttertoast.showToast(
+                                    msg:
+                                    "There is no process to activate ! please save at least one process !",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 10,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 10.0);
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(7.0),
+                                  side: BorderSide(
+                                      color: Colors.green, width: 0.5)),
+                              color: Colors.green,
+                              splashColor: Colors.green,
+                              textColor: Colors.black,
+                            ),
+                          ),
                         ),
-                        color: Colors.red,
-                        splashColor: Colors.red,
-                        textColor: Colors.black,
-                      ),
-
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                          child: Container(
+                            height: 45,
+                            width: 150,
+                            child: FlatButton(
+                              child: Text(
+                                "Stop process",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onPressed: () {
+                                Fluttertoast.showToast(
+                                    msg:
+                                    "There is no process to stop ! please save at least one process !",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 10,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 10.0);
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(7.0),
+                                  side: BorderSide(
+                                      color: Colors.red, width: 0.5)),
+                              color: Colors.red,
+                              splashColor: Colors.red,
+                              textColor: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
+
               ],
             ),
           ),
         ),
       ); // this could be any Widget
     }
-    else if (_selectedLocation == "AI mode"){
+    else if (_selectedLocation == "Manuel mode" && widget.sens.rules.isNotEmpty) {
+      widget.Electro.forEach((element) {
+        Elec.add({"item_id": element.id, "item_text": element.name});
+      });
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0), color: Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device name: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.name,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device description: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.description,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device status: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.status.toString(),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'Start date:  ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        "${selectedDate.toLocal()}".split(' ')[0],
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                        child: Container(
+                          width: 180,
+                          height: 40,
+                          child: FlatButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                side: BorderSide(
+                                    color: Colors.blue[300], width: 1.5)),
+                            onPressed: () => _selectDate(context),
+                            color: Colors.transparent,
+                            textColor: Colors.blue,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today,
+                                  color: Colors.blue,
+                                ),
+                                Text(
+                                  '      Select date',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'T max:  ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Container(
+                        width: 80,
+                        height: 50,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "T max cannot be empty !";
+                            } else
+                              return null;
+                          },
+                          controller: TmaxController,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(10.0),
+                              borderSide: BorderSide(
+                                  color: Colors.blue[300], width: 1.0),
+                            ),
+                            hintText: "80",
+                            hintStyle: TextStyle(color: Colors.grey[400]),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        child: Text(
+                          'T min:  ',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      Container(
+                        width: 80,
+                        height: 50,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "T min cannot be empty !";
+                            } else
+                              return null;
+                          },
+                          controller: TminController,
+                          decoration: InputDecoration(
+                              border: new OutlineInputBorder(
+                                borderRadius: new BorderRadius.circular(10.0),
+                                borderSide: BorderSide(
+                                    color: Colors.blue[300], width: 1.5),
+                              ),
+                              hintText: "20",
+                              hintStyle: TextStyle(color: Colors.grey[400])),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Alert type: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        'Email',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Relays:     ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 13, 0, 0),
+                        child: Form(
+                          key: _formKey,
+                          child: MultiSelectFormField(
+                            context: context,
+                            buttonText: 'Relays',
+                            itemList: widget.Electro,
+                            questionText: 'Select Your Relays',
+                            validator: (flavours) => flavours.length == 0
+                                ? 'Please select at least one Relay!'
+                                : null,
+                            onSaved: (flavours) {
+                              print(widget.Electro);
+                              // Logic to save selected flavours in the database
+                            },
+                          ),
+                          onChanged: () {
+                            if (_formKey.currentState.validate()) {
+                              // Invokes the OnSaved Method
+                              _formKey.currentState.save();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 40, 0, 5),
+                      child: Container(
+                        height: 45,
+                        width: 350,
+                        child: FlatButton(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.save,
+                                color: Colors.blue,
+                              ),
+                              Text(
+                                '  Save',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            _doSomething();
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7.0),
+                              side: BorderSide(color: Colors.blue[400], width: 2)),
+                          color: Colors.blue[50],
+                          splashColor: Colors.blue[300],
+                          textColor: Colors.black,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
+                          child: Container(
+                            height: 45,
+                            width: 150,
+                            child: FlatButton(
+                              child: Text(
+                                "Start process",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onPressed: () {
+                                widget.sens.rules.forEach((element) {
+                                  status = element.status;
+                                });
+                                if (status == false) {
+                                  print(status.toString());
+                                  TurnOn(widget.sens.id);
+                                } else if (status == true) {
+                                  print(status.toString());
+                                  Fluttertoast.showToast(
+                                      msg:
+                                      "The process is already activated !",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 10,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 10.0);
+                                }
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(7.0),
+                                  side: BorderSide(
+                                      color: Colors.green, width: 0.5)),
+                              color: Colors.green,
+                              splashColor: Colors.green,
+                              textColor: Colors.black,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                          child: Container(
+                            height: 45,
+                            width: 150,
+                            child: FlatButton(
+                              child: Text(
+                                "Stop process",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onPressed: () {
+                                widget.sens.rules.forEach((element) {
+                                  status = element.status;
+                                });
+                                if (status == true) {
+                                  TurnOff(widget.sens.id);
+                                } else if (status == false) {
+                                  print(status.toString());
+                                  Fluttertoast.showToast(
+                                      msg: "The process is already stopped !",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 10,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 10.0);
+                                }
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(7.0),
+                                  side: BorderSide(
+                                      color: Colors.red, width: 0.5)),
+                              color: Colors.red,
+                              splashColor: Colors.red,
+                              textColor: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+
+              ],
+            ),
+          ),
+        ),
+      ); // this could be any Widget
+    }
+    else if (_selectedLocation == "AI mode" && widget.sens.rules.isEmpty) {
       widget.Electro.forEach((element) {
         Elec.add({"item_id": element.id, "item_text": element.name});
       });
@@ -579,65 +966,32 @@ class schedulePageState extends State<schedulePage> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(37, 40, 0, 5),
-                  child: Container(
-                    height: 45,
-                    width: 350,
-                    child: FlatButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.save,
-                            color: Colors.blue,
-                          ),
-                          Text(
-                            '  Save',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
-                      onPressed: (){
-                        Fluttertoast.showToast(
-                            msg: "AI configurations are saved with success !",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 10,
-                            backgroundColor: Colors.green,
-                            textColor: Colors.white,
-                            fontSize: 10.0);
-                      },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7.0),
-                          side: BorderSide(color: Colors.grey,width: 1.5)
-
-                      ),
-                      color: Colors.white,
-                      splashColor: Colors.grey,
-                      textColor: Colors.black,
-                    ),
-
-                  ),
-                ),
-                Row(
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(58, 0, 5, 0),
+                      padding: const EdgeInsets.fromLTRB(0, 40, 0, 5),
                       child: Container(
                         height: 45,
-                        width: 150,
+                        width: 350,
                         child: FlatButton(
-                          child: Text("Start process",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),),
-                          onPressed: (){
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.save,
+                                color: Colors.blue,
+                              ),
+                              Text(
+                                '  Save',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
                             Fluttertoast.showToast(
-                                msg: "Process started",
+                                msg: "AI configurations are saved with success !",
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
                                 timeInSecForIosWeb: 10,
@@ -647,48 +1001,447 @@ class schedulePageState extends State<schedulePage> {
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(7.0),
-                              side: BorderSide(color: Colors.black,width: 0.5)
-
-                          ),
-                          color: Colors.green,
-                          splashColor: Colors.green,
+                              side: BorderSide(color: Colors.blue[400], width: 2)),
+                          color: Colors.blue[50],
+                          splashColor: Colors.blue[300],
                           textColor: Colors.black,
                         ),
-
                       ),
                     ),
-                    Container(
-                      height: 45,
-                      width: 150,
-                      child: FlatButton(
-                        child: Text("Stop process",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                          ),),
-                        onPressed: (){
-                          Fluttertoast.showToast(
-                              msg: "Process stopped",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 10,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 10.0);
-                        },
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(7.0),
-                            side: BorderSide(color: Colors.black,width: 0.5)
-
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
+                          child: Container(
+                            height: 45,
+                            width: 150,
+                            child: FlatButton(
+                              child: Text(
+                                "Start process",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onPressed: () {
+                                Fluttertoast.showToast(
+                                    msg:
+                                    "There is no process to activate ! please save at least one process !",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 10,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 10.0);
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(7.0),
+                                  side: BorderSide(
+                                      color: Colors.green, width: 0.5)),
+                              color: Colors.green,
+                              splashColor: Colors.green,
+                              textColor: Colors.black,
+                            ),
+                          ),
                         ),
-                        color: Colors.red,
-                        splashColor: Colors.red,
-                        textColor: Colors.black,
-                      ),
-
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                          child: Container(
+                            height: 45,
+                            width: 150,
+                            child: FlatButton(
+                              child: Text(
+                                "Stop process",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onPressed: () {
+                                Fluttertoast.showToast(
+                                    msg:
+                                    "There is no process to stop ! please save at least one process !",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 10,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 10.0);
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(7.0),
+                                  side: BorderSide(
+                                      color: Colors.red, width: 0.5)),
+                              color: Colors.red,
+                              splashColor: Colors.red,
+                              textColor: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
+
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    else if (_selectedLocation == "AI mode" && widget.sens.rules.isNotEmpty) {
+      widget.Electro.forEach((element) {
+        Elec.add({"item_id": element.id, "item_text": element.name});
+      });
+      var now = new DateTime.now();
+      var formatter = new DateFormat('yyyy-MM-dd');
+      String date = formatter.format(now);
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0), color: Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device name: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.name,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device description: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.description,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Device status: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        widget.sens.status.toString(),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'Start date:  ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        date.toString(),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'T max:  ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Container(
+                        width: 80,
+                        height: 50,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "T max cannot be empty !";
+                            } else
+                              return null;
+                          },
+                          controller: TmaxController,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(10.0),
+                              borderSide: BorderSide(
+                                  color: Colors.blue[300], width: 1.0),
+                            ),
+                            hintText: "80",
+                            hintStyle: TextStyle(color: Colors.grey[400]),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        child: Text(
+                          'T min:  ',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      Container(
+                        width: 80,
+                        height: 50,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "T min cannot be empty !";
+                            } else
+                              return null;
+                          },
+                          controller: TminController,
+                          decoration: InputDecoration(
+                              border: new OutlineInputBorder(
+                                borderRadius: new BorderRadius.circular(10.0),
+                                borderSide: BorderSide(
+                                    color: Colors.blue[300], width: 1.5),
+                              ),
+                              hintText: "20",
+                              hintStyle: TextStyle(color: Colors.grey[400])),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Alert type: ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        'Email',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Relays:     ',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 13, 0, 0),
+                        child: Form(
+                          key: _formKey,
+                          child: MultiSelectFormField(
+                            context: context,
+                            buttonText: 'Relays',
+                            itemList: widget.Electro,
+                            questionText: 'Select Your Relays',
+                            validator: (flavours) => flavours.length == 0
+                                ? 'Please select at least one Relay!'
+                                : null,
+                            onSaved: (flavours) {
+                              print(widget.Electro);
+                              // Logic to save selected flavours in the database
+                            },
+                          ),
+                          onChanged: () {
+                            if (_formKey.currentState.validate()) {
+                              // Invokes the OnSaved Method
+                              _formKey.currentState.save();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 40, 0, 5),
+                      child: Container(
+                        height: 45,
+                        width: 350,
+                        child: FlatButton(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.save,
+                                color: Colors.blue,
+                              ),
+                              Text(
+                                '  Save',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            Fluttertoast.showToast(
+                                msg: "AI configurations are saved with success !",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 10,
+                                backgroundColor: Colors.green,
+                                textColor: Colors.white,
+                                fontSize: 10.0);
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7.0),
+                              side: BorderSide(color: Colors.blue[400], width: 2)),
+                          color: Colors.blue[50],
+                          splashColor: Colors.blue[300],
+                          textColor: Colors.black,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
+                          child: Container(
+                            height: 45,
+                            width: 150,
+                            child: FlatButton(
+                              child: Text(
+                                "Start process",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onPressed: () {
+                                widget.sens.rules.forEach((element) {
+                                  status = element.status;
+                                });
+                                if (status == false) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                      "Process started !",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 10,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 10.0);
+                                } else if (status == true) {
+                                  print(status.toString());
+                                  Fluttertoast.showToast(
+                                      msg:
+                                      "The process is already activated !",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 10,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 10.0);
+                                }
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(7.0),
+                                  side: BorderSide(
+                                      color: Colors.green, width: 0.5)),
+                              color: Colors.green,
+                              splashColor: Colors.green,
+                              textColor: Colors.black,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                          child: Container(
+                            height: 45,
+                            width: 150,
+                            child: FlatButton(
+                              child: Text(
+                                "Stop process",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onPressed: () {
+                                widget.sens.rules.forEach((element) {
+                                  status = element.status;
+                                });
+                                if (status == true) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                      "Process stoped !",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 10,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 10.0);
+                                } else if (status == false) {
+                                  print(status.toString());
+                                  Fluttertoast.showToast(
+                                      msg: "The process is already stopped !",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 10,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 10.0);
+                                }
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(7.0),
+                                  side: BorderSide(
+                                      color: Colors.red, width: 0.5)),
+                              color: Colors.red,
+                              splashColor: Colors.red,
+                              textColor: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+
               ],
             ),
           ),
@@ -716,6 +1469,8 @@ class schedulePageState extends State<schedulePage> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     List<String> flavours = [];
     String _chosenValue;
     var hour = DateTime.now().hour;
@@ -730,55 +1485,64 @@ class schedulePageState extends State<schedulePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   new IconButton(
-                    icon: new Icon(Icons.arrow_back, color: Colors.black,size: 30,),
+                    icon: new Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 30,
+                    ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   Container(
+                    width: queryData.size.width,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(10, 0, 0, 25),
                       child: Row(
                         children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                widget.location.siteName,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 30.0,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.normal,
+                          Container(
+                            width: queryData.size.width - 100,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  widget.location.siteName,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 30.0,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.normal,
+                                  ),
                                 ),
-                              ),
-                              FutureBuilder<User>(
+                                FutureBuilder<User>(
 //                future: databaseHelper.getData(),
-                                  future: databaseHelper2.getUser(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasError) {
-                                      print(snapshot.error);
-                                      print("mochkla lenaa *");
-                                    }
-                                    if (snapshot.hasData) {
-                                      return Text(
-                                          'Welcome '+snapshot.data.firstName+' '+snapshot.data.lastName,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 15.0,
-                                            color: Colors.grey,
-                                            fontWeight:
-                                            FontWeight.w500,
-                                            fontStyle:
-                                            FontStyle.normal,
-                                          ));
-                                    } else {
-                                      return Container();
-                                    }
-                                  }),
-                            ],
+                                    future: databaseHelper2.getUser(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasError) {
+                                        print(snapshot.error);
+                                        print("mochkla lenaa *");
+                                      }
+                                      if (snapshot.hasData) {
+                                        return Text(
+                                            'Welcome ' +
+                                                snapshot.data.firstName +
+                                                ' ' +
+                                                snapshot.data.lastName,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 15.0,
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w500,
+                                              fontStyle: FontStyle.normal,
+                                            ));
+                                      } else {
+                                        return Container();
+                                      }
+                                    }),
+                              ],
+                            ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(190, 0, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: CircleAvatar(
                               backgroundColor: Colors.blue[100],
                               child: Icon(
@@ -830,7 +1594,7 @@ class schedulePageState extends State<schedulePage> {
                     child: Text(
                       'Please choose the mode',
                       style:
-                      TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                     ),
                   ), // Not necessary for Option 1
                   value: _selectedLocation,
@@ -869,7 +1633,6 @@ class schedulePageState extends State<schedulePage> {
     );
   }
 
-
   // DatabaseHelper2 databaseHelper2 = new DatabaseHelper2();
   final _key = GlobalKey<FormState>();
   List<dynamic> NotifSelection = [];
@@ -883,10 +1646,10 @@ class schedulePageState extends State<schedulePage> {
     print("button pressed ");
     print(" max" + TmaxController.text);
     print(" min" + TminController.text);
-    print(" date" + selectedDate.toIso8601String()+"Z");
+    print(" date" + selectedDate.toIso8601String() + "Z");
     print(" relays" + value.toString());
     print(" relays" + NotifSelection.toString());
-    if (TmaxController.text.isEmpty){
+    if (TmaxController.text.isEmpty) {
       Fluttertoast.showToast(
           msg: "T Max Cannot be empty!",
           toastLength: Toast.LENGTH_SHORT,
@@ -895,8 +1658,7 @@ class schedulePageState extends State<schedulePage> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 10.0);
-    }
-    else if (TminController.text.isEmpty){
+    } else if (TminController.text.isEmpty) {
       Fluttertoast.showToast(
           msg: "T Min Cannot be empty!",
           toastLength: Toast.LENGTH_SHORT,
@@ -905,8 +1667,8 @@ class schedulePageState extends State<schedulePage> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 10.0);
-    }
-    else if (int.parse(TmaxController.text) < int.parse(TminController.text) ){
+    } else if (int.parse(TmaxController.text) <
+        int.parse(TminController.text)) {
       Fluttertoast.showToast(
           msg: "T Min Cannot be greater than T Max!",
           toastLength: Toast.LENGTH_SHORT,
@@ -915,8 +1677,8 @@ class schedulePageState extends State<schedulePage> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 10.0);
-    }
-    else if (int.parse(TmaxController.text) == int.parse(TminController.text) ){
+    } else if (int.parse(TmaxController.text) ==
+        int.parse(TminController.text)) {
       Fluttertoast.showToast(
           msg: "T Max and T Min Cannot be equal!",
           toastLength: Toast.LENGTH_SHORT,
@@ -925,39 +1687,46 @@ class schedulePageState extends State<schedulePage> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 10.0);
+    } else {
+      AddRules(widget.sens.id, NotifSelection, selectedDate,
+          TmaxController.text, TminController.text, value);
+      setState(() {
+      });
+      Fluttertoast.showToast(
+          msg: "Manuel configurations are saved with success !",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 10,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 10.0);
+      NotifSelection.clear();
+      print(" relays" + value.toString());
+      print(" relays" + NotifSelection.toString());
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SideBarLayout()));
     }
-    AddRules(widget.sens.id, NotifSelection, selectedDate, TmaxController.text, TminController.text, value);
-    Fluttertoast.showToast(
-        msg: "Manuel configurations are saved with success !",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 10,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 10.0);
-    NotifSelection.clear();
-    print(" relays" + value.toString());
-    print(" relays" + NotifSelection.toString());
-
-
   }
 
-  void AddRules(String id, List NotifSelection, DateTime startDate, String Tmax, String Tmin, Object value) async {
+  void AddRules(String id, List NotifSelection, DateTime startDate, String Tmax,
+      String Tmin, Object value) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
     final token = prefs.get(key) ?? 0;
     var jsonResponse = null;
     List<dynamic> RelayConfiguration = [];
-    RelayConfiguration.add({"NotifSelection": NotifSelection, "RelaySelection": value, "date": selectedDate.toIso8601String(), "TMax": Tmax, "TMin": Tmin});
-    Map data = {
-      "SensorId": "$id",
-      "Rules": RelayConfiguration
-    };    String myUrl = DatabaseHelper2.serverUrl + "/sensors/AddRules?token=" + token;
+    RelayConfiguration.add({
+      "NotifSelection": NotifSelection,
+      "RelaySelection": value,
+      "date": selectedDate.toIso8601String(),
+      "TMax": Tmax,
+      "TMin": Tmin
+    });
+    Map data = {"SensorId": "$id", "Rules": RelayConfiguration};
+    String myUrl =
+        DatabaseHelper2.serverUrl + "/sensors/AddRules?token=" + token;
     var response = await http.post(myUrl,
-        headers: {"Content-Type": "application/json"},
-        body:
-        json.encode(data)
-    );
+        headers: {"Content-Type": "application/json"}, body: json.encode(data));
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
 
@@ -971,7 +1740,7 @@ class schedulePageState extends State<schedulePage> {
             textColor: Colors.white,
             fontSize: 10.0);
         NotifSelection.clear();
-      } else if (jsonResponse['status'] == "err"){
+      } else if (jsonResponse['status'] == "err") {
         await Fluttertoast.showToast(
             msg: "Something goes wrong !",
             toastLength: Toast.LENGTH_SHORT,
@@ -984,7 +1753,6 @@ class schedulePageState extends State<schedulePage> {
     }
   }
 
-
   TurnOff(String id) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'token';
@@ -992,7 +1760,9 @@ class schedulePageState extends State<schedulePage> {
     Map data = {'ProcessState': false, 'SensorId': "$id"};
     var jsonResponse = null;
     var response = await http.post(
-        DatabaseHelper2.serverUrl + "/dashboard/ProcessConfiguration?token=" + value,
+        DatabaseHelper2.serverUrl +
+            "/dashboard/ProcessConfiguration?token=" +
+            value,
         headers: {"Content-Type": "application/json"},
 //        "http://192.168.56.81:3000/api/users/login",
         body: json.encode(data));
@@ -1009,11 +1779,7 @@ class schedulePageState extends State<schedulePage> {
             textColor: Colors.white,
             fontSize: 10.0);
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    SideBarLayout(
-                    )));
+            context, MaterialPageRoute(builder: (context) => SideBarLayout()));
       }
     }
     print(response.body);
@@ -1026,7 +1792,9 @@ class schedulePageState extends State<schedulePage> {
     Map data = {'ProcessState': true, 'SensorId': "$id"};
     var jsonResponse = null;
     var response = await http.post(
-        DatabaseHelper2.serverUrl + "/dashboard/ProcessConfiguration?token=" + value,
+        DatabaseHelper2.serverUrl +
+            "/dashboard/ProcessConfiguration?token=" +
+            value,
         headers: {"Content-Type": "application/json"},
 //        "http://192.168.56.81:3000/api/users/login",
         body: json.encode(data));
@@ -1043,11 +1811,7 @@ class schedulePageState extends State<schedulePage> {
             textColor: Colors.white,
             fontSize: 10.0);
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    SideBarLayout(
-                    )));
+            context, MaterialPageRoute(builder: (context) => SideBarLayout()));
       }
     }
     print(response.body);
@@ -1057,9 +1821,9 @@ class schedulePageState extends State<schedulePage> {
     List<String> ddl = ['AI mode', 'Manuel mode'];
     return ddl
         .map((value) => DropdownMenuItem(
-      value: value,
-      child: Text(value),
-    ))
+              value: value,
+              child: Text(value),
+            ))
         .toList();
   }
 }
@@ -1145,11 +1909,9 @@ class _ItemchartState extends State<Itemchart> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                  0, 15, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                               child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     snapshot.data.name.toString(),
@@ -1159,8 +1921,9 @@ class _ItemchartState extends State<Itemchart> {
                                     ),
                                   ),
                                   Text(
-                                    "Identifier: "+snapshot.data.sensorIdentifier
-                                        .toString(),
+                                    "Identifier: " +
+                                        snapshot.data.sensorIdentifier
+                                            .toString(),
                                     style: TextStyle(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.w400,
@@ -1168,8 +1931,8 @@ class _ItemchartState extends State<Itemchart> {
                                     ),
                                   ),
                                   Text(
-                                    "Type: "+snapshot.data.sensorType
-                                        .toString(),
+                                    "Type: " +
+                                        snapshot.data.sensorType.toString(),
                                     style: TextStyle(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.w400,
@@ -1185,7 +1948,7 @@ class _ItemchartState extends State<Itemchart> {
                     ),
                     FutureBuilder(
                         future:
-                        databaseHelper2.getdataDeviceByID(snapshot.data.id),
+                            databaseHelper2.getdataDeviceByID(snapshot.data.id),
                         builder: (context, snapshot2) {
                           if (snapshot2.hasError) {
                             print(snapshot2.error);
@@ -1199,7 +1962,8 @@ class _ItemchartState extends State<Itemchart> {
                           if (snapshot2.hasData) {
                             return Column(
                               children: [
-                                ChartLineClass(data: snapshot2.data, type: type),
+                                ChartLineClass(
+                                    data: snapshot2.data, type: type),
                                 Container(
                                   height: 90,
                                   child: Card(
@@ -1229,10 +1993,10 @@ class _ItemchartState extends State<Itemchart> {
                                               0, 0, 20, 0),
                                           child: Text(
                                             snapshot2.data[
-                                            snapshot2.data.length -
-                                                1]["batterie"]
-                                                .round()
-                                                .toString() +
+                                                        snapshot2.data.length -
+                                                            1]["batterie"]
+                                                    .round()
+                                                    .toString() +
                                                 "%",
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,

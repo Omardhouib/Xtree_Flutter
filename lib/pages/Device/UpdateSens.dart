@@ -62,6 +62,7 @@ class UpdateSensState extends State<UpdateSens> {
           borderRadius: BorderRadius.all(Radius.circular(20.0))),
       contentPadding: EdgeInsets.only(top: 10.0),
       content: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
       child: Column(
             children: [
               Padding(
@@ -158,7 +159,7 @@ class UpdateSensState extends State<UpdateSens> {
                       });
                     }
                     return Container(
-                      height: 600,
+                      height: 450,
                       width: 400,
                       child:GoogleMap(
                         initialCameraPosition: _initialPosition,

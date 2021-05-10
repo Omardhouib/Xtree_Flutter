@@ -91,168 +91,185 @@ class _SideBarState extends State<SideBar>
                       ])),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 70, 0, 0),
-                    child: Column(
-                      children: <Widget>[
-                        ListTile(
-                          title:FutureBuilder<User>(
+                    child: GestureDetector(
+                      onTap: () {
+                        BlocProvider.of<NavigationBloc>(context)
+                            .add(NavigationEvents.HomePageClickedEvent);
+                        onIconPressed();
+                      },
+                      child: Container(
+                        child: Column(
+                          children: <Widget>[
+                            ListTile(
+                              title: FutureBuilder<User>(
 //                future: databaseHelper.getData(),
-                              future: databaseHelper2.getUser(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasError) {
-                                  print(snapshot.error);
-                                  print("mochkla lenaa *");
-                                }
-                                if (snapshot.hasData) {
-                                  return Text(
-                                    "Omar dhouib",
-                                    style: TextStyle(
-                                        color: Colors.grey[400],
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w800),
-                                  );
-                                } else {
-                                return Container();
-                                }
-                              }),
-                          subtitle: Text(
-                            "XTREE",
-                            style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 18,
+                                  future: databaseHelper2.getUser(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError) {
+                                      print(snapshot.error);
+                                      print("mochkla lenaa *");
+                                    }
+                                    if (snapshot.hasData) {
+                                      return Text(
+                                        "Omar dhouib",
+                                        style: TextStyle(
+                                            color: Colors.grey[400],
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.w800),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  }),
+                              subtitle: Text(
+                                "XTREE",
+                                style: TextStyle(
+                                  color: Colors.grey[400],
+                                  fontSize: 18,
+                                ),
+                              ),
+                              leading: CircleAvatar(
+                                child: Icon(
+                                  Icons.perm_identity,
+                                  color: Colors.grey[400],
+                                ),
+                                radius: 40,
+                              ),
                             ),
-                          ),
-                          leading: CircleAvatar(
-                            child: Icon(
-                              Icons.perm_identity,
-                              color: Colors.grey[400],
+                            Divider(
+                              height: 34,
+                              thickness: 0.9,
+                              color: Colors.grey[400].withOpacity(0.3),
+                              indent: 32,
+                              endIndent: 32,
                             ),
-                            radius: 40,
-                          ),
-                        ),
-                        Divider(
-                          height: 34,
-                          thickness: 0.9,
-                          color: Colors.grey[400].withOpacity(0.3),
-                          indent: 32,
-                          endIndent: 32,
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.home),
-                          title: Text(
-                            "Dashboard",
-                            style: TextStyle(
-                                color: Colors.grey[400],
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          onTap: () {
-                            onIconPressed();
-                            BlocProvider.of<NavigationBloc>(context)
-                                .add(NavigationEvents.HomePageClickedEvent);
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.place),
-                          title: Text(
-                            "My sites",
-                            style: TextStyle(
-                                color: Colors.grey[400],
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          onTap: () {
-                            onIconPressed();
-                            BlocProvider.of<NavigationBloc>(context)
-                                .add(NavigationEvents.MyOrdersClickedEvent);
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.device_hub),
-                          title: Text(
-                            "My devices",
-                            style: TextStyle(
-                                color: Colors.grey[400],
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          onTap: () {
-                            onIconPressed();
-                            BlocProvider.of<NavigationBloc>(context)
-                                .add(NavigationEvents.MyAccountClickedEvent);
-                          },
-                        ),
-                        Divider(
-                          height: 34,
-                          thickness: 0.9,
-                          color: Colors.grey[400].withOpacity(0.3),
-                          indent: 32,
-                          endIndent: 32,
-                        ),
-                        FutureBuilder<List<Location>>(
+                            ListTile(
+                              leading: Icon(Icons.home),
+                              title: Text(
+                                "Dashboard",
+                                style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              onTap: () {
+                                onIconPressed();
+                                BlocProvider.of<NavigationBloc>(context)
+                                    .add(NavigationEvents.HomePageClickedEvent);
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.place),
+                              title: Text(
+                                "My sites",
+                                style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              onTap: () {
+                                onIconPressed();
+                                BlocProvider.of<NavigationBloc>(context)
+                                    .add(NavigationEvents.MyOrdersClickedEvent);
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.device_hub),
+                              title: Text(
+                                "My devices",
+                                style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              onTap: () {
+                                onIconPressed();
+                                BlocProvider.of<NavigationBloc>(context).add(
+                                    NavigationEvents.MyAccountClickedEvent);
+                              },
+                            ),
+                            Divider(
+                              height: 34,
+                              thickness: 0.9,
+                              color: Colors.grey[400].withOpacity(0.3),
+                              indent: 32,
+                              endIndent: 32,
+                            ),
+                            FutureBuilder<List<Location>>(
 //                future: databaseHelper.getData(),
-                            future: databaseHelper2.AllUserLocation(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError) {
-                                print(snapshot.error);
-                                print("mochkla lenaa *");
-                              }
-                              if (snapshot.hasData) {
-                                return itemList(list: snapshot.data);
-                              } else {
-                                return Container();
-                              }
-                            }),
-                        Divider(
-                          height: 34,
-                          thickness: 0.9,
-                          color: Colors.grey[400].withOpacity(0.3),
-                          indent: 32,
-                          endIndent: 32,
+                                future: databaseHelper2.AllUserLocation(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    print(snapshot.error);
+                                    print("mochkla lenaa *");
+                                  }
+                                  if (snapshot.hasData) {
+                                    return itemList(list: snapshot.data);
+                                  } else {
+                                    return Container();
+                                  }
+                                }),
+                            Divider(
+                              height: 34,
+                              thickness: 0.9,
+                              color: Colors.grey[400].withOpacity(0.3),
+                              indent: 32,
+                              endIndent: 32,
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.settings),
+                              title: Text(
+                                "Account settings",
+                                style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              onTap: () {
+                                onIconPressed();
+                                BlocProvider.of<NavigationBloc>(context).add(
+                                    NavigationEvents.MyProfileClickedEvent);
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.exit_to_app),
+                              title: Text(
+                                "Logout",
+                                style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              onTap: () async {
+                                onIconPressed();
+                                SharedPreferences preferences =
+                                    await SharedPreferences.getInstance();
+                                await preferences.clear();
+                                await Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            LoginPage()),
+                                    (Route<dynamic> route) => false);
+                              },
+                            ),
+                          ],
                         ),
-                        ListTile(
-                          leading: Icon(Icons.settings),
-                          title: Text(
-                            "Account settings",
-                            style: TextStyle(
-                                color: Colors.grey[400],
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          onTap: (){
-                            onIconPressed();
-                            BlocProvider.of<NavigationBloc>(context)
-                                .add(NavigationEvents.MyProfileClickedEvent);
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.exit_to_app),
-                          title: Text(
-                            "Logout",
-                            style: TextStyle(
-                                color: Colors.grey[400],
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          onTap: () async {
-                            onIconPressed();
-                            SharedPreferences preferences =
-                                await SharedPreferences.getInstance();
-                            await preferences.clear();
-                            await Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        LoginPage()),
-                                (Route<dynamic> route) => false);
-                          },
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
               GestureDetector(
-                onTap: () {
+                onTap: (){
                   onIconPressed();
+                },
+                onHorizontalDragUpdate: (details) {
+                  int sensitivity = 0;
+                  if (details.delta.dx > sensitivity) {
+                    onIconPressed();
+                  } else if(details.delta.dx < -sensitivity){
+                    onIconPressed();
+                  }
                 },
                 child: Container(
                   width: 70,
@@ -297,22 +314,23 @@ class _SideBarState extends State<SideBar>
                           icon: Icons.place,
                           title: list[i].siteName.toString(),
                           onTap: () => {
-                          Fluttertoast.showToast(
-                          msg: list[i].siteName+" does not have any device !",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 3,
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                          fontSize: 10.0)
-
+                            Fluttertoast.showToast(
+                                msg: list[i].siteName +
+                                    " does not have any device !",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 3,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 10.0)
                           },
                         ),
                         Container(
                           width: 17.0,
                           height: 27.0,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(4.0)),
                             color: Colors.red,
                           ),
                           alignment: Alignment.center,
@@ -336,15 +354,16 @@ class _SideBarState extends State<SideBar>
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        LocationDetails(identifier: list[i].id))),
+                                    builder: (context) => LocationDetails(
+                                        identifier: list[i].id))),
                           },
                         ),
                         Container(
                           width: 17.0,
                           height: 27.0,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(4.0)),
                             color: Colors.green,
                           ),
                           alignment: Alignment.center,

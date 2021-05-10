@@ -19,9 +19,12 @@ class _ElectrovanneClassState extends State<ElectrovanneClass> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: Container(
+        width: queryData.size.width,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0), color: Colors.white),
         child: Column(

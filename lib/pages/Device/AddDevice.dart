@@ -53,6 +53,7 @@ class AddDeviceState extends State<AddDevice> {
           borderRadius: BorderRadius.all(Radius.circular(20.0))),
       contentPadding: EdgeInsets.only(top: 10.0),
       content: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
         child: Column(
             children: [
               Form(
@@ -60,7 +61,7 @@ class AddDeviceState extends State<AddDevice> {
                 child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                       child: Text(
                         "ADD DEVICE",style: TextStyle(
                         fontSize: 23,
@@ -154,7 +155,7 @@ class AddDeviceState extends State<AddDevice> {
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                       child: Container(
-                        height: 600,
+                        height: 450,
                         width: 400,
                           child:GoogleMap(
                         initialCameraPosition: _initialPosition,

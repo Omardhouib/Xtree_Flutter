@@ -62,98 +62,103 @@ class LocationDetailsState extends State<LocationDetails> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     var hour = DateTime.now().hour;
     return new Scaffold(
         backgroundColor: Colors.grey[200],
         body: ListView(
           scrollDirection: Axis.vertical,
           children: <Widget>[
-            Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new IconButton(
-                    icon: new Icon(Icons.arrow_back, color: Colors.black,size: 30,),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 25),
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            width: 365,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                FutureBuilder<Location>(
+            Container(
+              width: queryData.size.width,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new IconButton(
+                      icon: new Icon(Icons.arrow_back, color: Colors.black,size: 30,),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 25),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              width: queryData.size.width - 100,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  FutureBuilder<Location>(
 //                future: databaseHelper.getData(),
-                                    future: databaseHelper2.getLocationByid(widget.identifier),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasError) {
-                                        print(snapshot.error);
-                                        print("mochkla lenaa last *");
-                                      }
-                                      if (snapshot.hasData) {
-                                        Location location = snapshot.data;
-                                        id = snapshot.data.id;
-                                        return Text(
-                                          location.siteName,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 30.0,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle: FontStyle.normal,
-                                          ),
-                                        );
-                                      } else {
-                                        return Container();
-                                      }
-                                    }),
-                                FutureBuilder<User>(
-//                future: databaseHelper.getData(),
-                                    future: databaseHelper2.getUser(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasError) {
-                                        print(snapshot.error);
-                                        print("mochkla lenaa *");
-                                      }
-                                      if (snapshot.hasData) {
-                                        return Text(
-                                            'Welcome '+snapshot.data.firstName+' '+snapshot.data.lastName,
+                                      future: databaseHelper2.getLocationByid(widget.identifier),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasError) {
+                                          print(snapshot.error);
+                                          print("mochkla lenaa last *");
+                                        }
+                                        if (snapshot.hasData) {
+                                          Location location = snapshot.data;
+                                          id = snapshot.data.id;
+                                          return Text(
+                                            location.siteName,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              fontSize: 15.0,
-                                              color: Colors.grey,
-                                              fontWeight:
-                                              FontWeight.w500,
-                                              fontStyle:
-                                              FontStyle.normal,
-                                            ));
-                                      } else {
-                                        return Container();
-                                      }
-                                    }),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.blue[100],
-                              child: Icon(
-                                Icons.perm_identity,
-                                size: 30,
-                                color: Colors.blue,
+                                              fontSize: 30.0,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle: FontStyle.normal,
+                                            ),
+                                          );
+                                        } else {
+                                          return Container();
+                                        }
+                                      }),
+                                  FutureBuilder<User>(
+//                future: databaseHelper.getData(),
+                                      future: databaseHelper2.getUser(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasError) {
+                                          print(snapshot.error);
+                                          print("mochkla lenaa *");
+                                        }
+                                        if (snapshot.hasData) {
+                                          return Text(
+                                              'Welcome '+snapshot.data.firstName+' '+snapshot.data.lastName,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 15.0,
+                                                color: Colors.grey,
+                                                fontWeight:
+                                                FontWeight.w500,
+                                                fontStyle:
+                                                FontStyle.normal,
+                                              ));
+                                        } else {
+                                          return Container();
+                                        }
+                                      }),
+                                ],
                               ),
-                              radius: 33,
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              child: CircleAvatar(
+                                backgroundColor: Colors.blue[100],
+                                child: Icon(
+                                  Icons.perm_identity,
+                                  size: 30,
+                                  color: Colors.blue,
+                                ),
+                                radius: 33,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ]),
+                  ]),
+            ),
             FutureBuilder<Location>(
                 future: databaseHelper2.getLocationByid(widget.identifier),
                 builder: (context, snapshot) {

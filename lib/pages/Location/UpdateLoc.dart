@@ -66,10 +66,11 @@ class UpdateLocState extends State<UpdateLoc> {
             borderRadius: BorderRadius.all(Radius.circular(20.0))),
         contentPadding: EdgeInsets.only(top: 10.0),
         content: SingleChildScrollView(
+          physics: NeverScrollableScrollPhysics(),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                 child: Text(
                   "UPDATE SITE: "+widget.name,style: TextStyle(
                     fontSize: 18,
@@ -125,7 +126,7 @@ class UpdateLocState extends State<UpdateLoc> {
                 ),
               ),
               Container(
-                height: 600,
+                height: 450,
                 width: 400,
                 child: GoogleMap(
                   initialCameraPosition: _initialPosition,
@@ -144,7 +145,7 @@ class UpdateLocState extends State<UpdateLoc> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: Container(
                   width: 250,
                   height: 40,

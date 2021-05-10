@@ -22,7 +22,7 @@ class _WeatherClassState extends State<WeatherClass> {
       child: ListView.builder(
           itemCount: 6,
           scrollDirection: Axis.horizontal,
-          itemExtent: 200.0,
+          itemExtent: 190.0,
           // ignore: missing_return
           itemBuilder: (context, i) {
             int date = (widget.list[i]["dt"]);
@@ -36,20 +36,6 @@ class _WeatherClassState extends State<WeatherClass> {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                 child: Container(
-                  /* decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                       image: DecorationImage(
-                           image: NetworkImage(
-                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
-                           fit: BoxFit.cover),
-                      gradient: LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: [
-                            Color(0xff152238),
-                            Color(0xff152238),
-                            Color(0xff152238),
-                          ])),*/
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       image: DecorationImage(
@@ -109,39 +95,15 @@ class _WeatherClassState extends State<WeatherClass> {
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
                           ),
                         ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
-                            child: Text(
-                              widget.list[i]["temp"]["min"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: Text(
-                              "/",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
-                            child: Text(
-                              widget.list[i]["temp"]["max"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
+                        child: Text(
+                          widget.list[i]["temp"]["min"].round().toString() + "°C" + " / " + widget.list[i]["temp"]["max"].round().toString() + "°C",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400),
+                        ),
                       ),
                       Row(
                         children: [
@@ -160,7 +122,7 @@ class _WeatherClassState extends State<WeatherClass> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w300),
+                                  fontWeight: FontWeight.w500),
                             ),
                           )
                         ],
@@ -182,7 +144,7 @@ class _WeatherClassState extends State<WeatherClass> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w300),
+                                  fontWeight: FontWeight.w500),
                             ),
                           )
                         ],
@@ -204,7 +166,7 @@ class _WeatherClassState extends State<WeatherClass> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w300),
+                                  fontWeight: FontWeight.w500),
                             ),
                           )
                         ],
@@ -217,20 +179,6 @@ class _WeatherClassState extends State<WeatherClass> {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                 child: Container(
-                  /* decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                       image: DecorationImage(
-                           image: NetworkImage(
-                               "https://www.pngarts.com/files/5/Lines-Transparent-Background-PNG.png"),
-                           fit: BoxFit.cover),
-                      gradient: LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: [
-                            Color(0xff152238),
-                            Color(0xff152238),
-                            Color(0xff152238),
-                          ])),*/
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       image: DecorationImage(
@@ -290,39 +238,15 @@ class _WeatherClassState extends State<WeatherClass> {
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
                           ),
                         ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
-                            child: Text(
-                              widget.list[i]["temp"]["min"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: Text(
-                              "/",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
-                            child: Text(
-                              widget.list[i]["temp"]["max"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
+                        child: Text(
+                          widget.list[i]["temp"]["min"].round().toString() + "°C" + " / " + widget.list[i]["temp"]["max"].round().toString() + "°C",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400),
+                        ),
                       ),
                       Row(
                         children: [
@@ -341,7 +265,7 @@ class _WeatherClassState extends State<WeatherClass> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w300),
+                                  fontWeight: FontWeight.w500),
                             ),
                           )
                         ],
@@ -363,7 +287,7 @@ class _WeatherClassState extends State<WeatherClass> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w300),
+                                  fontWeight: FontWeight.w500),
                             ),
                           )
                         ],
@@ -385,7 +309,7 @@ class _WeatherClassState extends State<WeatherClass> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w300),
+                                  fontWeight: FontWeight.w500),
                             ),
                           )
                         ],
@@ -457,39 +381,15 @@ class _WeatherClassState extends State<WeatherClass> {
                                 'https://www.dovora.com/resources/weather-icons/showcase/modern_showcase/day_clear.png'),
                           ),
                         ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 0, 4, 0),
-                            child: Text(
-                              widget.list[i]["temp"]["min"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: Text(
-                              "/",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
-                            child: Text(
-                              widget.list[i]["temp"]["max"].round().toString() + "°C",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          )
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
+                        child: Text(
+                          widget.list[i]["temp"]["min"].round().toString() + "°C" + " / " + widget.list[i]["temp"]["max"].round().toString() + "°C",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400),
+                        ),
                       ),
                       Row(
                         children: [
@@ -508,7 +408,7 @@ class _WeatherClassState extends State<WeatherClass> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w300),
+                                  fontWeight: FontWeight.w500),
                             ),
                           )
                         ],
@@ -530,7 +430,7 @@ class _WeatherClassState extends State<WeatherClass> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w300),
+                                  fontWeight: FontWeight.w500),
                             ),
                           )
                         ],
@@ -552,7 +452,7 @@ class _WeatherClassState extends State<WeatherClass> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w300),
+                                  fontWeight: FontWeight.w500),
                             ),
                           )
                         ],

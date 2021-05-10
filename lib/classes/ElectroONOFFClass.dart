@@ -22,87 +22,95 @@ class _ElectroONOFFClassState extends State<ElectroONOFFClass> {
   bool cmbscritta = false;
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     id = widget.Electro.id.toString();
-    return Row(
-      children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-          child: Container(
-            height: 80,
-            width: 220,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  //Electro.toString() ?? '',
-                  widget.Electro.name.toString(),
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+    return Container(
+      width: queryData.size.width,
+      child: Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+            child: Container(
+              height: 80,
+              width: 200,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    //Electro.toString() ?? '',
+                    widget.Electro.name.toString(),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  //Electro.toString() ?? '',
-                  "Identifier: "+widget.Electro.sensorIdentifier.toString(),
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey
-                  ),
-                ),
-                Text(
-                  //Electro.toString() ?? '',
-                  "Description: "+widget.Electro.description.toString(),
-                  style: TextStyle(
+                  Text(
+                    //Electro.toString() ?? '',
+                    "Identifier: "+widget.Electro.sensorIdentifier.toString(),
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
                       color: Colors.grey
+                    ),
+                  ),
+                  Text(
+                    //Electro.toString() ?? '',
+                    "Description: "+widget.Electro.description.toString(),
+                    style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
+            child: Text(
+              widget.Electro.status != cmbscritta ? "ON" : "OFF",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                 color: widget.Electro.status != cmbscritta ? Colors.green : Colors.red ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(70, 0, 0, 30),
+            child: Column(
+              children: [
+                IconButton(
+                  icon: widget.Electro.status != cmbscritta ? Icon(Icons.flash_off) : Icon(Icons.flash_on),
+                  iconSize: 30,
+                  color: widget.Electro.status != cmbscritta ? Colors.red : Colors.green,
+                  onPressed: () {
+                     status = widget.Electro.status.toString();
+                    _doSomething();
+
+                     setState(() {
+                      cmbscritta = !cmbscritta;
+                     //7yela
+                     // widget.Electro.status=!widget.Electro.status;
+                    //rasmi
+                     // widget.Electro  =  _doSomething();
+                    });
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  child: Text(
+                    widget.Electro.status != cmbscritta ? "TURN OFF" : "TURN ON",
+                    style:
+                    TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ),
               ],
             ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(right: 80),
-          child: Text(
-            widget.Electro.status != cmbscritta ? "ON" : "OFF",
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-               color: widget.Electro.status != cmbscritta ? Colors.green : Colors.red ),
-          ),
-        ),
-        Column(
-          children: [
-            IconButton(
-              icon: widget.Electro.status != cmbscritta ? Icon(Icons.flash_off) : Icon(Icons.flash_on),
-              iconSize: 30,
-              color: widget.Electro.status != cmbscritta ? Colors.red : Colors.green,
-              onPressed: () {
-                 status = widget.Electro.status.toString();
-                _doSomething();
-
-                 setState(() {
-                  cmbscritta = !cmbscritta;
-                 //7yela
-                 // widget.Electro.status=!widget.Electro.status;
-                //rasmi
-                 // widget.Electro  =  _doSomething();
-                });
-              },
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-              child: Text(
-                widget.Electro.status != cmbscritta ? "TURN OFF" : "TURN ON",
-                style:
-                TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ),
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 

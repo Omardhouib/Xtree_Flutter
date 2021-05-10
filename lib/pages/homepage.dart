@@ -52,6 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<LocationHome> getHomedetails;
   Future<int> getSensNum;
   Future<int> getLocNum;
+
+  String IdSens;
   void _onValueChange(String value) {
     setState(() {
       _selectedId = value;
@@ -95,6 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     var hour = DateTime.now().hour;
     return new WillPopScope(
       onWillPop: _onWillPop,
@@ -180,12 +184,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
+                            width: queryData.size.width,
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(10, 50, 0, 25),
                               child: Row(
                                 children: <Widget>[
                                   Container(
-                                    width: 365,
+                                    width: queryData.size.width - 100,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -386,6 +391,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 )
                               : Container();
                         }),
+
                     FutureBuilder<LocationHome>(
                         future: getHomedetails,
                         builder: (context, snapshot) {
@@ -450,134 +456,150 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ],
                               );
                             }
-                            if (snapshot.data.sol != null) {
-                              snapshot.data.sol.rules.forEach((element) {
-                                status = element.status;
-                              });
-                            }
+                            snapshot.data.locations.sensorIds.forEach((element) {
+                              IdSens = element;
+                            });
+                            return FutureBuilder<Sensor>(
+//
+                                future: databaseHelper2.getSolDeviceById(IdSens),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    print(snapshot.error);
+                                    print("mochkla lenaa *");
+                                  }
+                                  if (snapshot.hasData) {
+                                    snapshot.data.rules.forEach((element) {
+                                      status = element.status;
+                                    });
+                                    if (status == true){
+                                      // print("status:"+status.toString());
+                                      return Container(
+                                        height: 80,
+                                        child: Card(
+                                          semanticContainer: true,
+                                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                                          color: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20.0),
+                                          ),
+                                          elevation: 4,
+                                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                                                child: CircleAvatar(
+                                                  backgroundColor: Colors.amber,
+                                                  child: Icon(
+                                                    Icons.schedule,
+                                                    color: Colors.white,
+                                                  ),
+                                                  radius: 25,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "SCHEDULES STATE:    ",
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    //color: Colors.green,
+                                                    height: 20.0, // height of the button
+                                                    width: 20.0, // width of the button
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.green,
+                                                        border: Border.all(
+                                                            color: Colors.grey[350],
+                                                            width: 3.0,
+                                                            style: BorderStyle.solid),
+                                                        shape: BoxShape.circle),
+                                                  ),
+                                                  Text(
+                                                    "  ACTIVE",
+                                                    style: TextStyle(
+                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: 16,color: Colors.green
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    else
+                                      //  print("status:"+status.toString());
+                                      return Container(
+                                        height: 80,
+                                        child: Card(
+                                          semanticContainer: true,
+                                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                                          color: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20.0),
+                                          ),
+                                          elevation: 4,
+                                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                                                child: CircleAvatar(
+                                                  backgroundColor: Colors.amber,
+                                                  child: Icon(
+                                                    Icons.schedule,
+                                                    color: Colors.white,
+                                                  ),
+                                                  radius: 25,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "SCHEDULES STATE:    ",
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    //color: Colors.green,
+                                                    height: 20.0, // height of the button
+                                                    width: 20.0, // width of the button
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.red,
+                                                        border: Border.all(
+                                                            color: Colors.grey[350],
+                                                            width: 3.0,
+                                                            style: BorderStyle.solid),
+                                                        shape: BoxShape.circle),
+                                                  ),
+                                                  Text(
+                                                    "  INACTIVE",
+                                                    style: TextStyle(
+                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: 16,color: Colors.red
+                                                    ),
+                                                  ),
 
-                            if (status == true) {
-                              return Container(
-                                height: 80,
-                                child: Card(
-                                  semanticContainer: true,
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  color: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  elevation: 4,
-                                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            15, 0, 20, 0),
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.amber,
-                                          child: Icon(
-                                            Icons.schedule,
-                                            color: Colors.white,
+
+
+                                                ],
+                                              ),
+                                            ],
                                           ),
-                                          radius: 25,
                                         ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "SCHEDULES STATE:    ",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          Container(
-                                            //color: Colors.green,
-                                            height:
-                                                20.0, // height of the button
-                                            width: 20.0, // width of the button
-                                            decoration: BoxDecoration(
-                                                color: Colors.green,
-                                                border: Border.all(
-                                                    color: Colors.grey[350],
-                                                    width: 3.0,
-                                                    style: BorderStyle.solid),
-                                                shape: BoxShape.circle),
-                                          ),
-                                          Text(
-                                            "  ACTIVE",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16,
-                                                color: Colors.green),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            } else
-                              return Container(
-                                height: 80,
-                                child: Card(
-                                  semanticContainer: true,
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  color: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  elevation: 4,
-                                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            15, 0, 20, 0),
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.amber,
-                                          child: Icon(
-                                            Icons.schedule,
-                                            color: Colors.white,
-                                          ),
-                                          radius: 25,
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "SCHEDULES STATE:    ",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          Container(
-                                            //color: Colors.green,
-                                            height:
-                                                20.0, // height of the button
-                                            width: 20.0, // width of the button
-                                            decoration: BoxDecoration(
-                                                color: Colors.red,
-                                                border: Border.all(
-                                                    color: Colors.grey[350],
-                                                    width: 3.0,
-                                                    style: BorderStyle.solid),
-                                                shape: BoxShape.circle),
-                                          ),
-                                          Text(
-                                            "  INACTIVE",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16,
-                                                color: Colors.red),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
+                                      );
+
+                                  } else {
+                                    return Container();
+                                  }
+                                });
                           } else {
                             return Container();
                           }

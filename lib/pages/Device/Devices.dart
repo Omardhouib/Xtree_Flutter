@@ -46,6 +46,8 @@ class _DevicesState extends State<Devices> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: ListView(
@@ -57,7 +59,7 @@ class _DevicesState extends State<Devices> {
               child: Row(
                 children: <Widget>[
                   Container(
-                    width: 350,
+                    width: queryData.size.width - 100,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -128,27 +130,33 @@ class _DevicesState extends State<Devices> {
               margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
               child: Row(
                 children: [
-                  Padding(
-                    padding:
-                    const EdgeInsets.fromLTRB(15, 0, 40, 0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.green,
-                      child: Icon(
-                        Icons.add_circle,
-                        color: Colors.white,
+                  Container(
+                    width: 100,
+                    child: Padding(
+                      padding:
+                      const EdgeInsets.fromLTRB(15, 0, 40, 0),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.green,
+                        child: Icon(
+                          Icons.add_circle,
+                          color: Colors.white,
+                        ),
+                        radius: 25,
                       ),
-                      radius: 25,
-                    ),
-                  ),
-                  Text(
-                    "ADD DEVICE ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(120, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 90, 0),
+                    child: Text(
+                      "ADD DEVICE ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: FlatButton(
                       child: Icon(
                         Icons.add_circle_outline,
@@ -182,27 +190,33 @@ class _DevicesState extends State<Devices> {
               margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
               child: Row(
                 children: [
-                  Padding(
-                    padding:
-                    const EdgeInsets.fromLTRB(15, 0, 40, 0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.red,
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.white,
+                  Container(
+                    width: 100,
+                    child: Padding(
+                      padding:
+                      const EdgeInsets.fromLTRB(15, 0, 40, 0),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.red,
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                        radius: 25,
                       ),
-                      radius: 25,
-                    ),
-                  ),
-                  Text(
-                    "DELETE DEVICE ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(90, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 65, 0),
+                    child: Text(
+                      "DELETE DEVICE ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: FlatButton(
                       child: Icon(
                         Icons.delete_outline,
@@ -285,7 +299,7 @@ class _ItemListState extends State<ItemList> {
         shrinkWrap: true,
         itemBuilder: (context, i) {
             return Container(
-              height: 460,
+              height: 480,
               child: Card(
                 semanticContainer: true,
                 clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -315,9 +329,9 @@ class _ItemListState extends State<ItemList> {
                               radius: 25,
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                               child: Container(
-                                width: 280,
+                                width: 250,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -352,7 +366,7 @@ class _ItemListState extends State<ItemList> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                               child: IconButton(
                                 icon: Icon(
                                   Icons.edit,

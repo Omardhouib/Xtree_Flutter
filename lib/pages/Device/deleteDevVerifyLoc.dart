@@ -184,7 +184,7 @@ class _ItemListState extends State<ItemList> {
                                 child: Padding(
                                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                   child: Container(
-                                    width: 230,
+                                    width: 180,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
